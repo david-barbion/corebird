@@ -1,0 +1,17 @@
+corebird (1.1-1~15.10) wily; urgency=low
+
+  * new upstream release
+
+ -- pandajim (key for lives deb) <ubuntuhandbook1@gmail.com>  Sun, 16 Nov 2014 19:30:57 +0800
+
+corebird (0.9-1~vivid) vivid; urgency=low
+
+  * New upstream release
+
+ -- pandajim (key for lives deb) <ubuntuhandbook1@gmail.com>  Sun, 16 Nov 2014 19:30:57 +0800
+
+corebird (0.8~utopic1-4) utopic; urgency=low
+
+  * Initial release
+
+ -- pandajim (key for lives deb) <ubuntuhandbook1@gmail.com>  Sun, 22 Jun 2014 17:30:57 +0800

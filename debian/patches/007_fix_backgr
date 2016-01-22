@@ -1,0 +1,13 @@
+Index: corebird-1.0/data/org.baedert.corebird.desktop.in.in
+===================================================================
+--- corebird-1.0.orig/data/org.baedert.corebird.desktop.in.in	2015-03-21 22:40:36.000000000 +0800
++++ corebird-1.0/data/org.baedert.corebird.desktop.in.in	2015-03-21 22:42:43.230988866 +0800
+@@ -2,7 +2,7 @@
+ Name=Corebird
+ _GenericName=Twitter Client
+ Keywords=twitter;
+-Exec=corebird
++Exec=env LIBOVERLAY_SCROLLBAR=0 corebird
+ Type=Application
+ Icon=corebird
+ Categories=Network;GTK;
