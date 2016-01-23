@@ -1,8 +1,8 @@
-corebird (1.1-2~15.10.1) wily; urgency=low
+corebird (1.1-2~16.04.1) xenial; urgency=low
 
   * new upstream release
 
- -- David Barbion <davidb@230ruedubac.fr>  Fri, 22 Jan 2016 22:49:35 +0800
+ -- David Barbion <davidb@230ruedubac.fr>  Fri, 23 Jan 2016 21:56:35 +0800
 
 corebird (1.1-1~15.10) wily; urgency=low
 
