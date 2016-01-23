@@ -1,8 +1,8 @@
 Source: corebird
 Section: misc
 Priority: optional
-Maintainer: pandajim (key for lives deb) <ubuntuhandbook1@gmail.com>
-Build-Depends: debhelper (>= 8.0.0), automake, libtool, autoconf, autopoint, libgtk-3-dev, libglib2.0-dev, librest-dev, libjson-glib-dev, libsqlite3-dev, libsoup2.4-dev, intltool, libgee-0.8-dev, valac, libgstreamer1.0-dev, libgstreamer-plugins-base1.0-dev 
+Maintainer: David Barbion <davidb@230ruedubac.fr>
+Build-Depends: debhelper (>= 8.0.0), automake, libtool, autoconf, autopoint, libgtk-3-dev, libglib2.0-dev, librest-dev, libjson-glib-dev, libsqlite3-dev, libsoup2.4-dev, intltool, libgee-0.8-dev, valac, libgstreamer1.0-dev, libgstreamer-plugins-base1.0-dev, libxml2-utils
 Standards-Version: 3.9.4
 Homepage: http://corebird.baedert.org/
 
@@ -10,4 +10,4 @@ Package: corebird
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Native Gtk+ Twitter client for the Linux desktop
- <insert long description, indented with spaces>
+ Corebird is a modern, easy and fun Twitter client, just what you were looking for, right? 

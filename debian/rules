@@ -12,3 +12,5 @@ export DEB_BUILD_OPTIONS = nocheck
 override_dh_auto_configure:
 	./autogen.sh --prefix=/usr
 	dh_auto_configure
+
+
