@@ -113,6 +113,7 @@ public class Corebird : Gtk.Application {
   }
 
   private void show_shortcuts_activated () {
+    // TODO: Remove this once the required gtk version is >= 3.20
     if (Gtk.get_major_version () == 3 && Gtk.get_minor_version () >= 19) {
       var builder = new Gtk.Builder.from_resource ("/org/baedert/corebird/ui/shortcuts-window.ui");
       var shortcuts_window = (Gtk.Window) builder.get_object ("shortcuts_window");
@@ -280,8 +281,9 @@ public class Corebird : Gtk.Application {
     if (startup_accounts.length == 1 && startup_accounts[0] == "")
       startup_accounts.resize (0);
 
-
+    debug ("Configured startup accounts: %d", startup_accounts.length);
     uint n_accounts = Account.list_accounts ().length ();
+    debug ("Configured accounts: %u", n_accounts);
 
     if (startup_accounts.length == 0) {
       if (n_accounts == 1) {

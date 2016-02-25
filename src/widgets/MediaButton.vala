@@ -50,6 +50,8 @@ private class MediaButton : Gtk.Widget {
   };
   private Pango.Layout layout;
   private Gtk.GestureMultiPress press_gesture;
+  private bool restrict_height = false;
+
 
   public signal void clicked (MediaButton source);
 
@@ -71,8 +73,9 @@ private class MediaButton : Gtk.Widget {
     this.set_can_focus (true);
   }
 
-  public MediaButton (Media? media) {
+  public MediaButton (Media? media, bool restrict_height = false) {
     this.media = media;
+    this.restrict_height = restrict_height;
     this.get_style_context ().add_class ("inline-media");
     this.get_style_context ().add_class ("dim-label");
     actions = new GLib.SimpleActionGroup ();
@@ -184,6 +187,20 @@ private class MediaButton : Gtk.Widget {
     return Gtk.SizeRequestMode.HEIGHT_FOR_WIDTH;
   }
 
+  public override void get_preferred_height (out int minimum,
+                                             out int natural) {
+    int media_height;
+    if (this._media == null || this._media.height == -1) {
+      media_height = 1;
+    } else {
+      media_height = this._media.height;
+    }
+
+    minimum = int.min (media_height, MAX_HEIGHT);
+
+    natural = media_height;
+  }
+
   public override void get_preferred_height_for_width (int width,
                                                        out int minimum,
                                                        out int natural) {
@@ -200,7 +217,12 @@ private class MediaButton : Gtk.Widget {
 
     double width_ratio = (double)width / (double) media_width;
     int height = int.min (media_height, (int)(media_height * width_ratio));
-    natural = minimum = height;
+    if (restrict_height) {
+      minimum = int.min (height, MAX_HEIGHT);
+    } else
+      minimum = height;
+
+    natural = height;
   }
 
   public override void get_preferred_width_for_height (int height,
@@ -221,19 +243,6 @@ private class MediaButton : Gtk.Widget {
     int width = int.min (media_width, (int)(media_width * height_ratio));
     minimum = int.min (media_width, MIN_WIDTH);
     natural = width;
-  }
-
-  public override void get_preferred_height (out int minimum,
-                                             out int natural) {
-    int media_height;
-    if (this._media == null || this._media.width == -1) {
-      media_height = 1;
-    } else {
-      media_height = this._media.width;
-    }
-
-    minimum = int.min (media_height, MIN_HEIGHT);
-    natural = media_height;
   }
 
   public override void get_preferred_width (out int minimum,
@@ -307,7 +316,7 @@ private class MediaButton : Gtk.Widget {
   }
 
   public override void size_allocate (Gtk.Allocation alloc) {
-    this.set_allocation (alloc);
+    base.size_allocate (alloc);
 
     int draw_width;
     int draw_height;

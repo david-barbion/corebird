@@ -118,7 +118,7 @@ namespace Utils {
   * @return The given date as GLib.DateTime in the current time zone.
   */
   GLib.DateTime parse_date (string input) {
-    if (input == "") {
+    if (input.length == 0) {
       return new GLib.DateTime.now_local ();
     }
     string month_str = input.substring (4, 3);
@@ -365,14 +365,6 @@ namespace Utils {
       back = s.get_char (0).toupper ().to_string () + s.substring (1);
     }
     return back;
-  }
-
-  uint int64_hash_func (int64? k) {
-    return (uint)k;
-  }
-
-  bool int64_equal_func (int64? a, int64? b) {
-    return a == b;
   }
 
   public int get_json_array_size (Json.Object node, string object_name) {

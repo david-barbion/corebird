@@ -4,7 +4,8 @@ AM_CPPFLAGS = \
 	-include $(CONFIG_HEADER) \
 	-DDATADIR=\"$(datadir)\" \
 	-DPKGDATADIR=\"$(pkgdatadir)\" \
-	-Wno-unused-value
+	-Wno-unused-value \
+	-w
 
 AM_VALAFLAGS = \
 	--thread \
@@ -59,6 +60,7 @@ libcorebird_la_VALASOURCES = \
 	Media.vala \
 	UserEventReceiver.vala \
 	SnippetManager.vala \
+	DMManager.vala \
 	widgets/TweetListBox.vala \
 	widgets/MaxSizeContainer.vala \
 	widgets/ScrollWidget.vala \
@@ -115,13 +117,15 @@ libcorebird_la_VALASOURCES = \
 	window/MediaDialog.vala \
 	window/ImageCropDialog.vala \
 	window/ModifySnippetDialog.vala \
+	window/FileSelector.vala \
 	sql/Database.vala \
 	sql/InsertStatement.vala \
 	sql/UpdateStatement.vala \
 	sql/SelectStatement.vala \
 	async/Collect.vala \
 	async/ComposeJob.vala \
-	model/TweetModel.vala
+	model/TweetModel.vala \
+	model/DMThreadsModel.vala
 
 nodist_libcorebird_la_SOURCES = \
 	libcorebird_la_vala.stamp \
