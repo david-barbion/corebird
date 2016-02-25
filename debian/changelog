@@ -1,8 +1,14 @@
+corebird (1.1.20160225-3~15.10.1) wily; urgency=low
+
+  * New release as of 25/02/2016
+
+ -- David Barbion <davidb@230ruedubac.fr>  Thu, 25 Feb 2016 10:27:00 +0100
+
 corebird (1.1-2~15.10.1) wily; urgency=low
 
   * new upstream release
 
- -- David Barbion <davidb@230ruedubac.fr>  Fri, 22 Jan 2016 22:49:35 +0800
+ -- David Barbion <davidb@230ruedubac.fr>  Fri, 22 Jan 2016 22:49:35 +0100
 
 corebird (1.1-1~15.10) wily; urgency=low
 
