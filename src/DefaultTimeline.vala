@@ -22,7 +22,7 @@ public abstract class DefaultTimeline : ScrollWidget, IPage, ITimeline {
   public int unread_count {
     set {
       _unread_count = int.max (value, 0);
-      debug ("New unread count: %d", value);
+      debug ("New unread count for %s: %d", this.get_title (), value);
       radio_button.show_badge = (_unread_count > 0);
     }
     get {
@@ -104,7 +104,7 @@ public abstract class DefaultTimeline : ScrollWidget, IPage, ITimeline {
 
   public void double_open () {
     if (!loading) {
-      this.scroll_up_next (true, false, true);
+      this.scroll_up_next (true, true);
       tweet_list.get_row_at_index (0).grab_focus ();
     }
   }
@@ -258,13 +258,15 @@ public abstract class DefaultTimeline : ScrollWidget, IPage, ITimeline {
   }
 
 
-  protected void scroll_up (Tweet t) {
+  protected bool scroll_up (Tweet t) {
     bool auto_scroll = Settings.auto_scroll_on_new_tweets ();
     if (this.scrolled_up && (t.user_id == account.id || auto_scroll)) {
-      this.scroll_up_next (true, false,
+      this.scroll_up_next (true,
                            main_window.cur_page_id != this.id);
+      return true;
     }
 
+    return false;
   }
 
   private void stream_resumed_cb () {

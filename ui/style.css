@@ -50,9 +50,11 @@
   background: none;
   border-radius: 0px;
   padding: 0px;
-  opacity: 0.8;
+  opacity: 0.9;
   box-shadow: none;
   border: none;
+  border-top: 2px solid transparent;
+  border-bottom: 2px solid transparent;
 }
 
 .inline-media:hover {
@@ -213,12 +215,14 @@
 }
 
 .quote {
-  border-left: 3px solid currentColor;
-  padding-left: 6px;
+  border-left: 3px solid alpha(currentColor, 0.4);
 }
 
 .close-button {
   padding: 3px;
   border-radius: 50%;
   outline-radius: 50%;
+  min-height: 0px;
+  min-width: 0px;
+  box-shadow: none;
 }

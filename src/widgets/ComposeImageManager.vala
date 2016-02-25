@@ -16,6 +16,8 @@
  */
 
 class ComposeImageManager : Gtk.Container {
+  private static const int BUTTON_DELTA = 10;
+  private static const int BUTTON_SPACING = 12;
   private Gee.ArrayList<AddImageButton> buttons;
   private Gee.ArrayList<Gtk.Button>      close_buttons;
 
@@ -27,21 +29,6 @@ class ComposeImageManager : Gtk.Container {
 
   public signal void image_removed ();
 
-  static construct {
-    // TODO: Remove this once the required gtk+ version is >= 3.20
-    if (Gtk.get_major_version () == 3 && Gtk.get_minor_version () >= 19) {
-      var screen = Gdk.Screen.get_default ();
-      var provider = new Gtk.CssProvider ();
-      try {
-        provider.load_from_data (".close-button{min-width:0px;min-height:0px;}", -1);
-      } catch (GLib.Error e) {
-        warning (e.message);
-      }
-      Gtk.StyleContext.add_provider_for_screen (screen, provider,
-                                                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-    }
-  }
-
   construct {
     this.buttons = new Gee.ArrayList<AddImageButton> ();
     this.close_buttons = new Gee.ArrayList<Gtk.Button> ();
@@ -51,6 +38,9 @@ class ComposeImageManager : Gtk.Container {
   private void remove_clicked_cb (Gtk.Button source) {
     int index = this.close_buttons.index_of (source);
     assert (index >= 0);
+
+    this.close_buttons.get (index).hide ();
+
 
     AddImageButton aib = (AddImageButton) this.buttons.get (index);
     aib.deleted.connect (() => {
@@ -66,9 +56,12 @@ class ComposeImageManager : Gtk.Container {
   // GtkContainer API {{{
   public override void forall_internal (bool include_internals, Gtk.Callback cb) {
     assert (buttons.size == close_buttons.size);
-    for (int i = 0, p = buttons.size; i < p; i ++) {
+    for (int i = 0; i < this.buttons.size;) {
+      int size_before = this.buttons.size;
       cb (buttons.get (i));
       cb (close_buttons.get (i));
+
+      i += this.buttons.size - size_before + 1;
     }
   }
 
@@ -87,7 +80,6 @@ class ComposeImageManager : Gtk.Container {
 
   public override void remove (Gtk.Widget widget) {
     widget.unparent ();
-    int index = 0;
     if (widget is AddImageButton)
       this.buttons.remove ((AddImageButton)widget);
     else
@@ -101,44 +93,45 @@ class ComposeImageManager : Gtk.Container {
   }
 
   public override void size_allocate (Gtk.Allocation allocation) {
+    base.size_allocate (allocation);
     Gtk.Allocation child_allocation = {};
-    this.set_allocation (allocation);
 
     if (this.buttons.size == 0) return;
 
+
+    int default_button_width = (allocation.width - (buttons.size * BUTTON_SPACING)) /
+                               buttons.size;
+
     child_allocation.x = allocation.x;
-    child_allocation.y = allocation.y + 10;
-    child_allocation.width = allocation.width / buttons.size;
-    child_allocation.height = int.max (allocation.height - 10, 0);
+    child_allocation.y = allocation.y + BUTTON_DELTA;
+    child_allocation.height = int.max (allocation.height - BUTTON_DELTA, 0);
 
     Gtk.Allocation close_allocation = {};
     close_allocation.y = allocation.y;
     for (int i = 0, p = this.buttons.size; i < p; i ++) {
-      int imp;
       int min, nat;
 
       AddImageButton aib = this.buttons.get (i);
-      aib.get_preferred_width_for_height (allocation.height, out min, out nat);
+      aib.get_preferred_width_for_height (child_allocation.height, out min, out nat);
 
-      int width = int.min (nat, allocation.width / buttons.size);
-
-      child_allocation.width = width;
+      child_allocation.width = int.min (default_button_width, nat);
       aib.size_allocate (child_allocation);
 
 
-      int m, n;
+      int n;
       Gtk.Widget btn = this.close_buttons.get (i);
       btn.get_preferred_width (out close_allocation.width, out n);
       btn.get_preferred_height (out close_allocation.height, out n);
       close_allocation.x = child_allocation.x + child_allocation.width
-                           - close_allocation.width + 10;
+                           - close_allocation.width + BUTTON_DELTA;
+
       btn.size_allocate (close_allocation);
 
-      child_allocation.x += child_allocation.width;
+      child_allocation.x += child_allocation.width + BUTTON_SPACING;
     }
   }
 
-  public override void get_preferred_height_for_width (int width,
+  public override void get_preferred_height_for_width (int     width,
                                                        out int minimum,
                                                        out int natural) {
     int min = 0;
@@ -165,8 +158,8 @@ class ComposeImageManager : Gtk.Container {
       nat += n;
     }
 
-    minimum = min;
-    natural = nat;
+    minimum = min + (buttons.size * BUTTON_SPACING);
+    natural = nat + (buttons.size * BUTTON_SPACING);
   }
 
   public override bool draw (Cairo.Context ct) {
@@ -184,8 +177,14 @@ class ComposeImageManager : Gtk.Container {
   }
   // }}}
 
-  public void load_image (string path) {
-    Cairo.ImageSurface surface = (Cairo.ImageSurface) load_surface (path);
+  public void load_image (string path, Gdk.Pixbuf? image) {
+    Cairo.ImageSurface surface;
+    if (image == null)
+      surface = (Cairo.ImageSurface) load_surface (path);
+    else
+      surface = (Cairo.ImageSurface) Gdk.cairo_surface_create_from_pixbuf (image,
+                                                                           this.get_scale_factor (),
+                                                                           this.get_window ());
 
     var button = new AddImageButton ();
     button.surface = surface;
