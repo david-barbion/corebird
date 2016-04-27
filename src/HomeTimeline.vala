@@ -85,12 +85,15 @@ public class HomeTimeline : IMessageReceiver, DefaultTimeline {
     tweet_list.model.add (t);
 
     if (!t.is_hidden) {
-      this.balance_next_upper_change (TOP);
-
-      if (!base.scroll_up (t))
+      if (auto_scroll) {
+        this.balance_next_upper_change (TOP);
+        base.scroll_up (t);
+      }
 
       if (!t.seen)
         this.unread_count ++;
+    } else {
+      t.seen = true;
     }
 
     if (should_focus) {
@@ -111,13 +114,16 @@ public class HomeTimeline : IMessageReceiver, DefaultTimeline {
       } else {
         summary = _("%s tweeted").printf (t.source_tweet.author.user_name);
       }
-      NotificationManager.notify (account, summary, t.get_real_text ());
+      string id_suffix = "tweet-%s".printf (t.id.to_string ());
+      t.notification_id = account.notifications.send (summary,
+                                                      t.get_real_text (),
+                                                      id_suffix);
 
     } else if(stack_size != 0 && unread_count % stack_size == 0
               && unread_count > 0) {
       string summary = ngettext("%d new Tweet!",
                                 "%d new Tweets!", unread_count).printf (unread_count);
-      NotificationManager.notify (account, summary);
+      account.notifications.send (summary, "");
     }
   } // }}}
 
@@ -146,23 +152,8 @@ public class HomeTimeline : IMessageReceiver, DefaultTimeline {
     tm.toggle_flag_on_retweet (user_id, reason, false);
   }
 
-  public override string? get_title () {
+  public override string get_title () {
     return "@" + account.screen_name;
-  }
-
-  public override void load_newest () {
-    this.loading = true;
-    this.load_newest_internal.begin (() => {
-      this.loading = false;
-    });
-  }
-
-  public override void load_older () {
-    this.balance_next_upper_change (BOTTOM);
-    this.loading = true;
-    this.load_older_internal.begin (() => {
-      this.loading = false;
-    });
   }
 
   public override void create_radio_button (Gtk.RadioButton? group) {

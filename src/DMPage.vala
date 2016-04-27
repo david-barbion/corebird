@@ -18,8 +18,13 @@
 [GtkTemplate (ui = "/org/baedert/corebird/ui/dm-page.ui")]
 class DMPage : IPage, IMessageReceiver, Gtk.Box {
   public int unread_count                   { get { return 0; } }
-  public unowned MainWindow main_window     { get; set; }
-  public unowned Account account            { get; set; }
+  private unowned MainWindow main_window;
+  public unowned MainWindow window {
+    set {
+      main_window = value;
+    }
+  }
+  public unowned Account account;
   public unowned DeltaUpdater delta_updater;
   public int id                             { get; set; }
   [GtkChild]
@@ -290,7 +295,7 @@ class DMPage : IPage, IMessageReceiver, Gtk.Box {
         call.invoke_async.end (res);
       } catch (GLib.Error e) {
         Utils.show_error_object (call.get_payload (), e.message,
-                                 GLib.Log.LINE, GLib.Log.FILE);
+                                 GLib.Log.LINE, GLib.Log.FILE, this.main_window);
         return;
       }
     });
@@ -308,10 +313,10 @@ class DMPage : IPage, IMessageReceiver, Gtk.Box {
     if (evt.keyval == Gdk.Key.Return &&
         (evt.state & Gdk.ModifierType.CONTROL_MASK) == Gdk.ModifierType.CONTROL_MASK) {
       send_button_clicked_cb ();
-      return true;
+      return Gdk.EVENT_STOP;
     }
 
-    return false;
+    return Gdk.EVENT_PROPAGATE;
   }
 
   private void recalc_length () {
@@ -320,7 +325,7 @@ class DMPage : IPage, IMessageReceiver, Gtk.Box {
   }
 
 
-  public string? get_title () {
+  public string get_title () {
     return _("Direct Conversation");
   }
 
