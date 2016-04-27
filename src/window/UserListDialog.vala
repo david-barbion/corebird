@@ -76,7 +76,7 @@ class UserListDialog : Gtk.Dialog {
     var lists_page = (ListsPage)main_window.get_page (Page.LISTS);
     lists_page.get_user_lists.begin ((obj, res) => {
       TwitterList[] lists = lists_page.get_user_lists.end (res);
-      foreach (var list in lists) {
+      foreach (unowned TwitterList list in lists) {
         var l = new ListUserEntry (list.name, list.description);
         l.id = list.id;
         if (list.n_members >= 500)
@@ -95,7 +95,7 @@ class UserListDialog : Gtk.Dialog {
         call.invoke_async.end (res);
       } catch (GLib.Error e) {
         Utils.show_error_object (call.get_payload (), e.message,
-                                 GLib.Log.LINE, GLib.Log.FILE);
+                                 GLib.Log.LINE, GLib.Log.FILE, this);
         return;
       }
       var parser = new Json.Parser ();
@@ -154,7 +154,7 @@ class UserListDialog : Gtk.Dialog {
         call.invoke_async.end (res);
       } catch (GLib.Error e) {
         Utils.show_error_object (call.get_payload (), e.message,
-                                 GLib.Log.LINE, GLib.Log.FILE);
+                                 GLib.Log.LINE, GLib.Log.FILE, this);
       }
     });
   }
@@ -170,7 +170,7 @@ class UserListDialog : Gtk.Dialog {
         call.invoke_async.end (res);
       } catch (GLib.Error e) {
         Utils.show_error_object (call.get_payload (), e.message,
-                                 GLib.Log.LINE, GLib.Log.FILE);
+                                 GLib.Log.LINE, GLib.Log.FILE, this);
       }
     });
   }

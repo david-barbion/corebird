@@ -27,14 +27,19 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
   };
 
   public int unread_count { get {return 0;} }
-  public int id                         { get; set; }
-  public unowned MainWindow main_window { get; set; }
-  public unowned Account account { get; set; }
+  public int id           { get; set; }
+  public unowned MainWindow window {
+    set {
+      main_window = value;
+    }
+  }
+  public unowned Account account;
   private int64 tweet_id;
   private string screen_name;
   private bool values_set = false;
   private Tweet tweet;
   private GLib.SimpleActionGroup actions;
+  private unowned MainWindow main_window;
 
   [GtkChild]
   private Gtk.Grid grid;
@@ -384,7 +389,7 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
         if (e.message.strip () != "Forbidden" &&
             e.message.strip ().down () != "not found") {
           Utils.show_error_object (call.get_payload (), e.message,
-                                   GLib.Log.LINE, GLib.Log.FILE);
+                                   GLib.Log.LINE, GLib.Log.FILE, this.main_window);
         }
         bottom_list_box.visible = (bottom_list_box.get_children ().length () > 0);
         return;
@@ -478,7 +483,7 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
   }
 
   private void favorite_activated () {
-    if (!values_set)
+    if (!values_set || !favorite_button.sensitive)
       return;
 
     bool favoriting = !favorite_button.active;
@@ -492,7 +497,7 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
 
     this.update_rt_fav_labels ();
 
-    TweetUtils.set_favorite_status.begin (account, tweet, !favoriting, () => {
+    TweetUtils.set_favorite_status.begin (account, tweet, favoriting, () => {
       favorite_button.sensitive = true;
       values_set = false;
       favorite_button.active = favoriting;
@@ -500,7 +505,7 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
     });
   }
 
-  public string? get_title () {
+  public string get_title () {
     return _("Tweet Details");
   }
 

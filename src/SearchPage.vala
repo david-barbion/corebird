@@ -22,9 +22,15 @@ class SearchPage : IPage, Gtk.Box {
   public int unread_count {
     get { return 0; }
   }
-  public unowned Account account        { get; set; }
-  public unowned MainWindow main_window { set; get; }
+  public unowned Account account;
   public int id                         { get; set; }
+  private unowned MainWindow main_window;
+  public unowned MainWindow window {
+    set {
+      main_window = value;
+    }
+  }
+
   [GtkChild]
   private Gtk.SearchEntry search_entry;
   [GtkChild]
@@ -312,7 +318,7 @@ class SearchPage : IPage, Gtk.Box {
   }
 
 
-  public string? get_title () {
+  public string get_title () {
     return _("Search");
   }
 

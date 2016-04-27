@@ -12,10 +12,10 @@
           <object class="MaxSizeContainer" id="max_size_container">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_top">4</property>
             <child>
               <object class="GtkGrid" id="grid1">
                 <property name="visible">True</property>
+                <property name="margin_top">4</property>
                 <property name="can_focus">False</property>
                 <property name="row_spacing">5</property>
                 <property name="column_spacing">10</property>
@@ -339,7 +339,6 @@
                     <object class="GtkLabel" id="description_label">
                       <property name="visible">True</property>
                       <property name="can_focus">False</property>
-                      <property name="label">List description</property>
                       <property name="wrap">True</property>
                       <property name="wrap_mode">word-char</property>
                       <attributes>
@@ -352,6 +351,7 @@
                       <property name="visible">True</property>
                       <property name="can_focus">True</property>
                       <property name="max_length">110</property>
+                      <property name="placeholder_text" translatable="yes">Description</property>
                     </object>
                     <packing>
                       <property name="position">1</property>
