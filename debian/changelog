@@ -1,3 +1,9 @@
+corebird (1.2+SNAPSHOT20160523222212+0200-1~15.10) wily; urgency=low
+
+  * new snapshot release
+
+ -- David Barbion <davidb@230ruedubac.fr>  Mon, 23 May 2016 22:22:12 +0200
+
 corebird (1.2+SNAPSHOT20160510224227+0200-1~15.10) wily; urgency=low
 
   * new snapshot release
