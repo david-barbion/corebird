@@ -22,9 +22,9 @@ private class MediaButton : Gtk.Widget {
   private static const int MIN_HEIGHT     = 40;
   private static const int MIN_WIDTH      = 40;
   private Gdk.Window? event_window = null;
-  private unowned Media? _media;
+  private unowned Cb.Media? _media;
   private static Cairo.Surface[] play_icons;
-  public unowned Media? media {
+  public unowned Cb.Media? media {
     get {
       return _media;
     }
@@ -32,14 +32,13 @@ private class MediaButton : Gtk.Widget {
       _media = value;
       if (value != null) {
         if (!media.loaded) {
-          _media.notify["percent-loaded"].connect (this.queue_draw);
-          _media.finished_loading.connect (fully_loaded_cb);
+          _media.progress.connect (media_progress_cb);
         } else {
           this.media_alpha = 1.0;
         }
       }
-      if (value != null && (value.type == MediaType.IMAGE ||
-                            value.type == MediaType.GIF)) {
+      if (value != null && (value.type == Cb.MediaType.IMAGE ||
+                            value.type == Cb.MediaType.GIF)) {
         menu_model.append (_("Copy URL"), "media.copy-url");
       }
     }
@@ -79,7 +78,7 @@ private class MediaButton : Gtk.Widget {
     this.set_can_focus (true);
   }
 
-  public MediaButton (Media? media, bool restrict_height = false) {
+  public MediaButton (Cb.Media? media, bool restrict_height = false) {
     this.media = media;
     this.restrict_height = restrict_height;
     this.get_style_context ().add_class ("inline-media");
@@ -98,10 +97,16 @@ private class MediaButton : Gtk.Widget {
     this.press_gesture.pressed.connect (gesture_pressed_cb);
   }
 
-  // Hah.
-  private void fully_loaded_cb () {
-    this.queue_resize ();
-    this.start_fade ();
+  private void media_progress_cb () {
+    this.queue_draw ();
+
+    if (this._media.percent_loaded >= 100) {
+      if (!_media.invalid && _media.surface != null) {
+        this.start_fade ();
+      }
+
+      this.queue_resize ();
+    }
   }
 
   private bool fade_in_cb (Gtk.Widget widget, Gdk.FrameClock frame_clock) {
@@ -169,9 +174,7 @@ private class MediaButton : Gtk.Widget {
 
     /* Draw thumbnail */
     if (_media != null && _media.surface != null && _media.loaded) {
-      ct.save ();
 
-      ct.rectangle (0, 0, widget_width, widget_height);
 
       int draw_width, draw_height;
       double scale;
@@ -179,18 +182,25 @@ private class MediaButton : Gtk.Widget {
 
       int draw_x = (widget_width / 2) - (draw_width / 2);
 
+      ct.save ();
+      ct.rectangle (0, 0, widget_width, widget_height);
       ct.scale (scale, scale);
       ct.set_source_surface (media.surface, draw_x / scale, 0);
       ct.paint_with_alpha (this.media_alpha);
       ct.restore ();
+      ct.new_path ();
 
       /* Draw play indicator */
-      if (media.is_video ()) {
+      if (_media.is_video ()) {
         int x = (widget_width  / 2) - (PLAY_ICON_SIZE / 2);
         int y = (widget_height / 2) - (PLAY_ICON_SIZE / 2);
+
+        ct.save ();
         ct.rectangle (x, y, PLAY_ICON_SIZE, PLAY_ICON_SIZE);
         ct.set_source_surface (play_icons[this.get_scale_factor () - 1], x, y);
         ct.paint_with_alpha (this.media_alpha);
+        ct.restore ();
+        ct.new_path ();
       }
 
       var sc = this.get_style_context ();
@@ -205,7 +215,7 @@ private class MediaButton : Gtk.Widget {
       var sc = this.get_style_context ();
       double layout_x, layout_y;
       int layout_w, layout_h;
-      layout.set_text ("%d%%".printf ((int)(media.percent_loaded * 100)), -1);
+      layout.set_text ("%d%%".printf (_media.percent_loaded), -1);
       layout.get_size (out layout_w, out layout_h);
       layout_x = (widget_width / 2.0) - (layout_w / Pango.SCALE / 2.0);
       layout_y = (widget_height / 2.0) - (layout_h / Pango.SCALE / 2.0);

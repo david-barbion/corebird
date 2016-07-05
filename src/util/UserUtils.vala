@@ -19,6 +19,7 @@ const uint FRIENDSHIP_FOLLOWED_BY   = 1 << 0;
 const uint FRIENDSHIP_FOLLOWING     = 1 << 1;
 const uint FRIENDSHIP_WANT_RETWEETS = 1 << 2;
 const uint FRIENDSHIP_BLOCKING      = 1 << 3;
+const uint FRIENDSHIP_CAN_DM        = 1 << 4;
 
 struct Cursor {
   int64 next_cursor;
@@ -62,6 +63,9 @@ namespace UserUtils {
 
     if (source.get_boolean_member ("blocking"))
       friendship |= FRIENDSHIP_BLOCKING;
+
+    if (source.get_boolean_member ("can_dm"))
+      friendship |= FRIENDSHIP_CAN_DM;
 
     return friendship;
   }
@@ -136,5 +140,24 @@ namespace UserUtils {
     cursor.json_object = root_obj.get_member ("users");
 
     return cursor;
+  }
+
+  async void mute_user (Account account,
+                        int64   to_block,
+                        bool    setting) {
+    var call = account.proxy.new_call ();
+    call.set_method ("POST");
+    if (setting)
+      call.set_function ("1.1/mutes/users/create.json");
+    else
+      call.set_function ("1.1/mutes/users/destroy.json");
+
+    call.add_param ("user_id", to_block.to_string ());
+
+    try {
+      yield call.invoke_async (null);
+    } catch (GLib.Error e) {
+      critical (e.message);
+    }
   }
 }
