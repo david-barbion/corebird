@@ -92,6 +92,14 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
   public virtual void on_join (int page_id, Bundle? args) {
     if (!initialized) {
       load_newest ();
+
+      if (!Settings.auto_scroll_on_new_tweets ()) {
+        /* we are technically not scrolling up, but due to missing content,
+           we can't really not be scrolled up...
+         */
+        mark_seen (-1);
+      }
+
       account.user_stream.resumed.connect (stream_resumed_cb);
       initialized = true;
     }
@@ -197,9 +205,9 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
     Tweet? t = this.tweet_list.model.get_from_id (id, 0);
     if (t != null) {
       if (mode)
-        t.set_flag (TweetState.FAVORITED);
+        this.tweet_list.model.set_tweet_flag (t, TweetState.FAVORITED);
       else
-        t.unset_flag (TweetState.FAVORITED);
+        this.tweet_list.model.unset_tweet_flag (t, TweetState.FAVORITED);
     }
   }
 
@@ -423,17 +431,32 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
   public void rerun_filters () {
     TweetModel tm = tweet_list.model;
 
-
-    for (uint i = 0, p = tm.get_n_items (); i < p; i ++) {
+    for (uint i = 0; i < tm.get_n_items (); i ++) {
       var tweet = (Tweet) tm.get_object (i);
       if (account.filter_matches (tweet)) {
-        tweet.set_flag (TweetState.HIDDEN_FILTERED);
+        if (tm.set_tweet_flag (tweet, TweetState.HIDDEN_FILTERED))
+          i --;
+
         if (!tweet.seen) {
           this.unread_count --;
           tweet.seen = true;
         }
       } else {
-        tweet.unset_flag (TweetState.HIDDEN_FILTERED);
+        if (tm.unset_tweet_flag (tweet, TweetState.HIDDEN_FILTERED)) {
+          i --;
+        }
+      }
+
+    }
+
+    // Same thing for invisible tweets...
+    for (uint i = 0; i < tm.hidden_tweets.length; i ++) {
+      var tweet =  tm.hidden_tweets.get (i);
+      if (tweet.is_flag_set (TweetState.HIDDEN_FILTERED)) {
+        if (!account.filter_matches (tweet)) {
+          tm.unset_tweet_flag (tweet, TweetState.HIDDEN_FILTERED);
+          i --;
+        }
       }
     }
   }

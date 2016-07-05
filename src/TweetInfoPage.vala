@@ -115,6 +115,16 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
     this.actions = new GLib.SimpleActionGroup ();
     this.actions.add_action_entries (action_entries, this);
     this.insert_action_group ("tweet", this.actions);
+
+    Settings.get ().changed["media-visibility"].connect (media_visiblity_changed_cb);
+    this.mm_widget.visible = (Settings.get_media_visiblity () != MediaVisibility.HIDE);
+  }
+
+  private void media_visiblity_changed_cb () {
+    if (Settings.get_media_visiblity () == MediaVisibility.HIDE)
+      this.mm_widget.hide ();
+    else
+      this.mm_widget.show ();
   }
 
   public void on_join (int page_id, Bundle? args) {
@@ -444,23 +454,22 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
     });
     update_rt_fav_labels ();
     time_label.label = time_format;
-    retweet_button.active = tweet.is_flag_set (TweetState.RETWEETED);
+    retweet_button.active  = tweet.is_flag_set (TweetState.RETWEETED);
     favorite_button.active = tweet.is_flag_set (TweetState.FAVORITED);
-    avatar_image.verified = tweet.is_flag_set (TweetState.VERIFIED);
+    avatar_image.verified  = tweet.is_flag_set (TweetState.VERIFIED);
 
 
     set_source_link (tweet.id, tweet.screen_name);
 
     if (tweet.has_inline_media) {
       mm_widget.set_all_media (tweet.medias);
-      mm_widget.show ();
+      this.mm_widget.visible = (Settings.get_media_visiblity () != MediaVisibility.HIDE);
     } else {
       mm_widget.hide ();
     }
 
-    if (tweet.user_id == account.id || tweet.is_flag_set (TweetState.PROTECTED)) {
+    if (tweet.is_flag_set (TweetState.PROTECTED)) {
       retweet_button.hide ();
-
       ((GLib.SimpleAction)actions.lookup_action ("quote")).set_enabled (false);
     } else {
       retweet_button.show ();
