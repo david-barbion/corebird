@@ -8,6 +8,6 @@ Homepage: http://corebird.baedert.org/
 
 Package: corebird
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, gstreamer1.0-libav, gstreamer1.0-plugins-bad
 Description: Native Gtk+ Twitter client for the Linux desktop
  Corebird is a modern, easy and fun Twitter client, just what you were looking for, right? 
