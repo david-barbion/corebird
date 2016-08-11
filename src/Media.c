@@ -39,6 +39,8 @@ cb_media_finalize (GObject *object)
 
   if (media->animation)
     g_object_unref (media->animation);
+
+  G_OBJECT_CLASS (cb_media_parent_class)->finalize (object);
 }
 
 static void
@@ -59,6 +61,7 @@ static void
 cb_media_init (CbMedia *media)
 {
   media->surface = NULL;
+  media->animation = NULL;
   media->loaded  = FALSE;
   media->invalid = FALSE;
   media->surface = NULL;

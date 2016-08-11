@@ -97,7 +97,6 @@ load_animation (GInputStream *input_stream,
   media->invalid = FALSE;
 
 out:
-  g_input_stream_close (input_stream, NULL, NULL);
   if (media->animation == NULL)
     g_object_unref (animation);
 
@@ -121,21 +120,32 @@ cb_media_downloader_get_instagram_url (CbMediaDownloader *downloader,
       return;
     }
 
-  medium_regex = g_regex_new ("<meda name=\"medium\" content=\"video\" />", 0, 0, NULL);
+  medium_regex = g_regex_new ("<media name=\"medium\" content=\"video\" />", 0, 0, NULL);
   g_regex_match (medium_regex, (const char *)msg->response_body->data, 0, &match_info);
 
   if (g_match_info_get_match_count (match_info) > 0)
     {
+      g_match_info_free (match_info);
+      g_regex_unref (url_regex);
+
       /* Video! */
       url_regex = g_regex_new ("<meta property=\"og:video\" content=\"(.*?)\"", 0, 0, NULL);
       g_regex_match (url_regex, (const char *)msg->response_body->data, 0, &match_info);
       media->url = g_match_info_fetch (match_info, 1);
+      g_regex_unref (url_regex);
     }
+
+  g_match_info_free (match_info);
 
   url_regex = g_regex_new ("<meta property=\"og:image\" content=\"(.*?)\"", 0, 0, NULL);
   g_regex_match (url_regex, (const char*)msg->response_body->data, 0, &match_info);
 
   media->thumb_url = g_match_info_fetch (match_info, 1);
+
+  g_regex_unref (url_regex);
+  g_regex_unref (medium_regex);
+  g_match_info_free (match_info);
+  g_object_unref (msg);
 }
 
 static void
@@ -150,6 +160,7 @@ cb_media_downloader_load_twitter_video (CbMediaDownloader *downloader,
   if (msg->status_code != SOUP_STATUS_OK)
     {
       mark_invalid (media);
+      g_object_unref (msg);
       return;
     }
 
@@ -160,20 +171,32 @@ cb_media_downloader_load_twitter_video (CbMediaDownloader *downloader,
     {
       g_assert (media->type == CB_MEDIA_TYPE_ANIMATED_GIF);
       media->url = g_match_info_fetch (match_info, 1);
+
+      g_regex_unref (regex);
+      g_match_info_free (match_info);
       g_object_unref (msg);
       return;
     }
   else
     {
+      g_regex_unref (regex);
+      g_match_info_free (match_info);
+
       regex = g_regex_new ("<source video-src=\"(.*?)\"", 0, 0, NULL);
       g_regex_match (regex, (const char *)msg->response_body->data, 0, &match_info);
       media->url = g_match_info_fetch (match_info, 1);
       media->type = CB_MEDIA_TYPE_TWITTER_VIDEO;
     }
 
+  g_regex_unref (regex);
+  g_match_info_free (match_info);
+
   regex = g_regex_new ("poster=\"(.*?)\"", 0, 0, NULL);
   g_regex_match (regex, (const char *)msg->response_body->data, 0, &match_info);
   media->thumb_url = g_match_info_fetch (match_info, 1);
+
+  g_regex_unref (regex);
+  g_match_info_free (match_info);
   g_object_unref (msg);
 }
 
@@ -285,6 +308,7 @@ cb_media_downloader_load_threaded (CbMediaDownloader *downloader,
                soup_status_get_phrase (msg->status_code));
 
       mark_invalid (media);
+      g_object_unref (msg);
       return;
     }
 
@@ -293,6 +317,7 @@ cb_media_downloader_load_threaded (CbMediaDownloader *downloader,
                                                       NULL);
 
   load_animation (input_stream, media);
+  g_input_stream_close (input_stream, NULL, NULL);
   g_object_unref (input_stream);
   g_object_unref (msg);
 }

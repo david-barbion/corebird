@@ -43,7 +43,6 @@ libcorebird_la_VALASOURCES = \
 	ITwitterItem.vala \
 	UserStream.vala \
 	IMessageReceiver.vala \
-	Tweet.vala \
 	IPage.vala \
 	UserCounter.vala \
 	DefaultTimeline.vala \
@@ -134,7 +133,7 @@ corebird.h corebird.vapi: libcorebird_la_vala.stamp
 $(libcorebird_la_VALASOURCES:.vala=.c): libcorebird_la_vala.stamp
 
 
-corebird_SOURCES = Media.c Media.h MediaDownloader.c MediaDownloader.h Types.c Types.h TextTransform.c TextTransform.h
+corebird_SOURCES = Media.c Media.h MediaDownloader.c MediaDownloader.h Types.c Types.h TextTransform.c TextTransform.h CbTweet.h CbTweet.c
 
 libcorebird_la_vala.stamp: $(libcorebird_la_VALASOURCES) Makefile
 	@$(VALAC) \

@@ -1,3 +1,9 @@
+corebird (1.2+SNAPSHOT20160719224535+0200-1~16.04) xenial; urgency=low
+
+  * New snapshot release
+
+ -- David Barbion <davidb@230ruedubac.fr>  Tue, 19 Jul 2016 22:45:35 +0200
+
 corebird (1.2+SNAPSHOT20160705215821+0200-1~16.04) xenial; urgency=low
 
   * new snapshot release

@@ -17,7 +17,7 @@
 
 [GtkTemplate (ui = "/org/baedert/corebird/ui/search-page.ui")]
 class SearchPage : IPage, Gtk.Box {
-  private static const int USER_COUNT = 3;
+  private const int USER_COUNT = 3;
   /** The unread count here is always zero */
   public int unread_count {
     get { return 0; }
@@ -297,8 +297,8 @@ class SearchPage : IPage, Gtk.Box {
         tweet_list.set_empty ();
 
       statuses.foreach_element ((array, index, node) => {
-        var tweet = new Tweet ();
-        tweet.load_from_json (node, now, account);
+        var tweet = new Cb.Tweet ();
+        tweet.load_from_json (node, now);
         if (tweet.id < lowest_tweet_id)
           lowest_tweet_id = tweet.id;
         var entry = new TweetListEntry (tweet, main_window, account);
