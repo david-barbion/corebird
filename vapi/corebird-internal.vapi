@@ -24,7 +24,7 @@ namespace Cb {
     public MediaType type;
     public int width;
     public int height;
-    public int percent_loaded;
+    public double percent_loaded;
     public Cairo.ImageSurface? surface;
     public Gdk.PixbufAnimation? animation;
     public signal void progress();
@@ -110,6 +110,7 @@ namespace Cb {
       public string get_formatted_text (uint transform_flags);
       public string get_trimmed_text (uint transform_flags);
       public string get_real_text ();
+      public string get_filter_text ();
 
       public unowned Cb.Media[] get_medias();
       public string[] get_mentions();

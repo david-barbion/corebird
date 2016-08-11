@@ -165,6 +165,13 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
       mm_widget.media_invalid.connect (media_invalid_cb);
       mm_widget.window = main_window;
 
+      if (text_label.label.length == 0 && tweet.quoted_tweet == null) {
+        if (this.media_stack == null)
+          this.grid.child_set (mm_widget, "top-attach", 1);
+        else
+          this.grid.child_set (media_stack, "top-attach", 1);
+      }
+
       if (tweet.is_flag_set (Cb.TweetState.NSFW))
         Settings.get ().changed["hide-nsfw-content"].connect (hide_nsfw_content_changed_cb);
 
@@ -226,6 +233,13 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
       this.quote_label.label = Cb.TextTransform.tweet (ref tweet.quoted_tweet,
                                                        Settings.get_text_transform_flags (),
                                                        0);
+    }
+
+    if (this.mm_widget != null && this.tweet.quoted_tweet == null) {
+      if (text_label.label.length == 0)
+        this.grid.child_set (mm_widget, "top-attach", 1);
+      else
+        this.grid.child_set (mm_widget, "top-attach", 7);
     }
   }
 
@@ -289,6 +303,11 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
           message ("Retweet!");
           message ("Retweet author id: %s", tweet.retweeted_tweet.author.id.to_string ());
           message ("Retweet author screen_name: %s", tweet.retweeted_tweet.author.screen_name);
+        }
+        if (tweet.has_inline_media ()) {
+          foreach (Cb.Media m in tweet.get_medias ()) {
+            message ("Media: %p", m);
+          }
         }
         return Gdk.EVENT_STOP;
     }
@@ -557,11 +576,23 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
         media_stack.visible_child_name = "nsfw";
       else
         media_stack.visible_child = mm_widget;
-      this.grid.attach (media_stack, 1, 6, 7, 1);
+
+      if (this.tweet.quoted_tweet != null) {
+        media_stack.margin_start = 12;
+        this.quote_grid.attach (media_stack, 0, 2, 2, 1);
+      } else {
+        this.grid.attach (media_stack, 1, 6, 7, 1);
+      }
     } else {
       /* We will never have to hide mm_widget */
       mm_widget.show_all ();
-      this.grid.attach (mm_widget, 1, 6, 7, 1);
+
+      if (this.tweet.quoted_tweet != null) {
+        mm_widget.margin_start = 12;
+        this.quote_grid.attach (mm_widget, 0, 2, 2, 1);
+      } else {
+        this.grid.attach (mm_widget, 1, 6, 7, 1);
+      }
     }
   }
 
@@ -587,6 +618,7 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
     quote_name.valign = Gtk.Align.BASELINE;
     quote_name.margin_start = 12;
     quote_name.margin_end = 6;
+    quote_name.margin_bottom = 4;
     quote_name.clicked.connect (quote_name_button_clicked_cb);
     quote_grid.attach (quote_name, 0, 0, 1, 1);
 

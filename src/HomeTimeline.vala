@@ -28,7 +28,7 @@ public class HomeTimeline : IMessageReceiver, DefaultTimeline {
     this.tweet_list.account = account;
   }
 
-  public void stream_message_received (StreamMessageType type, Json.Node root) { // {{{
+  public void stream_message_received (StreamMessageType type, Json.Node root) {
     if (type == StreamMessageType.TWEET) {
       add_tweet (root);
     } else if (type == StreamMessageType.DELETE) {
@@ -51,8 +51,14 @@ public class HomeTimeline : IMessageReceiver, DefaultTimeline {
     } else if (type == StreamMessageType.EVENT_UNBLOCK) {
       int64 user_id = root.get_object ().get_object_member ("target").get_int_member ("id");
       show_tweets_from (user_id, Cb.TweetState.HIDDEN_AUTHOR_BLOCKED);
+    } else if (type == StreamMessageType.EVENT_MUTE) {
+      int64 user_id = root.get_object ().get_object_member ("target").get_int_member ("id");
+      hide_tweets_from (user_id, Cb.TweetState.HIDDEN_AUTHOR_MUTED);
+    } else if (type == StreamMessageType.EVENT_UNMUTE) {
+      int64 user_id = root.get_object ().get_object_member ("target").get_int_member ("id");
+      show_tweets_from (user_id, Cb.TweetState.HIDDEN_AUTHOR_MUTED);
     }
-  } // }}}
+  }
 
   private void add_tweet (Json.Node obj) {
     GLib.DateTime now = new GLib.DateTime.now_local ();
@@ -61,15 +67,29 @@ public class HomeTimeline : IMessageReceiver, DefaultTimeline {
 
     /* We don't use the set_state version from TweetModel here since
        we just decide the initial visibility of the tweet */
-    if (t.retweeted_tweet != null)
+    if (t.retweeted_tweet != null) {
       t.set_flag (get_rt_flags (t));
 
-    if (account.blocked_or_muted (t.get_user_id ()))
-      t.set_flag (Cb.TweetState.HIDDEN_RETWEETER_BLOCKED);
+      /* CbTweet#get_user_id () returns the retweeted user's id in case it's a retweet,
+         so check both retweeted_tweet's and source_tweet's author id separately */
+      if (account.is_blocked (t.source_tweet.author.id))
+        t.set_flag (Cb.TweetState.HIDDEN_RETWEETER_BLOCKED);
 
+      if (account.is_blocked (t.retweeted_tweet.author.id))
+        t.set_flag (Cb.TweetState.HIDDEN_AUTHOR_BLOCKED);
 
-    if (t.retweeted_tweet != null && account.blocked_or_muted (t.retweeted_tweet.author.id))
-      t.set_flag (Cb.TweetState.HIDDEN_AUTHOR_BLOCKED);
+      if (account.is_muted (t.source_tweet.author.id))
+        t.set_flag (Cb.TweetState.HIDDEN_RETWEETER_MUTED);
+
+      if (account.is_muted (t.retweeted_tweet.author.id))
+        t.set_flag (Cb.TweetState.HIDDEN_AUTHOR_MUTED);
+    } else {
+       if (account.is_blocked (t.source_tweet.author.id))
+          t.set_flag (Cb.TweetState.HIDDEN_AUTHOR_BLOCKED);
+
+       if (account.is_muted (t.source_tweet.author.id))
+         t.set_flag (Cb.TweetState.HIDDEN_AUTHOR_MUTED);
+    }
 
     if (account.filter_matches (t))
       t.set_flag (Cb.TweetState.HIDDEN_FILTERED);
@@ -104,8 +124,12 @@ public class HomeTimeline : IMessageReceiver, DefaultTimeline {
       tweet_list.get_first_visible_row ().grab_focus ();
     }
 
-    // We never show any notifications if auto-scroll-on-new-tweet is enabled
+    /* The rest of this function deals with notifications which we certainly
+       don't want to show for invisible tweets */
+    if (t.is_hidden ())
+      return;
 
+    // We never show any notifications if auto-scroll-on-new-tweet is enabled
     int stack_size = Settings.get_tweet_stack_count ();
     if (t.get_user_id () == account.id || auto_scroll)
       return;

@@ -98,14 +98,20 @@ cb_media_is_video (CbMedia *media)
 static gboolean
 emit_media_finished (gpointer data)
 {
+  CbMedia *media = data;
+
+  g_return_val_if_fail (CB_IS_MEDIA (media), G_SOURCE_REMOVE);
+
   g_signal_emit (data, media_signals[PROGRESS], 0);
 
   return G_SOURCE_REMOVE;
 }
 
 void
-cb_media_update_progress (CbMedia *media, int progress)
+cb_media_update_progress (CbMedia *media, double progress)
 {
+  g_return_if_fail (CB_IS_MEDIA (media));
+
   media->percent_loaded = progress;
 
   g_main_context_invoke (NULL,
@@ -126,7 +132,8 @@ cb_media_loading_finished (CbMedia *media)
 CbMediaType
 cb_media_type_from_url (const char *url)
 {
-  if (g_str_has_prefix (url, "https://vine.co/v/"))
+  if (g_str_has_prefix (url, "https://vine.co/v/") ||
+      g_str_has_prefix (url, "http://vine.co/v/"))
     return CB_MEDIA_TYPE_VINE;
 
   if (g_str_has_suffix (url, "/photo/1"))

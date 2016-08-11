@@ -56,8 +56,8 @@
                     <property name="height-request">73</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="margin-start">6</property>
-                    <property name="margin-top">5</property>
+                    <property name="margin-start">12</property>
+                    <property name="margin-top">12</property>
                     <property name="margin-end">8</property>
                     <property name="valign">start</property>
                     <property name="halign">start</property>
@@ -72,6 +72,7 @@
                     <property name="visible">1</property>
                     <property name="orientation">vertical</property>
                     <property name="valign">center</property>
+                    <property name="margin-top">12</property>
                     <child>
                       <object class="GtkLabel" id="name_label">
                         <property name="visible">1</property>
@@ -124,9 +125,8 @@
                         <child>
                           <object class="GtkMenuButton" id="more_button">
                             <property name="visible">1</property>
-                            <property name="can-focus">1</property>
                             <property name="halign">end</property>
-                            <property name="margin-top">6</property>
+                            <property name="margin-top">14</property>
                             <property name="menu-model">more_menu</property>
                           </object>
                         </child>
@@ -136,8 +136,8 @@
                             <property name="can-focus">True</property>
                             <property name="halign">end</property>
                             <property name="valign">fill</property>
-                            <property name="margin-end">6</property>
-                            <property name="margin-top">6</property>
+                            <property name="margin-end">14</property>
+                            <property name="margin-top">14</property>
                             <signal name="clicked" handler="follow_button_clicked_cb" swapped="no"/>
                           </object>
                           <packing>
@@ -150,7 +150,7 @@
                       <object class="GtkLabel" id="follows_you_label">
                         <property name="no-show-all">1</property>
                         <property name="halign">end</property>
-                        <property name="margin-end">6</property>
+                        <property name="margin-end">14</property>
                         <property name="margin-top">6</property>
                         <property name="label" translatable="yes">Follows you</property>
                         <property name="hexpand">1</property>
@@ -168,8 +168,8 @@
                 <child>
                   <object class="GtkLabel" id="description_label">
                     <property name="visible">1</property>
-                    <property name="margin-start">10</property>
-                    <property name="margin-end">10</property>
+                    <property name="margin-start">14</property>
+                    <property name="margin-end">14</property>
                     <property name="margin-top">12</property>
                     <property name="margin-bottom">6</property>
                     <property name="yalign">0</property>
