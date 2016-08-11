@@ -66,14 +66,17 @@ load_animation (GInputStream *input_stream,
   GdkPixbufAnimation *animation;
   GdkPixbuf *frame;
   GError *error = NULL;
+  cairo_surface_t *surface;
+  cairo_t *ct;
+  gboolean has_alpha;
 
   animation = gdk_pixbuf_animation_new_from_stream (input_stream, NULL, &error);
   if (error)
     {
-      g_warning ("Couldn't load pixbuf: %s", error->message);
+      g_warning ("Couldn't load pixbuf: %s (%s)", error->message, media->url);
       mark_invalid (media);
       g_error_free (error);
-      goto out;
+      return;
     }
   frame = gdk_pixbuf_animation_get_static_image (animation);
 
@@ -82,7 +85,18 @@ load_animation (GInputStream *input_stream,
   else
     media->animation = NULL;
 
-  media->surface = gdk_cairo_surface_create_from_pixbuf (frame, 1, NULL);
+  g_object_get (frame, "has-alpha", &has_alpha, NULL);
+
+  surface = cairo_image_surface_create (has_alpha ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24,
+                                        gdk_pixbuf_get_width (frame),
+                                        gdk_pixbuf_get_height (frame));
+
+  ct = cairo_create (surface);
+  gdk_cairo_set_source_pixbuf (ct, frame, 0.0, 0.0);
+  cairo_paint (ct);
+  cairo_destroy (ct);
+
+  media->surface = surface;
 
   if (media->surface == NULL)
     {
@@ -97,7 +111,6 @@ load_animation (GInputStream *input_stream,
   media->invalid = FALSE;
 
 out:
-  g_input_stream_close (input_stream, NULL, NULL);
   if (media->animation == NULL)
     g_object_unref (animation);
 
@@ -121,21 +134,32 @@ cb_media_downloader_get_instagram_url (CbMediaDownloader *downloader,
       return;
     }
 
-  medium_regex = g_regex_new ("<meda name=\"medium\" content=\"video\" />", 0, 0, NULL);
+  medium_regex = g_regex_new ("<media name=\"medium\" content=\"video\" />", 0, 0, NULL);
   g_regex_match (medium_regex, (const char *)msg->response_body->data, 0, &match_info);
 
   if (g_match_info_get_match_count (match_info) > 0)
     {
+      g_match_info_free (match_info);
+      g_regex_unref (url_regex);
+
       /* Video! */
       url_regex = g_regex_new ("<meta property=\"og:video\" content=\"(.*?)\"", 0, 0, NULL);
       g_regex_match (url_regex, (const char *)msg->response_body->data, 0, &match_info);
       media->url = g_match_info_fetch (match_info, 1);
+      g_regex_unref (url_regex);
     }
+
+  g_match_info_free (match_info);
 
   url_regex = g_regex_new ("<meta property=\"og:image\" content=\"(.*?)\"", 0, 0, NULL);
   g_regex_match (url_regex, (const char*)msg->response_body->data, 0, &match_info);
 
   media->thumb_url = g_match_info_fetch (match_info, 1);
+
+  g_regex_unref (url_regex);
+  g_regex_unref (medium_regex);
+  g_match_info_free (match_info);
+  g_object_unref (msg);
 }
 
 static void
@@ -150,6 +174,7 @@ cb_media_downloader_load_twitter_video (CbMediaDownloader *downloader,
   if (msg->status_code != SOUP_STATUS_OK)
     {
       mark_invalid (media);
+      g_object_unref (msg);
       return;
     }
 
@@ -160,20 +185,32 @@ cb_media_downloader_load_twitter_video (CbMediaDownloader *downloader,
     {
       g_assert (media->type == CB_MEDIA_TYPE_ANIMATED_GIF);
       media->url = g_match_info_fetch (match_info, 1);
+
+      g_regex_unref (regex);
+      g_match_info_free (match_info);
       g_object_unref (msg);
       return;
     }
   else
     {
+      g_regex_unref (regex);
+      g_match_info_free (match_info);
+
       regex = g_regex_new ("<source video-src=\"(.*?)\"", 0, 0, NULL);
       g_regex_match (regex, (const char *)msg->response_body->data, 0, &match_info);
       media->url = g_match_info_fetch (match_info, 1);
       media->type = CB_MEDIA_TYPE_TWITTER_VIDEO;
     }
 
+  g_regex_unref (regex);
+  g_match_info_free (match_info);
+
   regex = g_regex_new ("poster=\"(.*?)\"", 0, 0, NULL);
   g_regex_match (regex, (const char *)msg->response_body->data, 0, &match_info);
   media->thumb_url = g_match_info_fetch (match_info, 1);
+
+  g_regex_unref (regex);
+  g_match_info_free (match_info);
   g_object_unref (msg);
 }
 
@@ -214,8 +251,7 @@ update_media_progress (SoupMessage *msg,
 
   if (msg->response_headers == NULL) return;
 
-  int chunk_percent = MAX (chunk->length /soup_message_headers_get_content_length (msg->response_headers),
-                           1);
+  double chunk_percent = chunk->length / (double)soup_message_headers_get_content_length (msg->response_headers);
 
   cb_media_update_progress (media, media->percent_loaded + chunk_percent);
 }
@@ -232,6 +268,7 @@ cb_media_downloader_load_threaded (CbMediaDownloader *downloader,
   g_return_if_fail (CB_IS_MEDIA (media));
   g_return_if_fail (media->url != NULL);
 
+  g_object_ref (media);
 
   url = canonicalize_url (media->url);
 
@@ -285,6 +322,7 @@ cb_media_downloader_load_threaded (CbMediaDownloader *downloader,
                soup_status_get_phrase (msg->status_code));
 
       mark_invalid (media);
+      g_object_unref (msg);
       return;
     }
 
@@ -293,6 +331,7 @@ cb_media_downloader_load_threaded (CbMediaDownloader *downloader,
                                                       NULL);
 
   load_animation (input_stream, media);
+  g_input_stream_close (input_stream, NULL, NULL);
   g_object_unref (input_stream);
   g_object_unref (msg);
 }
@@ -322,8 +361,10 @@ cb_media_downloader_load_async (CbMediaDownloader   *downloader,
   g_return_if_fail (CB_IS_MEDIA_DOWNLOADER (downloader));
   g_return_if_fail (CB_IS_MEDIA (media));
 
+  g_object_ref (media);
+
   task = g_task_new (downloader, NULL, callback, user_data);
-  g_task_set_task_data (task, media, NULL);
+  g_task_set_task_data (task, media, g_object_unref);
 
   g_task_run_in_thread (task, load_in_thread);
   g_object_unref (task);

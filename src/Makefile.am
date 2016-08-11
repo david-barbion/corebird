@@ -3,9 +3,7 @@ AM_CPPFLAGS = \
 	$(CB_CFLAGS) \
 	-include $(CONFIG_HEADER) \
 	-DDATADIR=\"$(datadir)\" \
-	-DPKGDATADIR=\"$(pkgdatadir)\" \
-	-O0 \
-	-fno-omit-frame-pointer
+	-DPKGDATADIR=\"$(pkgdatadir)\"
 
 
 AM_VALAFLAGS = \
@@ -43,7 +41,6 @@ libcorebird_la_VALASOURCES = \
 	ITwitterItem.vala \
 	UserStream.vala \
 	IMessageReceiver.vala \
-	Tweet.vala \
 	IPage.vala \
 	UserCounter.vala \
 	DefaultTimeline.vala \
@@ -134,7 +131,17 @@ corebird.h corebird.vapi: libcorebird_la_vala.stamp
 $(libcorebird_la_VALASOURCES:.vala=.c): libcorebird_la_vala.stamp
 
 
-corebird_SOURCES = Media.c Media.h MediaDownloader.c MediaDownloader.h Types.c Types.h TextTransform.c TextTransform.h
+libcorebird_la_SOURCES = \
+	Media.c \
+	Media.h \
+	MediaDownloader.c \
+	MediaDownloader.h \
+	Types.c \
+	Types.h \
+	TextTransform.c \
+	TextTransform.h \
+	CbTweet.c \
+	CbTweet.h
 
 libcorebird_la_vala.stamp: $(libcorebird_la_VALASOURCES) Makefile
 	@$(VALAC) \
@@ -180,7 +187,7 @@ corebird-resources.c: $(top_srcdir)/corebird.gresource.xml $(resource_deps) Make
 CLEANFILES = \
 	libcorebird_la_vala.stamp \
 	corebird_vala.stamp \
-	$(nodist_libcorebird_la_SOURCES) \
+	$(libcorebird_la_VALASOURCES:.vala=.c) \
 	$(nodist_corebird_SOURCES) \
 	corebird.vapi \
 	corebird.h
@@ -188,4 +195,5 @@ CLEANFILES = \
 EXTRA_DIST = \
 	$(libcorebird_la_VALASOURCES) \
 	$(corebird_VALASOURCES) \
+	$(corebird_SOURCES) \
 	$(resource_deps)

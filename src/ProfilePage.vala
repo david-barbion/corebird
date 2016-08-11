@@ -107,12 +107,12 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
       if (evt.delta_y < 0 && this.vadjustment.value == 0) {
         if (banner_image.scale >= 1.0) {
           banner_image.scale = 1.0f;
-          return false;
+          return Gdk.EVENT_PROPAGATE;
         }
         banner_image.scale += 0.25f * (-evt.delta_y);
-        return true;
+        return Gdk.EVENT_STOP;
       }
-      return false;
+      return Gdk.EVENT_PROPAGATE;
     });
     this.scrolled_to_end.connect (() => {
       if (user_stack.visible_child == tweet_list) {
@@ -170,27 +170,25 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
 
   private void set_user_id (int64 user_id) {
     this.user_id = user_id;
-
     follow_button.sensitive = (user_id != account.id);
-    ((SimpleAction)actions.lookup_action ("add-remove-list")).set_enabled (user_id != account.id);
-    ((SimpleAction)actions.lookup_action ("write-dm")).set_enabled (user_id != account.id);
-    ((SimpleAction)actions.lookup_action ("toggle-blocked")).set_enabled (user_id != account.id);
-    ((SimpleAction)actions.lookup_action ("toggle-muted")).set_enabled (user_id != account.id);
-    /* We (maybe) re-enable this later when the friendship object has arrived */
-    ((SimpleAction)actions.lookup_action ("toggle-retweets")).set_enabled (false);
-
-    /* Set muted and blocked status now, let the friendship update it */
-    set_user_blocked (account.is_blocked (user_id));
-    set_user_muted (account.is_muted (user_id));
 
     set_banner (null);
     load_friendship.begin ();
-    /* Load the profile data now, then - if available - set the cached data */
     load_profile_data.begin (user_id);
   }
 
 
   private async void load_friendship () {
+    /* Set muted and blocked status now, let the friendship update it */
+    set_user_blocked (account.is_blocked (user_id));
+    set_user_muted (account.is_muted (user_id));
+    /* We (maybe) re-enable this later when the friendship object has arrived */
+    ((SimpleAction)actions.lookup_action ("toggle-retweets")).set_enabled (false);
+    ((SimpleAction)actions.lookup_action ("add-remove-list")).set_enabled (user_id != account.id);
+    ((SimpleAction)actions.lookup_action ("write-dm")).set_enabled (user_id != account.id);
+    ((SimpleAction)actions.lookup_action ("toggle-blocked")).set_enabled (user_id != account.id);
+    ((SimpleAction)actions.lookup_action ("toggle-muted")).set_enabled (user_id != account.id);
+
     uint fr = yield UserUtils.load_friendship (account, this.user_id);
 
     follows_you_label.visible = (fr & FRIENDSHIP_FOLLOWED_BY) > 0;
@@ -530,8 +528,8 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
     HomeTimeline ht = (HomeTimeline) main_window.get_page (Page.STREAM);
     if (follow_button.following) {
       call.set_function( "1.1/friendships/destroy.json");
-      ht.hide_tweets_from (this.user_id, TweetState.HIDDEN_UNFOLLOWED);
-      ht.hide_retweets_from (this.user_id, TweetState.HIDDEN_UNFOLLOWED);
+      ht.hide_tweets_from (this.user_id, Cb.TweetState.HIDDEN_UNFOLLOWED);
+      ht.hide_retweets_from (this.user_id, Cb.TweetState.HIDDEN_UNFOLLOWED);
       follower_count --;
       account.unfollow_id (this.user_id);
       ((SimpleAction)actions.lookup_action ("toggle-retweets")).set_enabled (false);
@@ -539,9 +537,9 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
     } else {
       call.set_function ("1.1/friendships/create.json");
       call.add_param ("follow", "false");
-      ht.show_tweets_from (this.user_id, TweetState.HIDDEN_UNFOLLOWED);
+      ht.show_tweets_from (this.user_id, Cb.TweetState.HIDDEN_UNFOLLOWED);
       if (!((SimpleAction)actions.lookup_action ("toggle-retweets")).get_state ().get_boolean ()) {
-        ht.show_retweets_from (this.user_id, TweetState.HIDDEN_UNFOLLOWED);
+        ht.show_retweets_from (this.user_id, Cb.TweetState.HIDDEN_UNFOLLOWED);
       }
       set_user_blocked (false);
       follower_count ++;
@@ -613,6 +611,9 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
       user_lists.clear_lists ();
       lists_page_inited = false;
       load_tweets.begin ();
+    } else {
+      /* Still load the friendship since muted/blocked/etc. may have changed */
+      load_friendship.begin ();
     }
     tweet_list.reset_placeholder_text ();
     followers_list.reset_placeholder_text ();
@@ -684,12 +685,12 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
     call.set_method ("POST");
     if (current_state) {
       call.set_function ("1.1/blocks/destroy.json");
-      ht.show_tweets_from (this.user_id, TweetState.HIDDEN_AUTHOR_BLOCKED);
+      ht.show_tweets_from (this.user_id, Cb.TweetState.HIDDEN_AUTHOR_BLOCKED);
     } else {
       call.set_function ("1.1/blocks/create.json");
       this.follow_button.following = false;
       this.follow_button.sensitive = (this.user_id != this.account.id);
-      ht.hide_tweets_from (this.user_id, TweetState.HIDDEN_AUTHOR_BLOCKED);
+      ht.hide_tweets_from (this.user_id, Cb.TweetState.HIDDEN_AUTHOR_BLOCKED);
     }
     set_user_blocked (!current_state);
     call.add_param ("user_id", this.user_id.to_string ());
@@ -715,11 +716,11 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
       mute_item_blocked = false;
       HomeTimeline ht = (HomeTimeline) main_window.get_page (Page.STREAM);
       if (setting) {
-        ht.show_tweets_from (this.user_id, TweetState.HIDDEN_AUTHOR_MUTED);
-        ht.show_retweets_from (this.user_id, TweetState.HIDDEN_RETWEETER_MUTED);
+        ht.show_tweets_from (this.user_id, Cb.TweetState.HIDDEN_AUTHOR_MUTED);
+        ht.show_retweets_from (this.user_id, Cb.TweetState.HIDDEN_RETWEETER_MUTED);
       } else {
-        ht.hide_tweets_from (this.user_id, TweetState.HIDDEN_AUTHOR_MUTED);
-        ht.hide_retweets_from (this.user_id, TweetState.HIDDEN_RETWEETER_MUTED);
+        ht.hide_tweets_from (this.user_id, Cb.TweetState.HIDDEN_AUTHOR_MUTED);
+        ht.hide_retweets_from (this.user_id, Cb.TweetState.HIDDEN_RETWEETER_MUTED);
       }
     });
   }
@@ -738,10 +739,10 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
     call.add_param ("retweets", current_state.to_string ());
     HomeTimeline ht = (HomeTimeline) main_window.get_page (Page.STREAM);
     if (current_state) {
-      ht.show_retweets_from (this.user_id, TweetState.HIDDEN_RTS_DISABLED);
+      ht.show_retweets_from (this.user_id, Cb.TweetState.HIDDEN_RTS_DISABLED);
       account.remove_disabled_rts_id (this.user_id);
     } else {
-      ht.hide_retweets_from (this.user_id, TweetState.HIDDEN_RTS_DISABLED);
+      ht.hide_retweets_from (this.user_id, Cb.TweetState.HIDDEN_RTS_DISABLED);
       account.add_disabled_rts_id (this.user_id);
     }
 
@@ -792,10 +793,9 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
         return;
 
       // Correct user!
-      var tweet = new Tweet ();
+      var tweet = new Cb.Tweet ();
       tweet.load_from_json (root_node,
-                            new GLib.DateTime.now_local (),
-                            this.account);
+                            new GLib.DateTime.now_local ());
       this.tweet_list.model.add (tweet);
     }
   }

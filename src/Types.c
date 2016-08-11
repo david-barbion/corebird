@@ -1,3 +1,20 @@
+/*  This file is part of corebird, a Gtk+ linux Twitter client.
+ *  Copyright (C) 2016 Timm Bäder
+ *
+ *  corebird is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  corebird is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with corebird.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "Types.h"
 #include "MediaDownloader.h"
 #include <string.h>
@@ -8,7 +25,6 @@ escape_ampersand (const char *in)
 {
   gsize bytes = strlen (in);
   gsize n_ampersands = 0;
-  gsize i = 0;
   const char *p = in;
   gunichar c;
   char *result;
@@ -112,7 +128,7 @@ cb_text_entity_copy (CbTextEntity *e1, CbTextEntity *e2)
 void
 cb_mini_tweet_free (CbMiniTweet *t)
 {
-  int i;
+  guint i;
 
   g_free (t->text);
 
@@ -131,12 +147,11 @@ cb_mini_tweet_free (CbMiniTweet *t)
 void
 cb_mini_tweet_copy (CbMiniTweet *t1, CbMiniTweet *t2)
 {
-  int i;
+  guint i;
 
   t2->id = t1->id;
   t2->created_at = t1->created_at;
-  if (&t2->author != NULL)
-    cb_user_identity_free (&t2->author);
+  cb_user_identity_free (&t2->author);
   cb_user_identity_copy (&t1->author, &t2->author);
   g_free (t2->text);
   t2->text = g_strdup (t1->text);
@@ -291,28 +306,26 @@ void
 cb_mini_tweet_parse_entities (CbMiniTweet *t,
                               JsonObject  *status)
 {
-  g_assert (status);
-
   JsonObject *entities     = json_object_get_object_member (status, "entities");
   JsonArray *urls          = json_object_get_array_member (entities, "urls");
   JsonArray *hashtags      = json_object_get_array_member (entities, "hashtags");
   JsonArray *user_mentions = json_object_get_array_member (entities, "user_mentions");
   JsonArray *media_arrays[2];
   int media_count = json_object_get_member_size (entities, "media");
-  int i, p;
+  guint i, p;
   int url_index = 0;
-  int n_media_arrays = 0;
+  guint n_media_arrays = 0;
   int max_entities;
 
   if (json_object_has_member (status, "extended_entities"))
     media_count +=  json_object_get_member_size (json_object_get_object_member (status, "extended_entities"),
                                                  "media");
 
-  media_count += (int)json_array_get_length (urls);
   max_entities = json_array_get_length (urls) +
                                       json_array_get_length (hashtags) +
                                       json_array_get_length (user_mentions) +
                                       media_count;
+  media_count += (int)json_array_get_length (urls);
 
 
   t->medias   = g_new0 (CbMedia*, media_count);
@@ -331,7 +344,7 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
 
       if (is_media_candidate (expanded_url))
         {
-          t->medias[t->n_medias] = CB_MEDIA (g_object_new (CB_TYPE_MEDIA, NULL));
+          t->medias[t->n_medias] = cb_media_new ();
           t->medias[t->n_medias]->url = g_strdup (expanded_url);
           t->medias[t->n_medias]->type = cb_media_type_from_url (expanded_url);
           t->n_medias ++;
@@ -388,7 +401,7 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
         {
           JsonObject *url = json_node_get_object (json_array_get_element (medias, i));
           JsonArray  *indices = json_object_get_array_member (url, "indices");
-          const char *expanded_url = json_object_get_string_member (url, "expanded_url");
+          /*const char *expanded_url = json_object_get_string_member (url, "expanded_url");*/
 
           t->entities[url_index].from = json_array_get_int_element (indices, 0);
           t->entities[url_index].to   = json_array_get_int_element (indices, 1);
@@ -414,7 +427,7 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
 
   for (i = 0; i < n_media_arrays; i ++)
     {
-      int x, k;
+      guint x, k;
       for (x = 0, p = json_array_get_length (media_arrays[i]); x < p; x ++)
         {
           JsonObject *media_obj = json_node_get_object (json_array_get_element (media_arrays[i], x));
@@ -440,7 +453,7 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
 
               if (is_media_candidate (url))
                 {
-                  t->medias[t->n_medias] = g_object_new (CB_TYPE_MEDIA, NULL);
+                  t->medias[t->n_medias] = cb_media_new ();
                   t->medias[t->n_medias]->url = g_strdup (url);
                   t->medias[t->n_medias]->target_url = g_strdup_printf ("%s:orig", url);
 
@@ -465,8 +478,8 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
               JsonObject *variant = NULL;
               int thumb_width  = -1;
               int thumb_height = -1;
-              gboolean hls_found = FALSE;
-              int q;
+              /*gboolean hls_found = FALSE;*/
+              guint q;
 
               if (json_object_has_member (media_obj, "sizes"))
                 {
@@ -482,7 +495,7 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
                   JsonObject *v = json_node_get_object (json_array_get_element (variants, k));
                   if (strcmp (json_object_get_string_member (v, "content_type"), "application/x-mpegURL") == 0)
                     {
-                      hls_found = TRUE;
+                      /*hls_found = TRUE;*/
                       variant = v;
                       break;
                     }
@@ -508,7 +521,7 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
 
               if (variant != NULL)
                 {
-                  t->medias[t->n_medias] = CB_MEDIA (g_object_new (CB_TYPE_MEDIA, NULL));
+                  t->medias[t->n_medias] = cb_media_new ();
                   t->medias[t->n_medias]->url = g_strdup (json_object_get_string_member (variant, "url"));
                   t->medias[t->n_medias]->thumb_url = g_strdup (json_object_get_string_member (media_obj, "media_url"));
                   t->medias[t->n_medias]->type   = CB_MEDIA_TYPE_TWITTER_VIDEO;
@@ -535,7 +548,7 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
 
   if (t->n_entities > 0)
     {
-      int i, k;
+      guint i, k;
       /* Sort entities. */
       for (i = 0; i < t->n_entities; i ++)
         for (k = 0; k < t->n_entities; k++)

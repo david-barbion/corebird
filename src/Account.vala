@@ -16,7 +16,7 @@
  */
 
 public class Account : GLib.Object {
-  public static const string DUMMY = "screen_name";
+  public const string DUMMY = "screen_name";
   public int64 id;
   public Sql.Database db;
   public string screen_name       {public get; public  set;}
@@ -380,14 +380,14 @@ public class Account : GLib.Object {
    *
    * @return true iff at least one of the filters match, false otherwise.
    */
-  public bool filter_matches (Tweet t) {
+  public bool filter_matches (Cb.Tweet t) {
     if (t.source_tweet.author.id == this.id)
       return false;
 
-
+    string text = t.get_filter_text ();
     for (int i = 0; i < filters.length; i ++) {
       var f = this.filters.get (i);
-      if (f.matches (t.get_real_text ())) {
+      if (f.matches (text)) {
         return true;
       }
     }

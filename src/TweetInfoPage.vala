@@ -17,8 +17,8 @@
 
 [GtkTemplate (ui = "/org/baedert/corebird/ui/tweet-info-page.ui")]
 class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
-  public static const int BY_INSTANCE = 1;
-  public static const int BY_ID       = 2;
+  public const int BY_INSTANCE = 1;
+  public const int BY_ID       = 2;
 
   private const GLib.ActionEntry[] action_entries = {
     {"quote",    quote_activated   },
@@ -37,7 +37,7 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
   private int64 tweet_id;
   private string screen_name;
   private bool values_set = false;
-  private Tweet tweet;
+  private Cb.Tweet tweet;
   private GLib.SimpleActionGroup actions;
   private unowned MainWindow main_window;
   private GLib.Cancellable? cancellable = null;
@@ -144,7 +144,7 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
 
     if (existing) {
       // Only possible BY_INSTANCE
-      Tweet tweet = (Tweet) args.get_object ("tweet");
+      var tweet = (Cb.Tweet) args.get_object ("tweet");
       rearrange_tweets (tweet.id);
     } else {
       bottom_list_box.model.clear ();
@@ -154,14 +154,14 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
     }
 
     if (mode == BY_INSTANCE) {
-      Tweet tweet = (Tweet)args.get_object ("tweet");
+      Cb.Tweet tweet = (Cb.Tweet)args.get_object ("tweet");
 
       if (tweet.retweeted_tweet != null)
         this.tweet_id = tweet.retweeted_tweet.id;
       else
         this.tweet_id = tweet.id;
 
-      this.screen_name = tweet.screen_name;
+      this.screen_name = tweet.get_screen_name ();
       this.tweet = tweet;
       set_tweet_data (tweet);
     } else if (mode == BY_ID) {
@@ -313,8 +313,8 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
         this.tweet.retweet_count = n_retweets;
         this.tweet.favorite_count = n_favorites;
       } else {
-        this.tweet = new Tweet ();
-        tweet.load_from_json (root, now, account);
+        this.tweet = new Cb.Tweet ();
+        tweet.load_from_json (root, now);
       }
 
       string with = root_object.get_string_member ("source");
@@ -351,7 +351,7 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
       int64 previous_tweet_id = -1;
       if (top_list_box.model.get_n_items () > 0) {
         //assert (top_list_box.model.get_n_items () == 1);
-        previous_tweet_id = ((Tweet)(top_list_box.model.get_item (0))).id;
+        previous_tweet_id = ((Cb.Tweet)(top_list_box.model.get_item (0))).id;
       }
       int n_replies = 0;
       statuses_node.foreach_element ((arr, index, node) => {
@@ -367,8 +367,8 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
           return;
         }
 
-        Tweet t = new Tweet ();
-        t.load_from_json (node, now, account);
+        var t = new Cb.Tweet ();
+        t.load_from_json (node, now);
         if (t.id != previous_tweet_id) {
           top_list_box.model.add (t);
           n_replies ++;
@@ -426,8 +426,8 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
       }
 
       /* If we get here, the tweet is not protected so we can just use it */
-      Tweet tweet = new Tweet ();
-      tweet.load_from_json (parser.get_root (), new GLib.DateTime.now_local (), account);
+      var tweet = new Cb.Tweet ();
+      tweet.load_from_json (parser.get_root (), new GLib.DateTime.now_local ());
       bottom_list_box.model.add (tweet);
       load_replied_to_tweet (tweet.reply_id);
     });
@@ -436,8 +436,8 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
   /**
    *
    */
-  private void set_tweet_data (Tweet tweet, string? with = null) {
-    account.user_counter.user_seen (tweet.user_id, tweet.screen_name, tweet.user_name);
+  private void set_tweet_data (Cb.Tweet tweet, string? with = null) {
+    account.user_counter.user_seen (tweet.get_user_id (), tweet.get_screen_name (), tweet.get_user_name ());
     GLib.DateTime created_at = new GLib.DateTime.from_unix_local (
              tweet.retweeted_tweet != null ? tweet.retweeted_tweet.created_at :
                                              tweet.source_tweet.created_at);
@@ -446,29 +446,29 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
       time_format += " via " + with;
     }
 
-    text_label.label = tweet.get_formatted_text ();
-    name_button.set_markup (tweet.user_name);
-    screen_name_label.label = "@" + tweet.screen_name;
-    avatar_image.surface = Twitter.get ().get_avatar (tweet.user_id, tweet.avatar_url, (a) => {
+    text_label.label = tweet.get_formatted_text (Settings.get_text_transform_flags ());
+    name_button.set_markup (tweet.get_user_name ());
+    screen_name_label.label = "@" + tweet.get_screen_name ();
+    avatar_image.surface = Twitter.get ().get_avatar (tweet.get_user_id (), tweet.avatar_url, (a) => {
       avatar_image.surface = a;
     });
     update_rt_fav_labels ();
     time_label.label = time_format;
-    retweet_button.active  = tweet.is_flag_set (TweetState.RETWEETED);
-    favorite_button.active = tweet.is_flag_set (TweetState.FAVORITED);
-    avatar_image.verified  = tweet.is_flag_set (TweetState.VERIFIED);
+    retweet_button.active  = tweet.is_flag_set (Cb.TweetState.RETWEETED);
+    favorite_button.active = tweet.is_flag_set (Cb.TweetState.FAVORITED);
+    avatar_image.verified  = tweet.is_flag_set (Cb.TweetState.VERIFIED);
 
 
-    set_source_link (tweet.id, tweet.screen_name);
+    set_source_link (tweet.id, tweet.get_screen_name ());
 
-    if (tweet.has_inline_media) {
-      mm_widget.set_all_media (tweet.medias);
+    if (tweet.has_inline_media ()) {
+      mm_widget.set_all_media (tweet.get_medias ());
       this.mm_widget.visible = (Settings.get_media_visiblity () != MediaVisibility.HIDE);
     } else {
       mm_widget.hide ();
     }
 
-    if (tweet.is_flag_set (TweetState.PROTECTED)) {
+    if (tweet.is_flag_set (Cb.TweetState.PROTECTED)) {
       retweet_button.hide ();
       ((GLib.SimpleAction)actions.lookup_action ("quote")).set_enabled (false);
     } else {
@@ -568,8 +568,8 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
       int64 reply_id = root_obj.get_int_member ("in_reply_to_status_id");
 
       if (reply_id == this.tweet_id) {
-        Tweet t = new Tweet ();
-        t.load_from_json (root, new GLib.DateTime.now_local (), this.account);
+        var t = new Cb.Tweet ();
+        t.load_from_json (root, new GLib.DateTime.now_local ());
         top_list_box.model.add (t);
         top_list_box.show ();
         this.reply_indicator.replies_available = true;

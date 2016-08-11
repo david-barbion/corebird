@@ -13,7 +13,7 @@ cb_text_transform_tweet (const CbMiniTweet *tweet,
                                  tweet->entities,
                                  tweet->n_entities,
                                  flags,
-                                 0,
+                                 tweet->n_medias,
                                  quote_id);
 }
 
@@ -82,13 +82,16 @@ cb_text_transform_text (const char   *text,
 {
   GString *str = g_string_new (NULL);
   const  guint text_len   = g_utf8_strlen (text, -1);
-  gint i;
+  int i;
   char *end_str;
   gboolean last_entity_was_trailing = FALSE;
   guint last_end   = 0;
   guint cur_end    = text_len;
 
-  for (i = n_entities - 1; i >= 0; i --)
+  if (text_len == 0)
+    return g_strdup (text);
+
+  for (i = (int)n_entities - 1; i >= 0; i --)
     {
       char *btw = g_utf8_substring (text,
                                     entities[i].to,
@@ -119,7 +122,7 @@ cb_text_transform_text (const char   *text,
     }
 
 
-  for (i = 0; i < n_entities; i ++)
+  for (i = 0; i < (int)n_entities; i ++)
     {
       CbTextEntity *entity = &entities[i];
 
@@ -165,11 +168,14 @@ cb_text_transform_text (const char   *text,
           if (entity->tooltip_text != NULL)
             {
               char *c = escape_ampersand (entity->tooltip_text);
+              char *cc = escape_ampersand (c);
+
               g_string_append (str, " title=\"");
-              g_string_append (str, c);
+              g_string_append (str, cc);
               g_string_append (str, "\"");
 
               g_free (c);
+              g_free (cc);
             }
 
           g_string_append (str, ">");

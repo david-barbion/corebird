@@ -234,7 +234,7 @@ void matches_tweet () {
   var acc = new Account (12345, "foobar", "Foo Bar");
   var filter = new Filter ("a+");
   acc.add_filter (filter);
-  var tweet = new Tweet ();
+  var tweet = new Cb.Tweet ();
   var parser = new Json.Parser ();
   var now = new GLib.DateTime.now_local ();
   try {
@@ -243,14 +243,14 @@ void matches_tweet () {
     critical (e.message);
     return;
   }
-  tweet.load_from_json (parser.get_root (), now, acc);
+  tweet.load_from_json (parser.get_root (), now);
 }
 
 void same_user () {
   var acc = new Account (12345, "foobar", "Foo Bar");
   var filter = new Filter ("a+");
   acc.add_filter (filter);
-  var tweet = new Tweet ();
+  var tweet = new Cb.Tweet ();
   var parser = new Json.Parser ();
   var now = new GLib.DateTime.now_local ();
   try {
@@ -259,7 +259,7 @@ void same_user () {
     critical (e.message);
     return;
   }
-  tweet.load_from_json (parser.get_root (), now, acc);
+  tweet.load_from_json (parser.get_root (), now);
   tweet.source_tweet.author.id = 12345;
 
   // Should always return false even if the filter(s) would match
@@ -272,7 +272,7 @@ void links () {
   var acc = new Account (12345, "foobar", "Foo Bar");
   var filter = new Filter ("t\\.co");
   acc.add_filter (filter);
-  var tweet = new Tweet ();
+  var tweet = new Cb.Tweet ();
   var parser = new Json.Parser ();
   var now = new GLib.DateTime.now_local ();
   try {
@@ -281,14 +281,14 @@ void links () {
     critical (e.message);
     return;
   }
-  tweet.load_from_json (parser.get_root (), now, acc);
+  tweet.load_from_json (parser.get_root (), now);
 
   // This should never match since we should be using the
   // 'real' url instead of the t.co shortened one.
   assert (!acc.filter_matches (tweet));
 
   // ... which is also why it should match now
-  message (tweet.get_real_text ());
+  //message (tweet.get_real_text ());
   acc.add_filter (new Filter ("tmblr"));
   assert (acc.filter_matches (tweet));
 }
@@ -298,7 +298,7 @@ void hashtags () {
   var acc = new Account (12345, "foobar", "Foo Bar");
   var filter = new Filter ("#foobar");
   acc.add_filter (filter);
-  var tweet = new Tweet ();
+  var tweet = new Cb.Tweet ();
   var parser = new Json.Parser ();
   var now = new GLib.DateTime.now_local ();
   try {
@@ -307,7 +307,7 @@ void hashtags () {
     critical (e.message);
     return;
   }
-  tweet.load_from_json (parser.get_root (), now, acc);
+  tweet.load_from_json (parser.get_root (), now);
 
   // This should never match since we should be using the
   // 'real' url instead of the t.co shortened one.

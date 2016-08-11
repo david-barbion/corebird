@@ -26,13 +26,8 @@ This is the readme for the current *development version*. If you're looking for 
   - `dd` - delete
   - `Return` - Show tweet details
 
-
-## Will this work on distribution XYZ?
-  I don't know. If you can satisfy all the dependencies, probably yes but
-  you'd most likely still have to compile and install it from source (that is,
-  if no one else makes packages).
-
 ## Translations
+
   Since February 2014, there's a [Corebird project on Transifex](https://www.transifex.com/projects/p/corebird)
 
 ## Contributing
@@ -48,7 +43,7 @@ This is the readme for the current *development version*. If you're looking for 
  - `json-glib-1.0`
  - `sqlite3`
  - `libsoup-2.4`
- - `intltool >= 0.40`
+ - `gettext >= 0.19.7`
  - `vala >= 0.28` (makedep)
  - `automake >= 1.14` (makedep)
  - `gst-plugins-base-1.0` (for playbin, disable via --disable-video)
@@ -58,7 +53,7 @@ This is the readme for the current *development version*. If you're looking for 
 
 Note that the above packages are just rough estimations, the actual package names on your distribution may vary.
 
-If you pass `--disable-video` to the configure script, you don't need any gstreamer dependency but  won't be able to view any videos (i.e. no vines and no twitter gifs).
+If you pass `--disable-video` to the configure script, you don't need any gstreamer dependency but won't be able to view any videos.
 
 ## Compiling
 

@@ -63,6 +63,8 @@ class CompletionTextView : Gtk.TextView {
       };
     }
 
+    Gdk.RGBA snippet_color = { 0.0, 0.65, 0.0627, 1.0};
+
     this.buffer.create_tag ("link",
                             "foreground_rgba",
                             link_color, null);
@@ -72,6 +74,10 @@ class CompletionTextView : Gtk.TextView {
     this.buffer.create_tag ("hashtag",
                             "foreground_rgba",
                             link_color, null);
+    this.buffer.create_tag ("snippet",
+                            "foreground_rgba",
+                            snippet_color, null);
+
     this.buffer.notify["cursor-position"].connect (update_completion);
     this.buffer.changed.connect (buffer_changed_cb);
     this.key_press_event.connect (key_press_event_cb);
@@ -215,9 +221,13 @@ class CompletionTextView : Gtk.TextView {
 
   private void update_completion () {
     string cur_word = get_cursor_word (null, null);
+    int n_chars = cur_word.char_count ();
+
+    if (n_chars == 0)
+      return;
 
     /* Check if the word ends with a 'special' character like ?!_ */
-    char end_char = cur_word.get (cur_word.char_count () - 1);
+    char end_char = cur_word.get (n_chars - 1);
     bool word_has_alpha_end = (end_char.isalpha () || end_char.isdigit ()) &&
                               end_char.isgraph () || end_char == '@';
     if (!cur_word.has_prefix ("@") || !word_has_alpha_end

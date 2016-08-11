@@ -1,0 +1,831 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Timm Bäder
+# This file is distributed under the same license as the corebird package.
+#
+# Translators:
+# irus, 2016
+msgid ""
+msgstr ""
+"Project-Id-Version: Corebird\n"
+"Report-Msgid-Bugs-To: https://github.com/baedert/corebird/issues/new\n"
+"POT-Creation-Date: 2016-07-31 08:33+0200\n"
+"PO-Revision-Date: 2016-07-30 08:17+0000\n"
+"Last-Translator: Ryan Lerch <ryanlerch@gmail.com>\n"
+"Language-Team: Korean (Korea) (http://www.transifex.com/corebird/corebird/"
+"language/ko_KR/)\n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: data/org.baedert.corebird.appdata.xml.in:5
+#: data/org.baedert.corebird.desktop.in:3
+msgid "Corebird"
+msgstr ""
+
+#: data/org.baedert.corebird.appdata.xml.in:6
+#: data/org.baedert.corebird.desktop.in:4
+msgid "Twitter Client"
+msgstr "트위터 클라이언트"
+
+#: data/org.baedert.corebird.appdata.xml.in:10
+msgid ""
+"Corebird is a native GTK+ twitter client that provides vital features such "
+"as Direct Messages (DMs), tweet notifications, conversation views."
+msgstr ""
+"Corebird 는 다이렉트 메시지 (DMs), 트윗 알림, 대화 보기 등의 중요 특징을 제공"
+"하는 순수 GTK+ 트위터 클라이언트 입니다."
+
+#: data/org.baedert.corebird.appdata.xml.in:13
+msgid ""
+"Additional features include local viewing of videos, multiple inline images, "
+"Lists, Filters, multiple accounts, etc."
+msgstr ""
+"추가적인 특징으로는 비디오 보기, 복수의 이미지, 리스트, 필터, 멀티 계정, 등등"
+"이 포함됩니다."
+
+#: data/org.baedert.corebird.appdata.xml.in:21
+msgid "Generic timeline view when using Corebird"
+msgstr ""
+
+#: data/org.baedert.corebird.appdata.xml.in:25
+msgid "Typical Twitter profile"
+msgstr ""
+
+#: data/org.baedert.corebird.appdata.xml.in:29
+msgid "Account settings can be configured"
+msgstr ""
+
+#: data/org.baedert.corebird.desktop.in:5
+msgid "Use Twitter from within a normal desktop application"
+msgstr ""
+
+#: data/org.baedert.corebird.desktop.in:7
+msgid "twitter;"
+msgstr ""
+
+#: data/org.baedert.corebird.desktop.in:11
+msgid "corebird"
+msgstr ""
+
+#: src/DefaultTimeline.vala:358
+msgid "Could not load tweets"
+msgstr ""
+
+#: src/DMPage.vala:329
+msgid "Direct Conversation"
+msgstr "다이렉트 대화"
+
+#: src/DMThreadsPage.vala:207
+#, fuzzy, c-format
+msgid "%d new Message from %s"
+msgid_plural "%d new Messages from %s"
+msgstr[0] "%s 로부터 %d 개의 새로운 메시지"
+
+#: src/DMThreadsPage.vala:213 src/UserEventReceiver.vala:94
+#, c-format
+msgid "New direct message from %s"
+msgstr "%s 로부터 새로운 다이렉트 메시지"
+
+#: src/DMThreadsPage.vala:223 src/DMThreadsPage.vala:237
+msgid "Direct Messages"
+msgstr "다이렉트 메시지"
+
+#: src/FavoritesTimeline.vala:67 src/FavoritesTimeline.vala:71
+#: src/TweetInfoPage.vala:482
+msgid "Favorites"
+msgstr "즐겨찾기"
+
+#: src/FilterPage.vala:47
+msgid "Add new Filter"
+msgstr ""
+
+#: src/FilterPage.vala:317 src/FilterPage.vala:323
+msgid "Filters"
+msgstr ""
+
+#: src/HomeTimeline.vala:122
+#, c-format
+msgid "%s retweeted %s"
+msgstr "%s 가 %s 를 리트윗 함"
+
+#: src/HomeTimeline.vala:125
+#, c-format
+msgid "%s tweeted"
+msgstr "%s 가 트윗함"
+
+#: src/HomeTimeline.vala:134
+#, c-format
+msgid "%d new Tweet!"
+msgid_plural "%d new Tweets!"
+msgstr[0] "%d 개의 새로운 트윗!"
+
+#: src/HomeTimeline.vala:169
+msgid "Home"
+msgstr "홈"
+
+#: src/list/DMThreadEntry.vala:71
+#, c-format
+msgid "(%d unread)"
+msgid_plural "(%d unread)"
+msgstr[0] "(%d 개의 읽지 않음)"
+
+#: src/ListsPage.vala:120 src/ListsPage.vala:125 ui/profile-page.ui:350
+msgid "Lists"
+msgstr "리스트"
+
+#: src/ListStatusesPage.vala:367
+msgid "List"
+msgstr "리스트"
+
+#: src/list/TweetListEntry.vala:411
+#, c-format
+msgid "Block %s"
+msgstr ""
+
+#: src/list/TweetListEntry.vala:546
+msgid "This tweet contains images marked as inappropriate"
+msgstr ""
+
+#: src/list/TweetListEntry.vala:553
+msgid "Show anyway"
+msgstr ""
+
+#: src/MainWindow.vala:75
+msgid "Add new Account"
+msgstr ""
+
+#: src/MentionsTimeline.vala:91 src/UserEventReceiver.vala:111
+#, c-format
+msgid "%s mentioned %s"
+msgstr ""
+
+#: src/MentionsTimeline.vala:99 src/MentionsTimeline.vala:103
+msgid "Mentions"
+msgstr "멘션"
+
+#: src/ProfilePage.vala:266
+msgid "Protected profile"
+msgstr "보호되는 프로필"
+
+#: src/ProfilePage.vala:319
+#, c-format
+msgid "Tweet to @%s"
+msgstr "@%s 에게 트윗"
+
+#: src/SearchPage.vala:353 src/SearchPage.vala:362 ui/search-page.ui:24
+msgid "Search"
+msgstr "찾기"
+
+#: src/TweetInfoPage.vala:300
+msgid "Could not show tweet"
+msgstr "트윗을 볼 수 없음"
+
+#: src/TweetInfoPage.vala:481
+msgid "Retweets"
+msgstr "리트윗"
+
+#: src/TweetInfoPage.vala:490 src/widgets/MediaButton.vala:91
+msgid "Open in Browser"
+msgstr "브라우저에서 열기"
+
+#: src/TweetInfoPage.vala:490
+msgid "Source"
+msgstr "원본"
+
+#: src/TweetInfoPage.vala:530
+msgid "Tweet Details"
+msgstr "상세 트윗"
+
+#: src/util/Utils.vala:195
+msgid "Now"
+msgstr "현재"
+
+#: src/util/Utils.vala:197
+#, c-format
+msgid "%dm"
+msgstr "%d분"
+
+#: src/util/Utils.vala:201
+#, c-format
+msgid "%dh"
+msgstr "%d시"
+
+#: src/widgets/AccountCreateWidget.vala:40
+msgid "Don't have an account yet?"
+msgstr "아직 계정이 없나요?"
+
+#: src/widgets/AccountCreateWidget.vala:40
+msgid "Create one"
+msgstr "하나 만들기"
+
+#: src/widgets/AccountCreateWidget.vala:55
+msgid ""
+"Unauthorized. Most of the time, this means that there's something wrong with "
+"the Twitter servers and you should try again later"
+msgstr ""
+"허용되지 않음. 이러한 문제는 대부분 트위터 서버 측의 문제이므로 나중에 다시 "
+"시도 하세요"
+
+#: src/widgets/AccountCreateWidget.vala:67
+#, c-format
+msgid "Could not open %s"
+msgstr "%s 을 열 수 없음"
+
+#: src/widgets/AccountCreateWidget.vala:89
+msgid "Wrong PIN"
+msgstr "올바르지 않은 PIN"
+
+#: src/widgets/AccountCreateWidget.vala:115
+msgid "Account already in use"
+msgstr "계정이 이미 사용 중"
+
+#: src/widgets/AvatarBannerWidget.vala:140
+msgid "Select banner"
+msgstr "배너 선택"
+
+#: src/widgets/AvatarBannerWidget.vala:155
+msgid "Select avatar"
+msgstr "아바타 선택"
+
+#: src/widgets/CompletionTextView.vala:33
+msgid "No users found"
+msgstr ""
+
+#: src/widgets/FollowButton.vala:45
+msgid "Follow"
+msgstr "팔로우"
+
+#: src/widgets/FollowButton.vala:46
+msgid "Unfollow"
+msgstr "언팔로우"
+
+#: src/widgets/MediaButton.vala:42
+msgid "Copy URL"
+msgstr ""
+
+#: src/widgets/PixbufButton.vala:52
+msgid "Copy link"
+msgstr "링크 복사"
+
+#: src/widgets/TweetListBox.vala:100
+msgid "Loading..."
+msgstr "불러오는 중..."
+
+#: src/widgets/TweetListBox.vala:103 src/widgets/TweetListBox.vala:151
+msgid "No entries found"
+msgstr "찾을수 없음"
+
+#: src/widgets/TweetListBox.vala:111
+msgid "Retry"
+msgstr "재시도"
+
+#: src/window/ComposeTweetWindow.vala:125
+msgid "Quote tweet"
+msgstr "트윗 인용"
+
+#: src/window/FileSelector.vala:39 src/window/FileSelector.vala:85
+msgid "Select Image"
+msgstr ""
+
+#: src/window/FileSelector.vala:70
+msgid "Open"
+msgstr ""
+
+#: src/window/FileSelector.vala:77 src/window/UserListDialog.vala:47
+#: ui/account-dialog.ui:21 ui/account-dialog.ui:233 ui/compose-window.ui:41
+#: ui/filter-list-entry.ui:80 ui/image-crop-dialog.ui:46
+#: ui/list-list-entry.ui:98 ui/list-statuses-page.ui:173
+#: ui/modify-filter-dialog.ui:13 ui/modify-snippet-dialog.ui:14
+#: ui/user-filter-entry.ui:114
+msgid "Cancel"
+msgstr "취소"
+
+#: src/window/FileSelector.vala:152
+msgid ""
+"Max file size exceeded\n"
+"(3MB)"
+msgstr ""
+
+#: src/window/ImageCropDialog.vala:58 ui/image-crop-dialog.ui:61
+msgid "Next"
+msgstr "다음"
+
+#: src/window/ImageCropDialog.vala:98 src/window/UserListDialog.vala:48
+#: ui/account-dialog.ui:28 ui/list-statuses-page.ui:129
+#: ui/modify-filter-dialog.ui:20 ui/modify-snippet-dialog.ui:21
+msgid "Save"
+msgstr "저장"
+
+#: src/window/ImageCropDialog.vala:103
+msgid "Image does not meet minimum size requirements:"
+msgstr "이미지가 최소 요구 크기에 맞지 않음:"
+
+#: src/window/ImageCropDialog.vala:104
+#, c-format
+msgid "Minimum width: %d pixel"
+msgid_plural "Minimum width: %d pixels"
+msgstr[0] "최소 넓이: %d 픽셀"
+
+#: src/window/ImageCropDialog.vala:106
+#, c-format
+msgid "Minimum height: %d pixel"
+msgid_plural "Minimum height: %d pixels"
+msgstr[0] "최소 높이: %d 픽셀"
+
+#: src/window/ModifyFilterDialog.vala:45
+msgid "Modify Filter"
+msgstr "필터 수정"
+
+#: src/window/ModifyFilterDialog.vala:80
+msgid "Matches"
+msgstr "일치함"
+
+#: src/window/ModifyFilterDialog.vala:82
+msgid "Doesn't match"
+msgstr "일치하지 않음"
+
+#: src/window/ModifySnippetDialog.vala:44
+msgid "Modify Snippet"
+msgstr ""
+
+#: src/window/ModifySnippetDialog.vala:63
+msgid "Snippet can't be empty"
+msgstr ""
+
+#: src/window/ModifySnippetDialog.vala:70
+msgid "Replacement can't be empty"
+msgstr ""
+
+#: src/window/ModifySnippetDialog.vala:78
+msgid "Snippet may not contain whitespace"
+msgstr ""
+
+#: src/window/ModifySnippetDialog.vala:86
+msgid "Snippet already exists"
+msgstr ""
+
+#: src/window/SettingsDialog.vala:83
+msgid ""
+"Hey, check out this new #Corebird version! \\ (•◡•) / #cool "
+"#newisalwaysbetter"
+msgstr ""
+"헤이, 새로운 #Corebird 버젼을 확인하세요! \\ (•◡•) / #cool #newisalwaysbetter"
+
+#: src/window/UserListDialog.vala:40
+msgid "Add to or Remove User From List"
+msgstr "리스트에서 사용자 추가 또는 삭제"
+
+#: src/window/UserListDialog.vala:69
+msgid "You have no lists."
+msgstr "리스트 없음."
+
+#: ui/about-dialog.ui:6
+msgid "About Corebird"
+msgstr "Corebird 에 관해"
+
+#: ui/about-dialog.ui:10
+msgid "Using Font Awesome by Dave Gandy - http://fontawesome.io"
+msgstr "Dave Gandy 의 글꼴 Awesome 을 사용함 - http://fontawesome.io"
+
+#: ui/account-create-widget.ui:16
+msgid "New Account"
+msgstr "새 계정"
+
+#: ui/account-create-widget.ui:44
+msgid "PIN:"
+msgstr "PIN:"
+
+#: ui/account-create-widget.ui:65
+msgid "Request PIN"
+msgstr "PIN 요청"
+
+#: ui/account-create-widget.ui:75 ui/list-statuses-page.ui:358
+msgid "Confirm"
+msgstr "확인"
+
+#: ui/account-dialog.ui:11
+msgid "Account Settings"
+msgstr "계정 설정"
+
+#: ui/account-dialog.ui:76
+msgid "Name"
+msgstr "이름"
+
+#: ui/account-dialog.ui:104
+msgid "Website"
+msgstr "웹사이트"
+
+#: ui/account-dialog.ui:158
+msgid "Autostart"
+msgstr "자동 시작"
+
+#: ui/account-dialog.ui:189 ui/account-dialog.ui:246 ui/filter-list-entry.ui:93
+#: ui/list-list-entry.ui:132 ui/list-statuses-page.ui:166
+#: ui/modify-snippet-dialog.ui:108 ui/tweet-list-entry.ui:10
+msgid "Delete"
+msgstr "지우기"
+
+#: ui/account-dialog.ui:221
+msgid "Do you really want to delete this account?"
+msgstr "정말 이 계정을 지울건가요?"
+
+#: ui/compose-window.ui:11 ui/compose-window.ui:25
+msgid "Compose Tweet"
+msgstr "트윗 작성"
+
+#: ui/compose-window.ui:48 ui/dm-page.ui:46
+msgid "Send"
+msgstr "보내기"
+
+#: ui/compose-window.ui:134
+msgid "Add Image"
+msgstr "이미지 추가"
+
+#: ui/filter-page.ui:71 ui/search-page.ui:86
+msgid "Users"
+msgstr "사용자"
+
+#: ui/image-crop-dialog.ui:71
+msgid "Back"
+msgstr "뒤로"
+
+#: ui/list-list-entry.ui:109
+msgid "Subscribe"
+msgstr "구독하기"
+
+#: ui/list-list-entry.ui:122
+msgid "Unsubscribe"
+msgstr "구독 취소"
+
+#: ui/list-statuses-page.ui:26
+msgid "Subscribers:"
+msgstr "구독자:"
+
+#: ui/list-statuses-page.ui:49
+msgid "Members:"
+msgstr "멤버:"
+
+#: ui/list-statuses-page.ui:72
+msgid "Creator:"
+msgstr "작성자:"
+
+#: ui/list-statuses-page.ui:84
+msgid "Created at:"
+msgstr "작성 장소:"
+
+#: ui/list-statuses-page.ui:119
+msgid "Edit"
+msgstr "수정"
+
+#: ui/list-statuses-page.ui:194
+msgid "Mode:"
+msgstr "모드:"
+
+#: ui/list-statuses-page.ui:217
+msgid "Private"
+msgstr "전용"
+
+#: ui/list-statuses-page.ui:218
+msgid "Public"
+msgstr "공용"
+
+#: ui/list-statuses-page.ui:296
+msgid "Description"
+msgstr ""
+
+#: ui/load-more-entry.ui:11
+msgid "Load more"
+msgstr "더 읽기"
+
+#: ui/main-window.ui:65
+msgid "Show configured accounts"
+msgstr "구성된 계정 보여주기"
+
+#: ui/main-window.ui:84
+msgid "Compose tweet"
+msgstr "트윗 작성"
+
+#: ui/main-window.ui:101
+msgid "New tweet"
+msgstr "새 트윗"
+
+#: ui/menus.ui:6 ui/settings-dialog.ui:16 ui/settings-dialog.ui:22
+msgid "Settings"
+msgstr "설정"
+
+#: ui/menus.ui:10
+msgid "Shortcuts"
+msgstr "바로가기"
+
+#: ui/menus.ui:15
+msgid "About"
+msgstr "About"
+
+#: ui/menus.ui:19
+msgid "Quit"
+msgstr "종료"
+
+#: ui/modify-filter-dialog.ui:6
+msgid "Add New Filter"
+msgstr "새로운 필터 추가"
+
+#: ui/modify-snippet-dialog.ui:6
+msgid "Add New Snippet"
+msgstr "새로운 스니펫 추가"
+
+#: ui/modify-snippet-dialog.ui:46
+msgid "Keyword"
+msgstr "키워드"
+
+#: ui/modify-snippet-dialog.ui:72
+msgid "Replacement"
+msgstr "대체"
+
+#: ui/new-list-entry.ui:30
+msgid "Create New List"
+msgstr "새로운 리스트 생성"
+
+#: ui/new-list-entry.ui:51
+msgid "Name:"
+msgstr "이름:"
+
+#: ui/new-list-entry.ui:73
+msgid "Create"
+msgstr "생성"
+
+#: ui/profile-page.ui:6
+msgid "Write Direct Message"
+msgstr "다이렉트 메시지 작성"
+
+#: ui/profile-page.ui:14
+msgid "Add to/Remove from List"
+msgstr "리스트에 추가/삭제"
+
+#: ui/profile-page.ui:20
+msgid "Blocked"
+msgstr "차단됨"
+
+#: ui/profile-page.ui:24
+msgid "Muted"
+msgstr ""
+
+#: ui/profile-page.ui:28
+msgid "Retweets disabled"
+msgstr "리트윗 불가"
+
+#: ui/profile-page.ui:155
+msgid "Follows you"
+msgstr "당신을 팔로우함"
+
+#: ui/profile-page.ui:227 ui/search-page.ui:74 ui/settings-dialog.ui:421
+msgid "Tweets"
+msgstr "트윗"
+
+#: ui/profile-page.ui:268
+msgid "Followers"
+msgstr "팔로워"
+
+#: ui/profile-page.ui:309
+msgid "Following"
+msgstr "팔로우 중"
+
+#: ui/settings-dialog.ui:60
+msgid "Show inline media"
+msgstr ""
+
+#: ui/settings-dialog.ui:79
+msgid "Always show"
+msgstr ""
+
+#: ui/settings-dialog.ui:80
+msgid "Always hide"
+msgstr ""
+
+#: ui/settings-dialog.ui:81
+msgid "Hide in timeline"
+msgstr ""
+
+#: ui/settings-dialog.ui:102
+msgid "Auto scroll on new tweets"
+msgstr "새로운 트윗으로 자동 스크롤"
+
+#: ui/settings-dialog.ui:132
+msgid "Double-click activation"
+msgstr "더블 클릭 활성화"
+
+#: ui/settings-dialog.ui:162
+msgid "Interface"
+msgstr "인터페이스"
+
+#: ui/settings-dialog.ui:180
+msgid "On New Tweets"
+msgstr "새로운 트윗"
+
+#: ui/settings-dialog.ui:194
+msgid "Actions"
+msgstr "액션"
+
+#: ui/settings-dialog.ui:209
+msgid "On New Mentions"
+msgstr "새로운 멘션"
+
+#: ui/settings-dialog.ui:223
+msgid "On New Messages"
+msgstr "새로운 메시지"
+
+#: ui/settings-dialog.ui:267
+msgid "Never"
+msgstr "절대 안함"
+
+#: ui/settings-dialog.ui:268
+msgid "Every"
+msgstr "매번"
+
+#: ui/settings-dialog.ui:269
+msgid "Stack 5"
+msgstr "스택 5"
+
+#: ui/settings-dialog.ui:270
+msgid "Stack 10"
+msgstr "스택 10"
+
+#: ui/settings-dialog.ui:271
+msgid "Stack 25"
+msgstr "스택 25"
+
+#: ui/settings-dialog.ui:272
+msgid "Stack 50"
+msgstr "스택 50"
+
+#: ui/settings-dialog.ui:285
+msgid "Notifications"
+msgstr "알림"
+
+#: ui/settings-dialog.ui:312
+msgid "Round avatars"
+msgstr "둥근 아바타"
+
+#: ui/settings-dialog.ui:339
+msgid "Remove trailing hashtags"
+msgstr "추적하는 해쉬태그 삭제"
+
+#: ui/settings-dialog.ui:367
+msgid "Remove media links"
+msgstr "미디어 링크 삭제"
+
+#: ui/settings-dialog.ui:395
+msgid "Hide inappropriate content"
+msgstr "부적절한 컨텐츠 숨기기"
+
+#: ui/settings-dialog.ui:442
+msgid "No snippets configured."
+msgstr "스니펫이 구성되지 않음."
+
+#: ui/settings-dialog.ui:481
+msgid "You can activate snippets by writing the keyword and pressing TAB."
+msgstr "키워드를 쓰고 TAB 을 눌러서 스니펫을 활성화할 수 있음."
+
+#: ui/settings-dialog.ui:495
+msgid "Snippets"
+msgstr "스니펫"
+
+#: ui/shortcuts-window.ui:12
+msgctxt "shortcuts window"
+msgid "General"
+msgstr "일반"
+
+#: ui/shortcuts-window.ui:17
+msgctxt "shortcuts window"
+msgid "Compose Tweet"
+msgstr "트윗 작성"
+
+#: ui/shortcuts-window.ui:24
+msgctxt "shortcuts window"
+msgid "Show Account settings"
+msgstr "계정 설정 보기"
+
+#: ui/shortcuts-window.ui:31
+msgctxt "shortcuts window"
+msgid "Show Accounts Popover"
+msgstr "계정 팝오버 보기"
+
+#: ui/shortcuts-window.ui:38
+msgctxt "shortcuts window"
+msgid "Show Application Settings"
+msgstr "앱 설정 보기"
+
+#: ui/shortcuts-window.ui:45
+msgctxt "shortcuts window"
+msgid "Toggle Topbar"
+msgstr "상단 바 토글"
+
+#: ui/shortcuts-window.ui:52
+msgctxt "shortcuts window"
+msgid "Go Back"
+msgstr "뒤로 가기"
+
+#: ui/shortcuts-window.ui:59
+msgctxt "shortcuts window"
+msgid "Go Forward"
+msgstr "앞으로 가기"
+
+#: ui/shortcuts-window.ui:66
+msgctxt "shortcuts window"
+msgid "Go to nth page"
+msgstr "특정 페이지 가기"
+
+#: ui/shortcuts-window.ui:74
+msgctxt "shortcuts window"
+msgid "Tweets"
+msgstr "트윗"
+
+#: ui/shortcuts-window.ui:79
+msgctxt "shortcuts window"
+msgid "Retweet"
+msgstr "리트윗"
+
+#: ui/shortcuts-window.ui:86
+msgctxt "shortcuts window"
+msgid "Favorite"
+msgstr "즐겨찾기"
+
+#: ui/shortcuts-window.ui:93
+msgctxt "shortcuts window"
+msgid "Reply"
+msgstr "답장"
+
+#: ui/shortcuts-window.ui:100
+msgctxt "shortcuts window"
+msgid "Show Details"
+msgstr "상세 보기"
+
+#: ui/shortcuts-window.ui:107
+msgctxt "shortcuts window"
+msgid "Delete"
+msgstr "지우기"
+
+#: ui/start-conversation-entry.ui:29
+msgid "Start new conversation"
+msgstr "새로운 대화 시작"
+
+#: ui/start-conversation-entry.ui:49
+msgid "With:"
+msgstr "함께:"
+
+#: ui/start-conversation-entry.ui:75
+msgid "Go"
+msgstr "가기"
+
+#: ui/tweet-info-page.ui:6 ui/tweet-list-entry.ui:6
+msgid "Quote"
+msgstr "인용"
+
+#: ui/tweet-info-page.ui:223
+msgid "Retweet tweet"
+msgstr "트윗을 리트윗"
+
+#: ui/tweet-info-page.ui:250
+msgid "Favorite tweet"
+msgstr "트윗을 즐겨찾기"
+
+#: ui/tweet-info-page.ui:277
+msgid "Reply to tweet"
+msgstr "트윗에 답장"
+
+#: ui/tweet-info-page.ui:315
+msgid "More"
+msgstr "더 보기"
+
+#: ui/tweet-list-entry.ui:60
+msgid "Favorite"
+msgstr "즐겨찾기"
+
+#: ui/tweet-list-entry.ui:81
+msgid "Reply"
+msgstr "답장"
+
+#: ui/user-filter-entry.ui:125
+msgid "Unblock"
+msgstr "블락 해제"
+
+#: ui/user-list-entry.ui:65
+msgid "Show settings of this account"
+msgstr "이 계정의 설정을 보여주기"
+
+#: ui/user-list-entry.ui:90
+msgid "Open in new window"
+msgstr "새 창에서 열기"
+
+#: ui/user-list-entry.ui:114
+msgid "Go to profile"
+msgstr ""
+
+#: ui/user-lists-widget.ui:14
+msgid "Created"
+msgstr "만들어짐"
+
+#: ui/user-lists-widget.ui:86
+msgid "Subscribed to"
+msgstr "을 구독함"
