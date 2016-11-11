@@ -131,7 +131,6 @@ data/24x24/Makefile
 data/16x16/Makefile
 po/Makefile.in
 tests/Makefile
-examples/Makefile
 ])
 
 
