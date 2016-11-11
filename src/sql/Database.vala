@@ -30,13 +30,13 @@ public class Database {
 
   public Database (string filename, string init_file, int max_version) {
     int err = Sqlite.Database.open (filename, out db);
-    if (err == 1) {
+    if (err != 0) {
       critical ("Error when opening the database '%s': %s",
                 filename, db.errmsg ());
     }
     this.exec ("PRAGMA journal_mode = MEMORY;");
 
-    int user_version = -1;
+    int user_version = 0;
     this.exec ("pragma user_version;", (n_cols, vals) => {user_version = int.parse(vals[0]); return STOP;});
 
     for (int cur_version = user_version + 1; cur_version <= max_version; cur_version ++) {

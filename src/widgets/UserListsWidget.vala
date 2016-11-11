@@ -15,9 +15,6 @@
  *  along with corebird.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
 [GtkTemplate (ui = "/org/baedert/corebird/ui/user-lists-widget.ui")]
 class UserListsWidget : Gtk.Box {
   [GtkChild]
@@ -34,6 +31,12 @@ class UserListsWidget : Gtk.Box {
   private Gtk.Frame subscribed_list_frame;
   [GtkChild]
   private NewListEntry new_list_entry;
+  [GtkChild]
+  private Gtk.Revealer user_lists_revealer;
+  [GtkChild]
+  private Gtk.Separator upper_separator;
+  [GtkChild]
+  private Gtk.ListBox new_list_box;
 
   public unowned MainWindow main_window { get; set; }
   public unowned Account account        { get; set; }
@@ -53,6 +56,8 @@ class UserListsWidget : Gtk.Box {
     user_list_label.visible = true;
     //user_list_frame.margin_top = 24;
     show_create_entry = false;
+    upper_separator.visible = false;
+    upper_separator.no_show_all = true;
   }
 
   [GtkCallback]
@@ -130,6 +135,7 @@ class UserListsWidget : Gtk.Box {
         user_list_frame.margin_top = show_create_entry ? 24 : 0;
         user_list_box.show ();
         user_list_frame.show ();
+        user_lists_revealer.reveal_child = n_user_list > 0;
       }
       collect_obj.emit ();
     });
@@ -158,12 +164,15 @@ class UserListsWidget : Gtk.Box {
 
 
   public void remove_list (int64 list_id) {
+    uint n_user_lists = user_list_box.get_children ().length ();
     user_list_box.foreach ((w) => {
       if (!(w is ListListEntry))
         return;
 
       if (((ListListEntry)w).id == list_id) {
         user_list_box.remove (w);
+        if (n_user_lists - 1 == 0)
+          user_lists_revealer.reveal_child = false;
       }
     });
 
@@ -194,6 +203,7 @@ class UserListsWidget : Gtk.Box {
           return;
       }
       user_list_box.add (entry);
+      user_lists_revealer.reveal_child = true;
     } else {
       // Avoid duplicates
       var subscribed_lists = subscribed_list_box.get_children ();
@@ -240,14 +250,12 @@ class UserListsWidget : Gtk.Box {
     }
   }
 
-  public TwitterList[] get_user_lists () { // {{{
+  public TwitterList[] get_user_lists () {
     GLib.List<weak Gtk.Widget> children = user_list_box.get_children ();
-    TwitterList[] lists = new TwitterList[children.length () - 1];
+    TwitterList[] lists = new TwitterList[children.length ()];
     int i = 0;
     foreach (Gtk.Widget w in children) {
-      if (!(w is ListListEntry))
-        continue;
-
+      assert (w is ListListEntry);
       var lle = (ListListEntry) w;
       lists[i].id = lle.id;
       lists[i].name = lle.name;
@@ -257,7 +265,7 @@ class UserListsWidget : Gtk.Box {
       i ++;
     }
     return lists;
-  } // }}}
+  }
 
   public void clear_lists () {
     user_list_box.foreach ((w) => { user_list_box.remove (w);});
@@ -312,5 +320,58 @@ class UserListsWidget : Gtk.Box {
 
   public void unreveal () {
     new_list_entry.unreveal ();
+  }
+
+  [GtkCallback]
+  private bool new_list_box_keynav_failed_cb (Gtk.DirectionType direction) {
+    if (direction == Gtk.DirectionType.DOWN) {
+      if (user_list_box.visible) {
+        user_list_box.child_focus (direction);
+        return Gdk.EVENT_STOP;
+      } else if (subscribed_list_box.visible) {
+        subscribed_list_box.child_focus (direction);
+        return Gdk.EVENT_STOP;
+      }
+    }
+    return Gdk.EVENT_PROPAGATE;
+  }
+
+  [GtkCallback]
+  private bool user_list_box_keynav_failed_cb (Gtk.DirectionType direction) {
+    if (direction == Gtk.DirectionType.UP) {
+      if (new_list_box.visible) {
+        new_list_box.child_focus (direction);
+        return Gdk.EVENT_STOP;
+      }
+    } else if (direction == Gtk.DirectionType.DOWN) {
+      if (subscribed_list_box.visible) {
+        subscribed_list_box.child_focus (direction);
+        return Gdk.EVENT_STOP;
+      }
+    }
+    return Gdk.EVENT_PROPAGATE;
+  }
+
+  [GtkCallback]
+  private bool subscribed_list_box_keynav_failed_cb (Gtk.DirectionType direction) {
+    if (direction == Gtk.DirectionType.UP) {
+      if (user_list_box.visible) {
+        user_list_box.child_focus (direction);
+        return Gdk.EVENT_STOP;
+      } else if (new_list_box.visible) {
+        new_list_box.child_focus (direction);
+        return Gdk.EVENT_STOP;
+      }
+    }
+    return Gdk.EVENT_PROPAGATE;
+  }
+
+  [GtkCallback]
+  private void revealer_child_revealed_cb (GLib.Object source, GLib.ParamSpec spec) {
+    Gtk.Revealer revealer = (Gtk.Revealer) source;
+    if (revealer.child_revealed)
+      revealer.show ();
+    else
+      revealer.hide ();
   }
 }

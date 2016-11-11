@@ -16,8 +16,8 @@
  */
 
 class ComposeImageManager : Gtk.Container {
-  private static const int BUTTON_DELTA = 10;
-  private static const int BUTTON_SPACING = 12;
+  private const int BUTTON_DELTA = 10;
+  private const int BUTTON_SPACING = 12;
   private GLib.GenericArray<AddImageButton> buttons;
   private GLib.GenericArray<Gtk.Button> close_buttons;
 
@@ -62,10 +62,17 @@ class ComposeImageManager : Gtk.Container {
   // GtkContainer API {{{
   public override void forall_internal (bool include_internals, Gtk.Callback cb) {
     assert (buttons.length == close_buttons.length);
-    for (int i = 0; i < this.buttons.length; i ++) {
+
+    for (int i = 0; i < this.close_buttons.length;) {
+      int size_before = this.close_buttons.length;
+      cb (close_buttons.get (i));
+
+      i += this.close_buttons.length - size_before + 1;
+    }
+
+    for (int i = 0; i < this.buttons.length;) {
       int size_before = this.buttons.length;
       cb (buttons.get (i));
-      cb (close_buttons.get (i));
 
       i += this.buttons.length - size_before + 1;
     }
@@ -73,7 +80,6 @@ class ComposeImageManager : Gtk.Container {
 
   public override void add (Gtk.Widget widget) {
     widget.set_parent (this);
-    widget.set_parent_window (this.get_window ());
     this.buttons.add ((AddImageButton)widget);
     var btn = new Gtk.Button.from_icon_name ("window-close-symbolic");
     btn.set_parent (this);
@@ -150,8 +156,26 @@ class ComposeImageManager : Gtk.Container {
       nat = int.max (n, nat);
     }
 
-    minimum = min;
-    natural = nat;
+    /* We subtract BUTTON_DELTA in size_allocate again */
+    minimum = min + BUTTON_DELTA;
+    natural = nat + BUTTON_DELTA;
+  }
+
+  public override void get_preferred_height (out int minimum,
+                                             out int natural) {
+    int min = 0;
+    int nat = 0;
+    for (int i = 0; i < buttons.length; i ++) {
+      var btn = buttons.get (i);
+      int m, n;
+      btn.get_preferred_height (out m, out n);
+      min = int.max (m, min);
+      nat = int.max (n, nat);
+    }
+
+    /* We subtract BUTTON_DELTA in size_allocate again */
+    minimum = min + BUTTON_DELTA;
+    natural = nat + BUTTON_DELTA;
   }
 
   public override void get_preferred_width (out int minimum,

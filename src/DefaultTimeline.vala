@@ -16,7 +16,7 @@
  */
 
 public abstract class DefaultTimeline : ScrollWidget, IPage {
-  public static const int REST = 25;
+  public const int REST = 25;
   protected bool initialized = false;
   public int id                          { get; set; }
   private int _unread_count = 0;
@@ -59,8 +59,9 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
 
   public DefaultTimeline (int id) {
     this.id = id;
-    this.scrolled_to_start.connect(handle_scrolled_to_start);
-    this.scrolled_to_end.connect(() => {
+    this.hscrollbar_policy = Gtk.PolicyType.NEVER;
+    this.scrolled_to_start.connect (handle_scrolled_to_start);
+    this.scrolled_to_end.connect (() => {
       if (!loading) {
         load_older ();
       }
@@ -91,6 +92,14 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
   public virtual void on_join (int page_id, Bundle? args) {
     if (!initialized) {
       load_newest ();
+
+      if (!Settings.auto_scroll_on_new_tweets ()) {
+        /* we are technically not scrolling up, but due to missing content,
+           we can't really not be scrolled up...
+         */
+        mark_seen (-1);
+      }
+
       account.user_stream.resumed.connect (stream_resumed_cb);
       initialized = true;
     }
@@ -193,12 +202,12 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
 
   public void toggle_favorite (int64 id, bool mode) {
 
-    Tweet? t = this.tweet_list.model.get_from_id (id, 0);
+    Cb.Tweet? t = this.tweet_list.model.get_from_id (id, 0);
     if (t != null) {
       if (mode)
-        t.set_flag (TweetState.FAVORITED);
+        this.tweet_list.model.set_tweet_flag (t, Cb.TweetState.FAVORITED);
       else
-        t.unset_flag (TweetState.FAVORITED);
+        this.tweet_list.model.unset_tweet_flag (t, Cb.TweetState.FAVORITED);
     }
   }
 
@@ -216,26 +225,26 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
    *      way of checking the case where 2 independend users retweet
    *      the same tweet.
    */
-  protected TweetState get_rt_flags (Tweet t) {
+  protected Cb.TweetState get_rt_flags (Cb.Tweet t) {
     uint flags = 0;
 
     /* First case */
-    if (t.user_id == account.id)
-      flags |= TweetState.HIDDEN_FORCE;
+    if (t.get_user_id () == account.id)
+      flags |= Cb.TweetState.HIDDEN_FORCE;
 
     /*  Second case */
-    if (account.follows_id (t.user_id))
-        flags |= TweetState.HIDDEN_RT_BY_FOLLOWEE;
+    if (account.follows_id (t.get_user_id ()))
+        flags |= Cb.TweetState.HIDDEN_RT_BY_FOLLOWEE;
 
     /* third case */
     if (t.retweeted_tweet != null &&
         t.retweeted_tweet.author.id == account.id)
-      flags |= TweetState.HIDDEN_FORCE;
+      flags |= Cb.TweetState.HIDDEN_FORCE;
 
     /* Fourth case */
     foreach (int64 id in account.disabled_rts) {
       if (id == t.source_tweet.author.id) {
-        flags |= TweetState.HIDDEN_RTS_DISABLED;
+        flags |= Cb.TweetState.HIDDEN_RTS_DISABLED;
         break;
       }
     }
@@ -245,13 +254,13 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
       if (w is TweetListEntry) {
         var tt = ((TweetListEntry)w).tweet;
         if (tt.retweeted_tweet != null && tt.retweeted_tweet.id == t.retweeted_tweet.id) {
-          flags |= TweetState.HIDDEN_FORCE;
+          flags |= Cb.TweetState.HIDDEN_FORCE;
           break;
         }
       }
     }
 
-    return (TweetState)flags;
+    return (Cb.TweetState)flags;
   }
 
   protected void mark_seen (int64 id) {
@@ -261,19 +270,20 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
 
       var tle = (TweetListEntry) w;
       if (tle.tweet.id == id || id == -1) {
-        if (!tle.tweet.seen) {
+        if (!tle.tweet.get_seen ()) {
           this.unread_count--;
         }
-        tle.tweet.seen = true;
-        break;
+        tle.tweet.set_seen (true);
+        if (id != -1)
+          break;
       }
     }
   }
 
 
-  protected bool scroll_up (Tweet t) {
+  protected bool scroll_up (Cb.Tweet t) {
     bool auto_scroll = Settings.auto_scroll_on_new_tweets ();
-    if (this.scrolled_up && (t.user_id == account.id || auto_scroll)) {
+    if (this.scrolled_up && (t.get_user_id () == account.id || auto_scroll)) {
       this.scroll_up_next (true,
                            main_window.cur_page_id != this.id);
       return true;
@@ -338,6 +348,7 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
     call.add_param ("count", requested_tweet_count.to_string ());
     call.add_param ("contributor_details", "true");
     call.add_param ("include_my_retweet", "true");
+    call.add_param ("tweet_mode", "extended");
     call.add_param ("max_id", (tweet_list.model.lowest_id - 1).to_string ());
 
     Json.Node? root_node = null;
@@ -370,6 +381,7 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
     call.set_method ("GET");
     call.add_param ("count", requested_tweet_count.to_string ());
     call.add_param ("include_my_retweet", "true");
+    call.add_param ("tweet_mode", "extended");
     call.add_param ("max_id", (tweet_list.model.lowest_id - 1).to_string ());
 
     Json.Node? root_node = null;
@@ -406,13 +418,13 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
         return;
 
       var tle = (TweetListEntry)w;
-      if (tle.tweet.seen)
+      if (tle.tweet.get_seen ())
         return;
 
       Gtk.Allocation alloc;
       tle.get_allocation (out alloc);
       if (alloc.y + (alloc.height / 2.0) >= value) {
-        tle.tweet.seen = true;
+        tle.tweet.set_seen (true);
         unread_count--;
       }
     });
@@ -421,17 +433,32 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
   public void rerun_filters () {
     TweetModel tm = tweet_list.model;
 
-
-    for (uint i = 0, p = tm.get_n_items (); i < p; i ++) {
-      var tweet = (Tweet) tm.get_object (i);
+    for (uint i = 0; i < tm.get_n_items (); i ++) {
+      var tweet = (Cb.Tweet) tm.get_object (i);
       if (account.filter_matches (tweet)) {
-        tweet.set_flag (TweetState.HIDDEN_FILTERED);
-        if (!tweet.seen) {
+        if (tm.set_tweet_flag (tweet, Cb.TweetState.HIDDEN_FILTERED))
+          i --;
+
+        if (!tweet.get_seen ()) {
           this.unread_count --;
-          tweet.seen = true;
+          tweet.set_seen (true);
         }
       } else {
-        tweet.unset_flag (TweetState.HIDDEN_FILTERED);
+        if (tm.unset_tweet_flag (tweet, Cb.TweetState.HIDDEN_FILTERED)) {
+          i --;
+        }
+      }
+
+    }
+
+    // Same thing for invisible tweets...
+    for (uint i = 0; i < tm.hidden_tweets.length; i ++) {
+      var tweet =  tm.hidden_tweets.get (i);
+      if (tweet.is_flag_set (Cb.TweetState.HIDDEN_FILTERED)) {
+        if (!account.filter_matches (tweet)) {
+          tm.unset_tweet_flag (tweet, Cb.TweetState.HIDDEN_FILTERED);
+          i --;
+        }
       }
     }
   }

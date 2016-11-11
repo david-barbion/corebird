@@ -1,4 +1,4 @@
-AC_INIT([corebird],[1.2],[mail@baedert.org])
+AC_INIT([corebird],[1.3.2],[mail@baedert.org])
 
 AC_PREREQ([2.65])
 
@@ -94,10 +94,12 @@ if test "$disable_video" = "no"; then
   CB_VALA_FLAGS="$CB_VALA_FLAGS \
                  -D VIDEO \
                  --pkg gstreamer-video-1.0"
+  CB_CFLAGS="$CB_CFLAGS -D VIDEO"
 fi
 
 if test "$enable_debug" = "yes"; then
   CB_VALA_FLAGS="$CB_VALA_FLAGS -D DEBUG -g"
+  CB_CFLAGS="$CB_CFLAGS -D DEBUG"
 fi
 
 
@@ -110,16 +112,15 @@ fi
 # Gettext stuff
 GETTEXT_PACKAGE=AC_PACKAGE_NAME
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"], [Gettext Package])
-AC_SUBST(GETTEXT_PACKAGE)
-IT_PROG_INTLTOOL([0.40])
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.19.7])
+AC_SUBST([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"])
 
 
 AC_CONFIG_FILES([
 Makefile
 src/Makefile
-ui/Makefile
 data/Makefile
-data/org.baedert.corebird.desktop.in
 data/256x256/Makefile
 data/128x128/Makefile
 data/96x96/Makefile

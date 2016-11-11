@@ -16,7 +16,7 @@
  */
 
 public class Account : GLib.Object {
-  public static const string DUMMY = "screen_name";
+  public const string DUMMY = "screen_name";
   public int64 id;
   public Sql.Database db;
   public string screen_name       {public get; public  set;}
@@ -184,20 +184,21 @@ public class Account : GLib.Object {
 
     Json.Array desc_urls = root.get_object_member ("entities").get_object_member ("description")
                                                               .get_array_member ("urls");
-    var urls = new TextEntity[desc_urls.get_length ()];
+    var urls = new Cb.TextEntity[desc_urls.get_length ()];
     desc_urls.foreach_element ((arr, index, node) => {
       Json.Object obj = node.get_object ();
       Json.Array indices = obj.get_array_member ("indices");
-      urls[index] = TextEntity () {
-        from = (int)indices.get_int_element (0),
-        to   = (int)indices.get_int_element (1),
+      urls[index] = Cb.TextEntity () {
+        from = (uint)indices.get_int_element (0),
+        to   = (uint)indices.get_int_element (1),
         display_text = obj.get_string_member ("expanded_url"),
         target = null
       };
     });
-    this.description = TextTransform.transform (root.get_string_member ("description"),
-                                                urls,
-                                                TransformFlags.EXPAND_LINKS);
+    this.description = Cb.TextTransform.text (root.get_string_member ("description"),
+                                              urls,
+                                              Cb.TransformFlags.EXPAND_LINKS,
+                                              0, 0);
 
 
     if (root.has_member ("profile_banner_url"))
@@ -379,14 +380,14 @@ public class Account : GLib.Object {
    *
    * @return true iff at least one of the filters match, false otherwise.
    */
-  public bool filter_matches (Tweet t) {
+  public bool filter_matches (Cb.Tweet t) {
     if (t.source_tweet.author.id == this.id)
       return false;
 
-
+    string text = t.get_filter_text ();
     for (int i = 0; i < filters.length; i ++) {
       var f = this.filters.get (i);
-      if (f.matches (t.get_real_text ())) {
+      if (f.matches (text)) {
         return true;
       }
     }
@@ -536,6 +537,22 @@ public class Account : GLib.Object {
         return true;
 
     foreach (int64 id in this.blocked)
+      if (id == user_id)
+        return true;
+
+    return false;
+  }
+
+  public bool is_blocked (int64 user_id) {
+    foreach (int64 id in this.blocked)
+      if (id == user_id)
+        return true;
+
+    return false;
+  }
+
+  public bool is_muted (int64 user_id) {
+    foreach (int64 id in this.muted)
       if (id == user_id)
         return true;
 

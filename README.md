@@ -1,6 +1,4 @@
-# Corebird
-
-This is the readme for the current *development version*. If you're looking for one of the stable releases, check the "releases" link at the top of this page.
+# Corebird 1.3.2
 
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=baedert&url=http://github.com/baedert/corebird&title=corebird&language=vala&tags=github&category=software)
 
@@ -26,13 +24,8 @@ This is the readme for the current *development version*. If you're looking for 
   - `dd` - delete
   - `Return` - Show tweet details
 
-
-## Will this work on distribution XYZ?
-  I don't know. If you can satisfy all the dependencies, probably yes but
-  you'd most likely still have to compile and install it from source (that is,
-  if no one else makes packages).
-
 ## Translations
+
   Since February 2014, there's a [Corebird project on Transifex](https://www.transifex.com/projects/p/corebird)
 
 ## Contributing
@@ -48,17 +41,17 @@ This is the readme for the current *development version*. If you're looking for 
  - `json-glib-1.0`
  - `sqlite3`
  - `libsoup-2.4`
- - `intltool >= 0.40`
+ - `gettext >= 0.19.7`
  - `vala >= 0.28` (makedep)
  - `automake >= 1.14` (makedep)
- - `gstreamer-1.0` (disable via --disable-video, default enabled)
+ - `gst-plugins-base-1.0` (for playbin, disable via --disable-video)
  - `gst-plugins-bad-1.0 >= 1.6` (disable via --disable-video, default enabled)
  - `gst-plugins-good-1.0` (disable via --disable-video, default enabled)
  - `gst-libav-1.0` (disable via --disable-video, default enabled)
 
 Note that the above packages are just rough estimations, the actual package names on your distribution may vary.
 
-If you pass `--disable-video` to the configure script, you don't need any gstreamer dependency but  won't be able to view any videos (i.e. no vines and no twitter gifs).
+If you pass `--disable-video` to the configure script, you don't need any gstreamer dependency but won't be able to view any videos.
 
 ## Compiling
 

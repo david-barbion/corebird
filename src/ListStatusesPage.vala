@@ -89,13 +89,12 @@ class ListStatusesPage : ScrollWidget, IPage {
     if (evt.delta_y < 0 && this.vadjustment.value == 0) {
       int inc = (int)(vadjustment.step_increment * (-evt.delta_y));
       max_size_container.max_size += inc;
-      return true;
+      return Gdk.EVENT_STOP;
     }
-    return false;
+    return Gdk.EVENT_PROPAGATE;
   }
+
   /**
-   *
-   *
    * va_list params:
    *  - int64 list_id - The id of the list to show
    *  - string name - The lists's name
@@ -107,7 +106,7 @@ class ListStatusesPage : ScrollWidget, IPage {
    *  - int64 created_at
    *  - string mode
    */
-  public void on_join (int page_id, Bundle? args) { // {{{
+  public void on_join (int page_id, Bundle? args) {
     int64 list_id = args.get_int64 ("list_id");
     if (list_id == 0) {
       list_id = this.list_id;
@@ -148,15 +147,17 @@ class ListStatusesPage : ScrollWidget, IPage {
       load_newest.begin ();
     }
 
-  } // }}}
+  }
 
   public void on_leave () {}
 
-  private async void load_newest () { // {{{
+  private async void load_newest () {
+    loading = true;
     tweet_list.set_unempty ();
     uint requested_tweet_count = 25;
     var call = account.proxy.new_call ();
     call.set_function ("1.1/lists/statuses.json");
+    call.add_param ("tweet_mode", "extended");
     call.set_method ("GET");
     debug ("USING LIST ID %s", list_id.to_string ());
     call.add_param ("list_id", list_id.to_string ());
@@ -170,20 +171,24 @@ class ListStatusesPage : ScrollWidget, IPage {
         tweet_list.set_empty ();
       }
       warning (e.message);
+      loading = false;
       return;
     }
 
     var root_array = root.get_array ();
     if (root_array.get_length () == 0) {
       tweet_list.set_empty ();
+      loading = false;
       return;
     }
     yield TweetUtils.work_array (root_array,
                                  tweet_list,
                                  account);
-  } // }}}
 
-  private async void load_older () { // {{{
+    loading = false;
+  }
+
+  private async void load_older () {
     if (loading)
       return;
 
@@ -191,6 +196,7 @@ class ListStatusesPage : ScrollWidget, IPage {
     uint requested_tweet_count = 25;
     var call = account.proxy.new_call ();
     call.set_function ("1.1/lists/statuses.json");
+    call.add_param ("tweet_mode", "extended");
     call.set_method ("GET");
     call.add_param ("list_id", list_id.to_string ());
     call.add_param ("max_id", (tweet_list.model.lowest_id -1).to_string ());
@@ -209,7 +215,7 @@ class ListStatusesPage : ScrollWidget, IPage {
                                  tweet_list,
                                  account);
     loading = false;
-  } // }}}
+  }
 
   [GtkCallback]
   private void edit_button_clicked_cb () {
@@ -290,13 +296,12 @@ class ListStatusesPage : ScrollWidget, IPage {
   }
 
   [GtkCallback]
-  private void refresh_button_clicked_cb () { // {{{
+  private void refresh_button_clicked_cb () {
     refresh_button.sensitive = false;
     load_newer.begin (() => {
       refresh_button.sensitive = true;
     });
-  } // }}}
-
+  }
 
   [GtkCallback]
   private void tweet_activated_cb (Gtk.ListBoxRow row) {

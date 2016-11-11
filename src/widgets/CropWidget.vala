@@ -191,9 +191,9 @@ class CropWidget : Gtk.DrawingArea {
     if (!resize_area_grabbed)
       return;
 
-    int max_width = MIN (image_rect.width,
-                         MIN ((int)(image_rect.width),
-                              (int)(image_rect.height * desired_aspect_ratio)));
+    int max_width = int.min (image_rect.width,
+                             int.min ((int)(image_rect.width),
+                                      (int)(image_rect.height * desired_aspect_ratio)));
 
     int new_width  = (int)x - selection_rect.x - resize_diff_x;
     int new_height = (int)(new_width / desired_aspect_ratio);
@@ -239,7 +239,7 @@ class CropWidget : Gtk.DrawingArea {
 
   public override bool draw (Cairo.Context ct) {
     if (image == null)
-      return false;
+      return Gdk.EVENT_PROPAGATE;
 
     int widget_width  = get_allocated_width ();
     int widget_height = get_allocated_height ();
@@ -279,7 +279,7 @@ class CropWidget : Gtk.DrawingArea {
       ct.set_source_rgba (1.0, 1.0, 1.0, 0.7);
     ct.fill ();
 
-    return true;
+    return Gdk.EVENT_PROPAGATE;
   }
 
   private inline void set_cursor (Gdk.Cursor cursor) {
@@ -341,12 +341,6 @@ class CropWidget : Gtk.DrawingArea {
     }
 
     return false;
-  }
-
-  private inline int MIN (int a, int b) {
-    if (a < b)
-      return a;
-    return b;
   }
 
   public Gdk.Pixbuf get_cropped_image () {

@@ -16,18 +16,22 @@
  */
 
 public class MultiMediaWidget : Gtk.Box {
-  public static const int MAX_HEIGHT = 180;
+  public const int MAX_HEIGHT = 180;
   public int media_count { public get; private set; default = 0;}
   public bool restrict_height = false;
   public unowned Gtk.Window window;
   private MediaButton[] media_buttons;
 
-  public signal void media_clicked (Media m, int index);
+  public signal void media_clicked (Cb.Media m, int index);
   private bool media_invalid_fired = false;
   public signal void media_invalid ();
 
+  construct {
+    this.orientation = Gtk.Orientation.HORIZONTAL;
+    this.homogeneous = true;
+  }
 
-  public void set_all_media (Media[] medias) {
+  public void set_all_media (Cb.Media[] medias) {
     this.remove_all ();
     this.media_buttons = new MediaButton[medias.length];
     this.media_count = medias.length;
@@ -44,7 +48,7 @@ public class MultiMediaWidget : Gtk.Box {
     });
   }
 
-  public void set_media (int index, Media media) {
+  public void set_media (int index, Cb.Media media) {
     assert (index < media_count);
 
     if (media.loaded && media.invalid)
@@ -59,12 +63,10 @@ public class MultiMediaWidget : Gtk.Box {
       media_buttons[index].media = media;
     } else {
       media_buttons[index].media = media;
-      media.finished_loading.connect (media_loaded_cb);
+      media.progress.connect (media_loaded_cb);
     }
     button.visible = true;
     button.clicked.connect (button_clicked_cb);
-    button.hexpand = true;
-    button.halign = Gtk.Align.FILL;
     this.pack_start (button, true, true);
     this.queue_draw ();
   }
@@ -77,7 +79,10 @@ public class MultiMediaWidget : Gtk.Box {
   }
 
 
-  private void media_loaded_cb (Media source) {
+  private void media_loaded_cb (Cb.Media source) {
+    if (source.percent_loaded < 100)
+      return;
+
     if (source.invalid) {
       for (int i = 0; i < media_count; i ++) {
         if (media_buttons[i] != null && media_buttons[i].media == source) {

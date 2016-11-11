@@ -16,10 +16,10 @@
  */
 
 class AddImageButton : Gtk.Widget {
-  private static const int MIN_WIDTH  = 40;
-  private static const int MAX_HEIGHT = 150;
-  private static const int MIN_HEIGHT = 100;
-  private static const int ICON_SIZE  = 32;
+  private const int MIN_WIDTH  = 40;
+  private const int MAX_HEIGHT = 150;
+  private const int MIN_HEIGHT = 100;
+  private const int ICON_SIZE  = 32;
   public string image_path;
   public Cairo.ImageSurface? surface;
 
@@ -138,8 +138,21 @@ class AddImageButton : Gtk.Widget {
       media_width = this.surface.get_width ();
     }
 
-    minimum = int.min (media_width, MIN_WIDTH);
-    natural = media_width;
+    minimum = (int)(int.min (media_width, MIN_WIDTH) * delete_factor);
+    natural = (int)(media_width * delete_factor);
+  }
+
+  public override void get_preferred_height (out int minimum,
+                                             out int natural) {
+    int media_height;
+    if (this.surface == null) {
+      media_height = 1;
+    } else {
+      media_height = this.surface.get_height ();
+    }
+
+    minimum = (int)(int.min (media_height, MIN_HEIGHT) * delete_factor);
+    natural = (int)(media_height * delete_factor);
   }
 
   private bool delete_tick_cb (Gtk.Widget     widget,
