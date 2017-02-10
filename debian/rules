@@ -10,7 +10,7 @@ export DEB_BUILD_OPTIONS = nocheck
 	dh $@
 
 override_dh_auto_configure:
-	./autogen.sh --prefix=/usr
+	./autogen.sh --prefix=/usr --disable-spellcheck
 	dh_auto_configure -- --disable-spellcheck
 
 
