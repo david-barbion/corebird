@@ -1,3 +1,13 @@
+corebird (1.4.2-1~16.04) xenial; urgency=medium
+
+  * Fix a crash when going back from a tweet with media to another
+    tweet with media
+  * Fix compilation with --disable-video
+  * Decrease log level of UserStream output to debug when no internet
+    connection is present
+
+ -- David Barbion <davidb@230ruedubac.fr>  Fri, 10 Feb 2017 21:51:58 +0100
+
 corebird (1.4.1.1-2~16.04) xenial; urgency=medium
 
   * add dependency on spell 
