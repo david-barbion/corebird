@@ -16,7 +16,7 @@
  */
 
 [GtkTemplate (ui = "/org/baedert/corebird/ui/tweet-list-entry.ui")]
-public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
+public class TweetListEntry : Cb.TwitterItem, Gtk.ListBoxRow {
   private const GLib.ActionEntry[] action_entries = {
     {"quote", quote_activated},
     {"delete", delete_activated}
@@ -81,9 +81,6 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
       this._read_only = value;
     }
   }
-  public int64 sort_factor {
-    get { return tweet.source_tweet.id;}
-  }
   public bool shows_actions {
     get {
       return stack.visible_child == action_box;
@@ -94,6 +91,7 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
   public Cb.Tweet tweet;
   private bool values_set = false;
   private bool delete_first_activated = false;
+  private GLib.TimeSpan last_timediff;
   [Signal (action = true)]
   private signal void reply_tweet ();
   [Signal (action = true)]
@@ -508,6 +506,21 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
     return (int)(cur_time.difference (then) / 1000.0 / 1000.0);
   }
 
+  public int64 get_sort_factor () {
+    return tweet.source_tweet.id;
+  }
+
+  public int64 get_timestamp () {
+    return tweet.source_tweet.created_at;
+  }
+
+  public GLib.TimeSpan get_last_set_timediff () {
+    return this.last_timediff;
+  }
+
+  public void set_last_set_timediff (GLib.TimeSpan span) {
+    this.last_timediff = span;
+  }
 
   public void toggle_mode () {
     if (this._read_only)

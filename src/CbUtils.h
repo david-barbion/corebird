@@ -1,5 +1,5 @@
 /*  This file is part of corebird, a Gtk+ linux Twitter client.
- *  Copyright (C) 2013 Timm Bäder
+ *  Copyright (C) 2017 Timm Bäder
  *
  *  corebird is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,14 +15,20 @@
  *  along with corebird.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class WeakRef : GLib.Object {
-  private GLib.WeakRef wr;
+#ifndef __UTILS_H
+#define __UTILS_H
 
-  public WeakRef (ITwitterItem obj) {
-    this.wr = GLib.WeakRef (obj);
-  }
+#include <gtk/gtk.h>
+#include <glib-object.h>
 
-  public new ITwitterItem get () {
-    return (ITwitterItem) wr.get ();
-  }
-}
+void cb_utils_bind_model (GtkWidget                  *listbox,
+                          GListModel                 *model,
+                          GtkListBoxCreateWidgetFunc  func,
+                          void                       *data);
+
+
+char * cb_utils_escape_quotes (const char *in);
+
+GDateTime * cb_utils_parse_date (const char *_in);
+
+#endif

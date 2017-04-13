@@ -30,8 +30,9 @@ class MediaVideoWidget : Gtk.Stack {
   private string? media_url = null;
 
   public MediaVideoWidget (Cb.Media media) {
+    GLib.return_if_fail (media.surface != null);
+
     this.cancellable = new GLib.Cancellable ();
-    assert (media.surface != null);
     var image_surface = (Cairo.ImageSurface) media.surface;
     video_progress.show ();
     int h;
@@ -46,10 +47,6 @@ class MediaVideoWidget : Gtk.Stack {
       case Cb.MediaType.INSTAGRAM_VIDEO:
         this.media_url = media.url;
         /* Video will be started in init() */
-      break;
-
-      case Cb.MediaType.VINE:
-        fetch_real_url.begin (media.url, "<meta property=\"twitter:player:stream\" content=\"(.*?)\"");
       break;
 
       case Cb.MediaType.ANIMATED_GIF:
@@ -152,11 +149,6 @@ class MediaVideoWidget : Gtk.Stack {
   private void show_error (string error_message) {
     error_label.label = error_message;
     this.visible_child = error_label;
-  }
-
-  public override bool button_press_event (Gdk.EventButton evt) {
-    stop ();
-    return Gdk.EVENT_PROPAGATE;
   }
 
   public override bool key_press_event (Gdk.EventKey evt) {

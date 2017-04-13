@@ -166,12 +166,6 @@ namespace TweetUtils {
    */
   public int calc_tweet_length (string text, int media_count = 0) {
     int length = 0;
-
-    /* trailing & laeding whitespace don't count unless there's other text */
-    if (text.strip ().length == 0) {
-      return 0;
-    }
-
     unichar c;
     int last_word_start = 0;
     int n_chars = text.char_count ();
@@ -207,12 +201,10 @@ namespace TweetUtils {
   }
 
   private int get_word_length (string s) {
-    if (s.has_prefix ("www.") || s.has_prefix ("http://"))
+    if (s.has_prefix ("www.")    ||
+        s.has_prefix ("http://") ||
+        s.has_prefix ("https://"))
       return Twitter.short_url_length;
-
-    if (s.has_prefix ("https://"))
-      return Twitter.short_url_length_https;
-
 
     string[] parts = s.split ("/");
     if (parts.length > 0) {
@@ -226,6 +218,7 @@ namespace TweetUtils {
   }
 
   bool activate_link (string uri, MainWindow window) {
+    debug ("Activating '%s'", uri);
     uri = uri._strip ();
     string term = uri.substring (1);
 

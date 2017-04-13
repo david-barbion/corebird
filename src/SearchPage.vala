@@ -44,7 +44,7 @@ class SearchPage : IPage, Gtk.Box {
   [GtkChild]
   private ScrollWidget scroll_widget;
   private Gtk.RadioButton radio_button;
-  public DeltaUpdater delta_updater;
+  public Cb.DeltaUpdater delta_updater;
   private GLib.Cancellable? cancellable = null;
   private LoadMoreEntry load_more_entry = new LoadMoreEntry ();
   private string search_query;
@@ -59,15 +59,15 @@ class SearchPage : IPage, Gtk.Box {
   private bool loading_users  = false;
 
 
-  public SearchPage (int id, Account account, DeltaUpdater delta_updater) {
+  public SearchPage (int id, Account account) {
     this.id = id;
     this.account = account;
-    this.delta_updater = delta_updater;
+    this.delta_updater = new Cb.DeltaUpdater (tweet_list);
 
     /* We are slightly abusing the TweetListBox here */
     tweet_list.bind_model (null, null);
     tweet_list.set_header_func (header_func);
-    tweet_list.set_sort_func (ITwitterItem.sort_func);
+    tweet_list.set_sort_func (twitter_item_sort_func);
     tweet_list.row_activated.connect (row_activated_cb);
     tweet_list.retry_button_clicked.connect (retry_button_clicked_cb);
     search_button.clicked.connect (() => {
@@ -332,7 +332,6 @@ class SearchPage : IPage, Gtk.Box {
         if (tweet.id < lowest_tweet_id)
           lowest_tweet_id = tweet.id;
         var entry = new TweetListEntry (tweet, main_window, account);
-        delta_updater.add (entry);
         if (!collect_obj.done)
           entry.visible = false;
         else
@@ -386,10 +385,8 @@ class SearchPage : IPage, Gtk.Box {
 }
 
 [GtkTemplate (ui = "/org/baedert/corebird/ui/load-more-entry.ui")]
-class LoadMoreEntry : Gtk.ListBoxRow, ITwitterItem {
-  public int64 sort_factor {
-    get { return int64.MAX-2; }
-  }
+class LoadMoreEntry : Gtk.ListBoxRow, Cb.TwitterItem {
+  private GLib.TimeSpan last_timediff;
   public bool seen {
     get { return true; }
     set {}
@@ -404,4 +401,18 @@ class LoadMoreEntry : Gtk.ListBoxRow, ITwitterItem {
     return load_more_button;
   }
   public int update_time_delta (GLib.DateTime? now = null) {return 0;}
+  public int64 get_sort_factor () {
+    return int64.MAX - 2;
+  }
+  public int64 get_timestamp () {
+    return 0;
+  }
+
+  public GLib.TimeSpan get_last_set_timediff () {
+    return this.last_timediff;
+  }
+
+  public void set_last_set_timediff (GLib.TimeSpan span) {
+    this.last_timediff = span;
+  }
 }

@@ -80,13 +80,11 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
   [GtkChild]
   private Gtk.Label error_label;
 
-  public TweetInfoPage (int id, Account account, DeltaUpdater delta_updater) {
+  public TweetInfoPage (int id, Account account) {
     this.id = id;
     this.account = account;
     this.top_list_box.account = account;
     this.bottom_list_box.account = account;
-    this.top_list_box.delta_updater = delta_updater;
-    this.bottom_list_box.delta_updater = delta_updater;
 
 
     mm_widget.media_clicked.connect ((m, i) => TweetUtils.handle_media_click (tweet, main_window, i));
@@ -189,7 +187,7 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
       // add the direct successor to the top_list
       top_list_box.model.clear ();
       top_list_box.show ();
-      var t = bottom_list_box.model.get_from_id (new_id, -1);
+      var t = bottom_list_box.model.get_for_id (new_id, -1);
       if (t != null) {
         top_list_box.model.add (t);
       } else {

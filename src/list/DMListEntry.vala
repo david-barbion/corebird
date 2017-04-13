@@ -16,7 +16,7 @@
  */
 
 [GtkTemplate (ui = "/org/baedert/corebird/ui/dm-list-entry.ui")]
-class DMListEntry : Gtk.ListBoxRow, ITwitterItem {
+class DMListEntry : Gtk.ListBoxRow, Cb.TwitterItem {
   [GtkChild]
   private AvatarWidget avatar_image;
   [GtkChild]
@@ -47,10 +47,7 @@ class DMListEntry : Gtk.ListBoxRow, ITwitterItem {
     set {}
   }
 
-  public int64 sort_factor {
-    get { return timestamp; }
-  }
-
+  private GLib.TimeSpan last_timediff;
   public int64 timestamp;
   public int64 id;
   public int64 user_id;
@@ -83,6 +80,22 @@ class DMListEntry : Gtk.ListBoxRow, ITwitterItem {
     GLib.DateTime then = new GLib.DateTime.from_unix_local (timestamp);
     time_delta_label.label = Utils.get_time_delta (then, cur_time);
     return (int)(cur_time.difference (then) / 1000.0 / 1000.0);
+  }
+
+  public int64 get_sort_factor () {
+    return timestamp;
+  }
+
+  public int64 get_timestamp () {
+    return timestamp;
+  }
+
+  public GLib.TimeSpan get_last_set_timediff () {
+    return this.last_timediff;
+  }
+
+  public void set_last_set_timediff (GLib.TimeSpan span) {
+    this.last_timediff = span;
   }
 }
 

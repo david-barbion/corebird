@@ -17,6 +17,7 @@
 
 #include "CbTypes.h"
 #include "CbMediaDownloader.h"
+#include "CbUtils.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -41,8 +42,9 @@ escape_ampersand (const char *in)
       c = g_utf8_get_char (p);
     }
 
-  result = g_malloc (bytes + (n_ampersands * 4) + 1);
-  result[bytes + (n_ampersands * 4)] = '\0';
+  /* 'amp;' and not '&amp;' since the input already contains the '&' */
+  result = g_malloc (bytes + (n_ampersands * strlen ("amp;")) + 1);
+  result[bytes + (n_ampersands * strlen ("amp;"))] = '\0';
 
   p = in;
   c = g_utf8_get_char (p);
@@ -73,7 +75,6 @@ escape_ampersand (const char *in)
 
   return result;
 }
-
 
 
 void
@@ -176,109 +177,6 @@ cb_mini_tweet_init (CbMiniTweet *t)
   t->n_entities = 0;
 }
 
-static GDateTime *
-parse_created_at (const char *_in)
-{
-  char *in = g_strdup (_in);
-  const char *month_str;
-  int year, month, hour, minute, day;
-  GDateTime *result;
-  GDateTime *result_local;
-  GTimeZone *time_zone;
-  GTimeZone *local_time_zone;
-  double seconds;
-
-  /* The input string is ASCII, in the form  'Wed Jun 20 19:01:28 +0000 2012' */
-
-  if (!_in)
-    {
-      g_free (in);
-      return g_date_time_new_now_local ();
-    }
-
-  g_assert (strlen (_in) == 30);
-
-  in[3]  = '\0';
-  in[7]  = '\0';
-  in[10] = '\0';
-  in[13] = '\0';
-  in[16] = '\0';
-  in[19] = '\0';
-  in[25] = '\0';
-
-  year    = atoi (in + 26);
-  day     = atoi (in + 8);
-  hour    = atoi (in + 11);
-  minute  = atoi (in + 14);
-  seconds = atof (in + 17);
-
-  month_str = in + 4;
-  switch (month_str[0])
-    {
-      case 'J': /* January */
-        if (month_str[1] == 'u' && month_str[2] == 'n')
-          month = 6;
-        else if (month_str[1] == 'u' && month_str[2] == 'l')
-          month = 7;
-        else
-          month = 1;
-        break;
-      case 'F':
-        month = 2;
-        break;
-      case 'M':
-        if (month_str[1] == 'a')
-          month = 3;
-        else
-          month = 5;
-        break;
-      case 'A':
-        if (month_str[1] == 'p')
-          month = 4;
-        else
-          month = 8;
-        break;
-      case 'S':
-        month = 9;
-        break;
-      case 'O':
-        month = 10;
-        break;
-      case 'N':
-        month = 11;
-        break;
-      case 'D':
-        month = 12;
-        break;
-
-      default:
-        g_warn_if_reached ();
-        break;
-    }
-
-
-  time_zone = g_time_zone_new (in + 20);
-
-  result = g_date_time_new (time_zone,
-                            year,
-                            month,
-                            day,
-                            hour,
-                            minute,
-                            seconds);
-  g_assert (result);
-
-  local_time_zone = g_time_zone_new_local ();
-  result_local = g_date_time_to_timezone (result, local_time_zone);
-
-  g_time_zone_unref (local_time_zone);
-  g_time_zone_unref (time_zone);
-  g_date_time_unref (result);
-  g_free (in);
-  return result_local;
-}
-
-
 void
 cb_mini_tweet_parse (CbMiniTweet *t,
                      JsonObject  *obj)
@@ -291,7 +189,7 @@ cb_mini_tweet_parse (CbMiniTweet *t,
   else
     extended_object = obj;
 
-  time = parse_created_at (json_object_get_string_member (obj, "created_at"));
+  time = cb_utils_parse_date (json_object_get_string_member (obj, "created_at"));
 
   t->id = json_object_get_int_member (obj, "id");
   if (json_object_has_member (extended_object, "full_text"))
@@ -442,7 +340,10 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
             }
 
           if (duplicate)
-            continue;
+            {
+              g_free (url_str);
+              continue;
+            }
 
           t->entities[url_index].from = json_array_get_int_element (indices, 0);
           t->entities[url_index].to   = json_array_get_int_element (indices, 1);

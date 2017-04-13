@@ -74,7 +74,7 @@ CB_VALA_FLAGS=" \
   --pkg sqlite3 \
   --pkg libsoup-2.4 \
   --pkg glib-2.0 \
-  --target-glib=2.38"
+  --target-glib=2.44"
 
 
 AC_SUBST(CB_CFLAGS)
@@ -89,6 +89,14 @@ AC_CHECK_LIB([gtk-3], [gtk_popover_popup],
              [CB_VALA_FLAGS="$CB_VALA_FLAGS -D GTK322"],
             )
 ])
+
+# Check for librest 0.8.1, which contains a bug fix for
+# rest_proxy_call_upload we need
+PKG_CHECK_MODULES([REST081], ["rest-0.7 >= 0.8.1"],
+                  [CB_VALA_FLAGS="$CB_VALA_FLAGS -D REST081"],
+                  []
+)
+
 
 
 AC_ARG_VAR([GLIB_COMPILE_RESOURCES],[the glib-compile-resources program])
@@ -145,13 +153,21 @@ src/Makefile
 data/Makefile
 data/hicolor/Makefile
 data/hicolor/256x256/Makefile
+data/hicolor/256x256/apps/Makefile
 data/hicolor/128x128/Makefile
+data/hicolor/128x128/apps/Makefile
 data/hicolor/96x96/Makefile
+data/hicolor/96x96/apps/Makefile
 data/hicolor/64x64/Makefile
+data/hicolor/64x64/apps/Makefile
 data/hicolor/48x48/Makefile
+data/hicolor/48x48/apps/Makefile
 data/hicolor/32x32/Makefile
+data/hicolor/32x32/apps/Makefile
 data/hicolor/24x24/Makefile
+data/hicolor/24x24/apps/Makefile
 data/hicolor/16x16/Makefile
+data/hicolor/16x16/apps/Makefile
 po/Makefile.in
 tests/Makefile
 ])

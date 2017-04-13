@@ -1,4 +1,5 @@
-project('Corebird', ['vala', 'c'])
+project('Corebird', ['vala', 'c'],
+        version: '1.4.2')
 
 gnome = import('gnome')
 
@@ -6,15 +7,23 @@ add_global_arguments('-DGETTEXT_PACKAGE="corebird"', language: 'c')
 add_global_arguments('-DDATADIR="' + get_option('datadir') + '"', language: 'c')
 add_global_arguments('-DG_LOG_DOMAIN="corebird"', language: 'c')
 add_global_arguments('--enable-deprecated', language: 'vala')
+add_global_arguments('-D', 'GTK322', language: 'vala')
 
 srcdir = include_directories('src')
 
-glib_dep = dependency('glib-2.0')
-gtk_dep  = dependency('gtk+-3.0')
+min_glib_version = '2.44'
+
+glib_dep = dependency('glib-2.0', version: '>=' + min_glib_version)
+gtk_dep  = dependency('gtk+-3.0', version: '>=3.18')
 json_dep = dependency('json-glib-1.0')
-rest_dep = dependency('rest-0.7')
+rest_dep = dependency('rest-0.7', version: '>=0.7.91')
 sql_dep  = dependency('sqlite3')
 soup_dep = dependency('libsoup-2.4')
+
+if (rest_dep.version() >= '0.8.1')
+  add_global_arguments('-D', 'REST081', language: 'vala')
+  add_global_arguments('-DREST081', language: 'c')
+endif
 
 cb_deps = [
   glib_dep,
@@ -25,20 +34,22 @@ cb_deps = [
   soup_dep
 ]
 
-enable_debug = get_option('enable-debug')
+enable_debug = get_option('debug')
 if (enable_debug)
+  add_global_arguments('-g', language: 'c')
   add_global_arguments('-DDEBUG', language: 'c')
+  add_global_arguments('-DG_DISABLE_CAST_CHECKS', language: 'c')
   add_global_arguments('-D', 'DEBUG', language: 'vala')
 endif
 
-enable_video = get_option('enable-video')
+enable_video = get_option('video')
 if (enable_video)
   add_global_arguments('-DVIDEO', language: 'c')
   add_global_arguments('-D', 'VIDEO', language: 'vala')
   cb_deps += [dependency('gstreamer-video-1.0', version: '>= 1.6')]
 endif
 
-enable_spellcheck = get_option('enable-spellcheck')
+enable_spellcheck = get_option('spellcheck')
 if (enable_spellcheck)
   add_global_arguments('-DSPELLCHECK', language: 'c')
   add_global_arguments('-D', 'SPELLCHECK', language: 'vala')
@@ -53,13 +64,11 @@ corebird_lib_sources = files([
   'src/DMPage.vala',
   'src/DMThreadsPage.vala',
   'src/DefaultTimeline.vala',
-  'src/DeltaUpdater.vala',
   'src/FavoritesTimeline.vala',
   'src/FilterPage.vala',
   'src/HomeTimeline.vala',
   'src/IMessageReceiver.vala',
   'src/IPage.vala',
-  'src/ITwitterItem.vala',
   'src/ListStatusesPage.vala',
   'src/ListsPage.vala',
   'src/MainWidget.vala',
@@ -87,8 +96,8 @@ corebird_lib_sources = files([
   'src/list/TweetListEntry.vala',
   'src/list/UserFilterEntry.vala',
   'src/list/UserListEntry.vala',
+  'src/list/FavImageRow.vala',
   'src/model/DMThreadsModel.vala',
-  'src/model/TweetModel.vala',
   'src/sql/Database.vala',
   'src/sql/InsertStatement.vala',
   'src/sql/SelectStatement.vala',
@@ -101,7 +110,6 @@ corebird_lib_sources = files([
   'src/util/UserCompletion.vala',
   'src/util/UserUtils.vala',
   'src/util/Utils.vala',
-  'src/util/WeakRef.vala',
   'src/widgets/AccountCreateWidget.vala',
   'src/widgets/AddImageButton.vala',
   'src/widgets/AspectImage.vala',
@@ -139,23 +147,19 @@ corebird_lib_sources = files([
 
   # C Sources
   'src/CbTweet.c',
-  'src/CbTweet.h',
   'src/CbTextTransform.c',
-  'src/CbTextTransform.h',
   'src/CbMedia.c',
-  'src/CbMedia.h',
   'src/CbMediaDownloader.c',
-  'src/CbMediaDownloader.h',
   'src/CbTypes.c',
-  'src/CbTypes.h',
-  'src/CbUserCounter.h',
   'src/CbUserCounter.c',
-  'src/CbFilter.h',
   'src/CbFilter.c',
-  'src/CbAvatarCache.h',
   'src/CbAvatarCache.c',
-  'src/CbMediaImageWidget.h',
   'src/CbMediaImageWidget.c',
+  'src/CbTweetModel.c',
+  'src/CbTwitterItem.c',
+  'src/CbDeltaUpdater.c',
+  'src/CbUtils.c',
+  'vapi/corebird-internal.vapi'
 ])
 
 # glib resources
@@ -176,15 +180,14 @@ configure_file(
 cb_lib = static_library(
   'libcorebird',
   corebird_lib_sources,
-  cb_resources,
   dependencies: cb_deps,
   include_directories: srcdir,
   vala_args: [
-    meson.source_root() + '/vapi/corebird-internal.vapi',
     meson.source_root() + '/vapi/config.vapi',
-    '--vapidir=vapi/',
-    '--target-glib=2.38',
+    '--target-glib=' + min_glib_version,
+    '--vapidir=' + meson.source_root() + '/vapi/',
     '--gresources=' + meson.source_root() + '/corebird.gresource.xml',
+    '--enable-experimental'
   ],
 )
 cb_dep = declare_dependency(
@@ -203,8 +206,10 @@ executable(
   include_directories: srcdir,
   vala_args: [
     meson.source_root() + '/vapi/corebird-internal.vapi',
-  ]
+  ],
+  install: true
 )
 
-subdir('tests')
 subdir('data')
+subdir('po')
+subdir('tests')

@@ -22,6 +22,7 @@ class ComposeJob : GLib.Object {
   public int64? reply_id = null;
   private GLib.GenericArray<string> image_paths = new GLib.GenericArray<string> ();
   public signal void image_upload_started  (string path);
+  public signal void image_progress  (string path, double progress);
   public signal void image_upload_finished (string path, string? error_message = null);
 
   public ComposeJob (Account account) {
@@ -49,7 +50,45 @@ class ComposeJob : GLib.Object {
                                             path);
     call.add_param_full (param);
 
+#if REST081
+    /* rest_proxy_call_debug is broken in librest < 0.8.1,
+     * so we have to do this conditionally since 0.8.1
+     * is not available in the flatpak runtime nor in
+     * most distributions atm.
+     */
+    int64 id = -1;
+    debug ("rest_proxy_call_upload'ing %s...", path);
+    call.upload ((call, total, uploaded, error) => {
+      double percent = (double) uploaded / (double) total;
+      debug ("Upload: %lld of %lld", uploaded, total);
 
+      if (cancellable.is_cancelled ())
+        call.cancel ();
+
+      this.image_progress (path, percent);
+
+      if (uploaded == total) {
+        debug ("%s", call.get_payload ());
+        var parser = new Json.Parser ();
+        try {
+          parser.load_from_data (call.get_payload ());
+        } catch (GLib.Error e) {
+          warning ("Error while parsing media json: %s; Json: \n%s",
+                   e.message, call.get_payload ());
+          upload_image.callback ();
+          return;
+        }
+        id = parser.get_root ().get_object ().get_int_member ("media_id");
+
+        upload_image.callback ();
+      }
+
+    }, proxy);
+    yield;
+
+    return id;
+
+#else
     yield call.invoke_async (cancellable);
     var parser = new Json.Parser ();
     try {
@@ -63,6 +102,7 @@ class ComposeJob : GLib.Object {
 
     var root = parser.get_root ().get_object ();
     return root.get_int_member ("media_id");
+#endif
   }
 
 

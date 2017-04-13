@@ -10,8 +10,10 @@ tests = [
   'filters',
   'texttransform',
   'avatardownload',
+  'avatarcache',
   'friends',
-  'highlighting'
+  'highlighting',
+  'twitteritem'
 ]
 
 foreach test_name : tests

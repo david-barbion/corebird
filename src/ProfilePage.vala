@@ -96,12 +96,11 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
   private Cursor? following_cursor = null;
   private GLib.SimpleActionGroup actions;
 
-  public ProfilePage (int id, Account account, DeltaUpdater delta_updater) {
+  public ProfilePage (int id, Account account) {
     this.id = id;
     this.account = account;
     this.user_lists.account = account;
     this.tweet_list.account = account;
-    this.tweet_list.delta_updater = delta_updater;
 
     this.scrolled_to_end.connect (() => {
       if (user_stack.visible_child == tweet_list) {
@@ -409,7 +408,7 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
     call.add_param ("count", requested_tweet_count.to_string ());
     call.add_param ("contributor_details", "true");
     call.add_param ("include_my_retweet", "true");
-    call.add_param ("max_id", (tweet_list.model.lowest_id - 1).to_string ());
+    call.add_param ("max_id", (tweet_list.model.min_id - 1).to_string ());
 
     Json.Node? root = null;
     try {

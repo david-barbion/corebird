@@ -74,11 +74,10 @@ class ListStatusesPage : ScrollWidget, IPage {
   private bool loading = false;
 
 
-  public ListStatusesPage (int id, Account account, DeltaUpdater delta_updater) {
+  public ListStatusesPage (int id, Account account) {
     this.id = id;
     this.account = account;
     this.tweet_list.account = account;
-    this.tweet_list.delta_updater = delta_updater;
     this.scroll_event.connect (scroll_event_cb);
     this.scrolled_to_end.connect (load_older);
     this.scrolled_to_start.connect (handle_scrolled_to_start);
@@ -199,7 +198,7 @@ class ListStatusesPage : ScrollWidget, IPage {
     call.add_param ("tweet_mode", "extended");
     call.set_method ("GET");
     call.add_param ("list_id", list_id.to_string ());
-    call.add_param ("max_id", (tweet_list.model.lowest_id -1).to_string ());
+    call.add_param ("max_id", (tweet_list.model.min_id -1).to_string ());
     call.add_param ("count", requested_tweet_count.to_string ());
 
     Json.Node? root = null;
@@ -320,7 +319,7 @@ class ListStatusesPage : ScrollWidget, IPage {
     call.set_method ("GET");
     call.add_param ("list_id", list_id.to_string ());
     call.add_param ("count", "30");
-    int64 since_id = tweet_list.model.greatest_id;
+    int64 since_id = tweet_list.model.max_id;
     if (since_id < 0)
       since_id = 1;
 
