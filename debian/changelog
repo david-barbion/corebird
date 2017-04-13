@@ -1,4 +1,4 @@
-corebird (1.4.1.1-2~16.10) yakkety; urgency=medium
+corebird (1.4.2.2-1~17.04) zesty; urgency=medium
 
   * add dependency on spell 
   * Lower the required gspell version to 1.0
