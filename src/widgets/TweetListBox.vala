@@ -92,20 +92,35 @@ public class TweetListBox : Gtk.ListBox {
         }
         tle.toggle_mode ();
         if (tle.shows_actions)
-          this._action_entry = tle;
+          set_action_entry (tle);
         else
-          this._action_entry = null;
+          set_action_entry (null);
 
         this.press_gesture.set_state (Gtk.EventSequenceState.CLAIMED);
       }
     }
   }
 
+  private void set_action_entry (TweetListEntry? entry) {
+    if (this._action_entry != null) {
+      this._action_entry.destroy.disconnect (action_entry_destroyed_cb);
+      this._action_entry = null;
+    }
+
+    if (entry != null) {
+      this._action_entry = entry;
+      this._action_entry.destroy.connect (action_entry_destroyed_cb);
+    }
+  }
+
+  private void action_entry_destroyed_cb () {
+    this._action_entry = null;
+  }
 
   private void add_placeholder () {
     placeholder = new Gtk.Stack ();
     placeholder.transition_type = Gtk.StackTransitionType.CROSSFADE;
-    var loading_label = new Gtk.Label (_("Loading..."));
+    var loading_label = new Gtk.Label (_("Loading…"));
     loading_label.get_style_context ().add_class ("dim-label");
     placeholder.add_named (loading_label, "spinner");
     no_entries_label  = new Gtk.Label (_("No entries found"));

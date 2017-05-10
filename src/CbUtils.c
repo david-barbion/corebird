@@ -18,6 +18,7 @@
 #include "CbUtils.h"
 #include <string.h>
 #include <stdlib.h>
+#include <glib/gi18n.h>
 
 void
 cb_utils_bind_model (GtkWidget                  *listbox,
@@ -36,6 +37,75 @@ cb_utils_bind_model (GtkWidget                  *listbox,
                            func,
                            data,
                            NULL);
+}
+
+void
+cb_utils_linkify_user (const CbUserIdentity *user,
+                       GString              *str)
+{
+  g_string_append (str, "<span underline='none'><a href='@");
+  g_string_append_printf (str, "%ld", user->id);
+  g_string_append (str, "/@");
+  g_string_append (str, user->screen_name);
+  g_string_append (str, "' ");
+
+  if (strlen (user->user_name) > 0)
+    {
+      char *s1, *s2, *s3, *s4;
+
+      /* TODO: Write one function doing all 4 things, since we need that often
+       *       and execute it often? */
+      s1 = cb_utils_escape_quotes (user->user_name);
+      s2 = cb_utils_escape_ampersands (s1);
+      s3 = cb_utils_escape_quotes (s2);
+      s4 = cb_utils_escape_ampersands (s3);
+
+      g_string_append (str, "title=\"");
+      g_string_append (str, s4);
+      g_string_append_c (str, '"');
+
+      g_free (s1);
+      g_free (s2);
+      g_free (s3);
+      g_free (s4);
+    }
+
+  g_string_append (str, ">@");
+  g_string_append (str, user->screen_name);
+  g_string_append (str, "</a></span>");
+}
+
+void
+cb_utils_write_reply_text (const CbMiniTweet *t,
+                           GString           *str)
+{
+
+  g_return_if_fail (t->reply_id != 0);
+  g_return_if_fail (t->n_reply_users > 0);
+
+  /* TRANSLATORS: This is the start of a "Replying to" line in a tweet */
+  g_string_append (str, _("Replying to"));
+  g_string_append_c (str, ' ');
+
+  cb_utils_linkify_user (&t->reply_users[0], str);
+
+  if (t->n_reply_users == 2)
+    {
+      g_string_append_c (str, ' ');
+      /* TRANSLATORS: This gets appended to the "replying to" line
+       * in a tweet. Example: "Replying to Foo and Bar" where
+       * "and Bar" comes from this string. */
+      g_string_append (str, _("and"));
+      g_string_append_c (str, ' ');
+      cb_utils_linkify_user (&t->reply_users[1], str);
+    }
+  else if (t->n_reply_users > 2)
+    {
+      g_string_append_c (str, ' ');
+      /* TRANSLATORS: This gets appended to the "replying to" line
+       * in a tweet */
+      g_string_append_printf (str, _("and %d others"), t->n_reply_users - 1);
+    }
 }
 
 char *
@@ -94,6 +164,63 @@ cb_utils_escape_quotes (const char *in)
   return result;
 }
 
+/* TODO: Code duplication here with escape_quotes */
+char *
+cb_utils_escape_ampersands (const char *in)
+{
+  gsize bytes = strlen (in);
+  gsize n_ampersands = 0;
+  const char *p = in;
+  gunichar c;
+  char *result;
+  const char *last;
+  char *out_pos;
+
+  c = g_utf8_get_char (p);
+  while (c != '\0')
+    {
+      if (c == '&')
+        n_ampersands ++;
+
+      p = g_utf8_next_char (p);
+      c = g_utf8_get_char (p);
+    }
+
+  /* 'amp;' and not '&amp;' since the input already contains the '&' */
+  result = g_malloc (bytes + (n_ampersands * strlen ("amp;")) + 1);
+  result[bytes + (n_ampersands * strlen ("amp;"))] = '\0';
+
+  p = in;
+  c = g_utf8_get_char (p);
+  last = p;
+  out_pos = result;
+  while (c != '\0')
+    {
+
+      if (c == '&')
+        {
+          int bytes = p - last;
+          memcpy (out_pos, last, bytes);
+          last = p;
+          out_pos[bytes + 0] = '&';
+          out_pos[bytes + 1] = 'a';
+          out_pos[bytes + 2] = 'm';
+          out_pos[bytes + 3] = 'p';
+          out_pos[bytes + 4] = ';';
+          last += 1; /* Skip & */
+          out_pos += bytes + 5;
+        }
+
+      p = g_utf8_next_char (p);
+      c = g_utf8_get_char (p);
+    }
+
+  memcpy (out_pos, last, p - last);
+
+  return result;
+
+}
+
 
 GDateTime *
 cb_utils_parse_date (const char *_in)
@@ -146,7 +273,7 @@ cb_utils_parse_date (const char *_in)
         month = 2;
         break;
       case 'M':
-        if (month_str[1] == 'a')
+        if (month_str[1] == 'a' && month_str[2] == 'r')
           month = 3;
         else
           month = 5;

@@ -67,12 +67,16 @@ namespace Cb {
   public struct MiniTweet {
     public int64 id;
     public int64 created_at;
+    public uint display_range_start;
+    public int64 reply_id;
     public Cb.UserIdentity author;
     public string text;
     [CCode (array_length_cname = "n_entities", array_length_type = "size_t")]
     public Cb.TextEntity[] entities;
     [CCode (array_length_cname = "n_medias", array_length_type = "size_t")]
     public Cb.Media[] medias;
+    [CCode (array_length_cname = "n_reply_users", array_length_type = "size_t")]
+    public Cb.UserIdentity[] reply_users;
 
     [CCode (cname = "cb_mini_tweet_init")]
     public MiniTweet();
@@ -89,7 +93,6 @@ namespace Cb {
       public Cb.MiniTweet? quoted_tweet;
       public int64 id;
       public int64 my_retweet;
-      public int64 reply_id;
       public int favorite_count;
       public int retweet_count;
       public string avatar_url;
@@ -111,6 +114,8 @@ namespace Cb {
       public string get_trimmed_text (uint transform_flags);
       public string get_real_text ();
       public string get_filter_text ();
+
+      public unowned Cb.UserIdentity[] get_reply_users ();
 
       public unowned Cb.Media[] get_medias();
       public string[] get_mentions();
@@ -160,7 +165,7 @@ namespace Cb {
   [CCode (cprefix = "cb_text_transform_", cheader_filename = "CbTextTransform.h")]
   namespace TextTransform {
     string tweet (ref MiniTweet tweet, uint flags, int64 quote_id);
-    string text (string text, TextEntity[] entities, uint flags, size_t n_medias, int64 quote_id);
+    string text (string text, TextEntity[] entities, uint flags, size_t n_medias, int64 quote_id, uint display_range_start = 0);
   }
 
   [CCode (cprefix = "cb_filter_", cheader_filename = "CbFilter.h")]
@@ -256,6 +261,31 @@ namespace Cb {
           "CbUtils.h")]
   namespace Utils {
     public void bind_model (Gtk.Widget listbox, GLib.ListModel model, Gtk.ListBoxCreateWidgetFunc func);
+    public void linkify_user (ref Cb.UserIdentity id, GLib.StringBuilder str);
+    public void write_reply_text (ref Cb.MiniTweet t, GLib.StringBuilder str);
     public GLib.DateTime parse_date (string _in);
+  }
+
+  [CCode (cprefix = "CbBundle_", lower_case_cprefix = "cb_bundle_", cheader_filename =
+          "CbBundle.h")]
+  public class Bundle : GLib.Object {
+    public Bundle ();
+
+    public void put_string (int key, string val);
+    public unowned string get_string (int key);
+
+    public void put_int (int key, int val);
+    public int get_int (int key);
+
+    public void put_int64 (int key, int64 val);
+    public int64 get_int64 (int key);
+
+    public void put_bool (int key, bool val);
+    public bool get_bool (int key);
+
+    public void put_object (int key, GLib.Object val);
+    public unowned GLib.Object get_object (int key);
+
+    public bool equals (Bundle? other);
   }
 }

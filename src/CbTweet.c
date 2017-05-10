@@ -17,6 +17,7 @@
 
 #include "CbTweet.h"
 #include "CbTextTransform.h"
+#include <string.h>
 
 
 /* TODO: We might want to put this into a utils.c later */
@@ -219,9 +220,6 @@ cb_tweet_load_from_json (CbTweet   *tweet,
       if (json_object_get_boolean_member (rt_user, "verified"))
         tweet->state |= CB_TWEET_STATE_VERIFIED;
 
-      if (!json_object_get_null_member (rt, "in_reply_to_status_id"))
-        tweet->reply_id = json_object_get_int_member (rt, "in_reply_to_status_id");
-
       if (usable_json_value (rt, "possibly_sensitive") &&
           json_object_get_boolean_member (rt, "possibly_sensitive"))
         tweet->state |= CB_TWEET_STATE_NSFW;
@@ -236,9 +234,6 @@ cb_tweet_load_from_json (CbTweet   *tweet,
 
       if (json_object_get_boolean_member (user, "verified"))
         tweet->state |= CB_TWEET_STATE_VERIFIED;
-
-      if (!json_object_get_null_member (status, "in_reply_to_status_id"))
-        tweet->reply_id = json_object_get_int_member (status, "in_reply_to_status_id");
 
       if (usable_json_value (status, "possibly_sensitive") &&
           json_object_get_boolean_member (status, "possibly_sensitive"))
@@ -437,6 +432,27 @@ cb_tweet_set_seen (CbTweet *tweet, gboolean value)
   tweet->seen = value;
 }
 
+CbUserIdentity *
+cb_tweet_get_reply_users (CbTweet *tweet,
+                          guint   *n_reply_users)
+{
+  g_return_val_if_fail (CB_IS_TWEET (tweet), NULL);
+  g_return_val_if_fail (n_reply_users != NULL, NULL);
+
+  if (tweet->retweeted_tweet != NULL)
+    {
+      *n_reply_users = tweet->retweeted_tweet->n_reply_users;
+      return tweet->retweeted_tweet->reply_users;
+    }
+  else
+    {
+      *n_reply_users = tweet->source_tweet.n_reply_users;
+      return tweet->source_tweet.reply_users;
+    }
+
+  return NULL; /* shrug */
+}
+
 CbTweet *
 cb_tweet_new (void)
 {
@@ -477,7 +493,6 @@ cb_tweet_init (CbTweet *tweet)
   tweet->state = 0;
   tweet->quoted_tweet = NULL;
   tweet->retweeted_tweet = NULL;
-  tweet->reply_id = 0;
   tweet->notification_id = NULL;
   tweet->seen = TRUE;
 }

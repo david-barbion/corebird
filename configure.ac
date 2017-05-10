@@ -1,4 +1,4 @@
-AC_INIT([corebird],[1.4.2],[mail@baedert.org])
+AC_INIT([corebird],[1.5],[mail@baedert.org])
 
 AC_PREREQ([2.65])
 
@@ -89,15 +89,6 @@ AC_CHECK_LIB([gtk-3], [gtk_popover_popup],
              [CB_VALA_FLAGS="$CB_VALA_FLAGS -D GTK322"],
             )
 ])
-
-# Check for librest 0.8.1, which contains a bug fix for
-# rest_proxy_call_upload we need
-PKG_CHECK_MODULES([REST081], ["rest-0.7 >= 0.8.1"],
-                  [CB_VALA_FLAGS="$CB_VALA_FLAGS -D REST081"],
-                  []
-)
-
-
 
 AC_ARG_VAR([GLIB_COMPILE_RESOURCES],[the glib-compile-resources program])
 AC_PATH_PROG([GLIB_COMPILE_RESOURCES],[glib-compile-resources],[])

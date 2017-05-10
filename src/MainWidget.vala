@@ -21,7 +21,7 @@ public class MainWidget : Gtk.Box {
 
   private Gtk.RadioButton dummy_button  = new Gtk.RadioButton (null);
   private IPage[] pages;
-  private BundleHistory history         = new BundleHistory (5);
+  private BundleHistory history         = new BundleHistory (10);
   private bool page_switch_lock         = false;
   private ImpostorWidget stack_impostor  = new ImpostorWidget ();
 
@@ -77,10 +77,6 @@ public class MainWidget : Gtk.Box {
           }
         });
       }
-
-
-      if (!(page is DefaultTimeline))
-        continue;
     }
 
     Settings.get ().bind ("sidebar-visible", sidebar_revealer, "reveal-child",
@@ -95,7 +91,7 @@ public class MainWidget : Gtk.Box {
    *                See the Page.* constants.
    *
    */
-  public void switch_page (int page_id, Bundle? args = null) {
+  public void switch_page (int page_id, Cb.Bundle? args = null) {
     if (page_id == history.current) {
       if (pages[page_id].handles_double_open ())
         pages[page_id].double_open ();

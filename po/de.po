@@ -11,7 +11,7 @@
 # jupaja, 2014-2015
 # Matthias Kellermann <matthias.kellermann@outlook.com>, 2016
 # Michael <michaelbaer89@gmail.com>, 2014
-# Peter Ludikovsky, 2015
+# Peter L., 2015-2017
 # Peter S <peter@schwindt-net.de>, 2015
 # Philip Gillißen <guerda@freenet.de>, 2015
 # Richard Schwab <mail@w.tf-w.tf>, 2014
@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Corebird\n"
 "Report-Msgid-Bugs-To: https://github.com/baedert/corebird/issues/new\n"
-"POT-Creation-Date: 2017-01-13 17:50+0100\n"
-"PO-Revision-Date: 2017-01-13 16:50+0000\n"
+"POT-Creation-Date: 2017-04-29 18:29+0200\n"
+"PO-Revision-Date: 2017-04-30 09:41+0000\n"
 "Last-Translator: baedert <mail@baedert.org>\n"
 "Language-Team: German (http://www.transifex.com/corebird/corebird/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -54,7 +54,7 @@ msgstr "Weitere Funktionalitäten beinhalten die lokale Anzeige von Videos, mehr
 
 #: data/org.baedert.corebird.appdata.xml.in:21
 msgid "Generic timeline view when using Corebird"
-msgstr ""
+msgstr "Allgemeine Verlaufsansicht bei Nutzung von Corebird"
 
 #: data/org.baedert.corebird.appdata.xml.in:25
 msgid "Typical Twitter profile"
@@ -64,6 +64,10 @@ msgstr "Typisches Twitter-Profil"
 msgid "Account settings can be configured"
 msgstr "Account-Einstellungen können konfiguriert werden"
 
+#: data/org.baedert.corebird.appdata.xml.in:41
+msgid "Timm Bäder"
+msgstr "Timm Bäder"
+
 #: data/org.baedert.corebird.desktop.in:5
 msgid "Use Twitter from within a normal desktop application"
 msgstr "Nutzen Sie Twitter in einer normalen Desktopanwendung"
@@ -72,7 +76,7 @@ msgstr "Nutzen Sie Twitter in einer normalen Desktopanwendung"
 #. localize the semicolons! The list MUST also end with a semicolon!
 #: data/org.baedert.corebird.desktop.in:7
 msgid "twitter;"
-msgstr ""
+msgstr "twitter;"
 
 #. TRANSLATORS: Do NOT translate or transliterate this text (this is an icon
 #. file name)!
@@ -80,32 +84,51 @@ msgstr ""
 msgid "corebird"
 msgstr "corebird"
 
-#: src/DefaultTimeline.vala:365
-msgid "Could not load tweets"
-msgstr "Konnte Tweets nicht laden"
+#. TRANSLATORS: This is the start of a "Replying to" line in a tweet
+#: src/CbUtils.c:87 src/TweetInfoPage.vala:479
+msgid "Replying to"
+msgstr ""
 
-#: src/DMPage.vala:330
+#. TRANSLATORS: This gets appended to the "replying to" line
+#. * in a tweet. Example: "Replying to Foo and Bar" where
+#. * "and Bar" comes from this string.
+#: src/CbUtils.c:98 src/TweetInfoPage.vala:491
+msgid "and"
+msgstr "und"
+
+#. TRANSLATORS: This gets appended to the "replying to" line
+#. * in a tweet
+#: src/CbUtils.c:107
+#, c-format
+msgid "and %d others"
+msgstr ""
+
+#: src/DMPage.vala:346
 msgid "Direct Conversation"
 msgstr "Direktnachrichten"
 
-#: src/DMThreadsPage.vala:207
+#: src/DMThreadsPage.vala:205
 #, c-format
 msgid "%d new Message from %s"
 msgid_plural "%d new Messages from %s"
 msgstr[0] "%d neue Nachricht von %s"
 msgstr[1] "%d neue Nachrichten von %s"
 
-#: src/DMThreadsPage.vala:213 src/UserEventReceiver.vala:94
+#: src/DMThreadsPage.vala:211 src/UserEventReceiver.vala:94
 #, c-format
 msgid "New direct message from %s"
 msgstr "Neue Direktnachricht von %s"
 
-#: src/DMThreadsPage.vala:223 src/DMThreadsPage.vala:237
+#: src/DMThreadsPage.vala:221 src/DMThreadsPage.vala:235
 msgid "Direct Messages"
 msgstr "Direktnachrichten"
 
+#: src/DefaultTimeline.vala:357
+msgid "Could not load tweets"
+msgstr "Konnte Tweets nicht laden"
+
 #: src/FavoritesTimeline.vala:67 src/FavoritesTimeline.vala:71
-#: src/TweetInfoPage.vala:479
+#: src/TweetInfoPage.vala:521
 msgid "Favorites"
 msgstr "Favoriten"
 
@@ -138,33 +161,13 @@ msgstr[1] "%d neue Tweets!"
 msgid "Home"
 msgstr "Timeline"
 
-#: src/list/DMThreadEntry.vala:71
-#, c-format
-msgid "(%d unread)"
-msgid_plural "(%d unread)"
-msgstr[0] "(%d ungelesen)"
-msgstr[1] "(%d ungelesene)"
-
-#: src/ListsPage.vala:120 src/ListsPage.vala:125 ui/profile-page.ui:365
-msgid "Lists"
-msgstr "Listen"
-
-#: src/ListStatusesPage.vala:369
+#: src/ListStatusesPage.vala:378
 msgid "List"
 msgstr "Liste"
 
-#: src/list/TweetListEntry.vala:434
-#, c-format
-msgid "Block %s"
-msgstr ""
-
-#: src/list/TweetListEntry.vala:575
-msgid "This tweet contains images marked as inappropriate"
-msgstr "Das eingebettete Medium könnte sensibles Material beinhalten"
-
-#: src/list/TweetListEntry.vala:582
-msgid "Show anyway"
-msgstr "Trotzdem zeigen"
+#: src/ListsPage.vala:123 src/ListsPage.vala:128 ui/profile-page.ui:364
+msgid "Lists"
+msgstr "Listen"
 
 #: src/MainWindow.vala:79
 msgid "Add new Account"
@@ -179,11 +182,11 @@ msgstr "%s erwähnte %s"
 msgid "Mentions"
 msgstr "Erwähnungen"
 
-#: src/ProfilePage.vala:253
+#: src/ProfilePage.vala:261
 msgid "Protected profile"
 msgstr "Geschütztes Profil"
 
-#: src/ProfilePage.vala:308
+#: src/ProfilePage.vala:319
 #, c-format
 msgid "Tweet to @%s"
 msgstr "Tweet an @%s"
@@ -192,64 +195,92 @@ msgstr "Tweet an @%s"
 msgid "Search"
 msgstr "Suchen"
 
-#: src/TweetInfoPage.vala:295
+#: src/TweetInfoPage.vala:303
 msgid "Could not show tweet"
 msgstr "Konnte Tweet nicht anzeigen"
 
-#: src/TweetInfoPage.vala:478
+#: src/TweetInfoPage.vala:520
 msgid "Retweets"
 msgstr "Retweets"
 
-#: src/TweetInfoPage.vala:487 src/widgets/MediaButton.vala:100
+#: src/TweetInfoPage.vala:529 src/widgets/MediaButton.vala:104
 msgid "Open in Browser"
 msgstr "Im Browser öffnen"
 
-#: src/TweetInfoPage.vala:487
+#: src/TweetInfoPage.vala:529
 msgid "Source"
 msgstr "Quelle"
 
-#: src/TweetInfoPage.vala:533
+#: src/TweetInfoPage.vala:575
 msgid "Tweet Details"
 msgstr "Tweet Details"
 
-#: src/util/Utils.vala:195
+#: src/list/DMThreadEntry.vala:71
+#, c-format
+msgid "(%d unread)"
+msgid_plural "(%d unread)"
+msgstr[0] "(%d ungelesen)"
+msgstr[1] "(%d ungelesene)"
+
+#: src/list/FavImageRow.vala:68 ui/account-dialog.ui:202
+#: ui/account-dialog.ui:259 ui/filter-list-entry.ui:93
+#: ui/list-list-entry.ui:132 ui/list-statuses-page.ui:166
+#: ui/modify-snippet-dialog.ui:108 ui/tweet-info-page.ui:10
+#: ui/tweet-list-entry.ui:10
+msgid "Delete"
+msgstr "Löschen"
+
+#: src/list/TweetListEntry.vala:453
+#, c-format
+msgid "Block %s"
+msgstr "%s blockieren"
+
+#: src/list/TweetListEntry.vala:609
+msgid "This tweet contains images marked as inappropriate"
+msgstr "Das eingebettete Medium könnte sensibles Material beinhalten"
+
+#: src/list/TweetListEntry.vala:616
+msgid "Show anyway"
+msgstr "Trotzdem zeigen"
+
+#: src/util/Utils.vala:168
 msgid "Now"
 msgstr "Jetzt"
 
-#: src/util/Utils.vala:197
+#: src/util/Utils.vala:170
 #, c-format
 msgid "%dm"
 msgstr "%dM"
 
-#: src/util/Utils.vala:201
+#: src/util/Utils.vala:174
 #, c-format
 msgid "%dh"
 msgstr "%dS"
 
-#: src/widgets/AccountCreateWidget.vala:40
-msgid "Don't have an account yet?"
-msgstr "Noch keinen Account?"
+#: src/widgets/AccountCreateWidget.vala:42
+msgid "Don’t have a Twitter account yet?"
+msgstr ""
 
-#: src/widgets/AccountCreateWidget.vala:40
+#: src/widgets/AccountCreateWidget.vala:42
 msgid "Create one"
 msgstr "Erstelle einen"
 
-#: src/widgets/AccountCreateWidget.vala:55
+#: src/widgets/AccountCreateWidget.vala:57
 msgid ""
-"Unauthorized. Most of the time, this means that there's something wrong with"
+"Unauthorized. Most of the time, this means that there’s something wrong with"
 " the Twitter servers and you should try again later"
-msgstr "Unautorisiert. Meinstens bedeutet dies dass es ein Problem mit den Twitter servern gibt und es später erneut versucht werden sollte."
+msgstr ""
 
-#: src/widgets/AccountCreateWidget.vala:67
+#: src/widgets/AccountCreateWidget.vala:69
 #, c-format
 msgid "Could not open %s"
 msgstr "Konnte %s nicht öffnen"
 
-#: src/widgets/AccountCreateWidget.vala:89
+#: src/widgets/AccountCreateWidget.vala:92
 msgid "Wrong PIN"
 msgstr "Falsche PIN"
 
-#: src/widgets/AccountCreateWidget.vala:115
+#: src/widgets/AccountCreateWidget.vala:118
 msgid "Account already in use"
 msgstr "Account schon in Benutzung"
 
@@ -265,56 +296,107 @@ msgstr "Folgen"
 msgid "Unfollow"
 msgstr "Entfolgen"
 
-#: src/widgets/MediaButton.vala:45
+#: src/widgets/MediaButton.vala:48
 msgid "Copy URL"
 msgstr "URL kopieren"
 
-#: src/widgets/PixbufButton.vala:52
-msgid "Copy link"
-msgstr "Kopiere Link"
+#: src/widgets/MediaButton.vala:106
+msgid "Save as…"
+msgstr "Speichern unter…"
 
-#: src/widgets/TweetListBox.vala:99
-msgid "Loading..."
-msgstr "Laden..."
+#: src/widgets/MediaButton.vala:269
+msgid "Save Video"
+msgstr "Speichere Video"
 
-#: src/widgets/TweetListBox.vala:102 src/widgets/TweetListBox.vala:153
-msgid "No entries found"
-msgstr "Keine Einträge gefunden"
+#: src/widgets/MediaButton.vala:271
+msgid "Save Image"
+msgstr "Speichere Bild"
 
-#: src/widgets/TweetListBox.vala:113
-msgid "Retry"
-msgstr "Erneut versuchen"
-
-#: src/window/ComposeTweetWindow.vala:128
-msgid "Quote tweet"
-msgstr "Zitiere Tweet"
-
-#: src/window/ComposeTweetWindow.vala:237
-#: src/window/ComposeTweetWindow.vala:262 src/window/UserListDialog.vala:47
-#: ui/account-dialog.ui:25 ui/account-dialog.ui:247 ui/compose-window.ui:41
+#: src/widgets/MediaButton.vala:276 src/window/AccountDialog.vala:314
+#: src/window/ComposeTweetWindow.vala:241
+#: src/window/ComposeTweetWindow.vala:271
+#: src/window/ComposeTweetWindow.vala:380 src/window/UserListDialog.vala:47
+#: ui/account-dialog.ui:25 ui/account-dialog.ui:246 ui/compose-window.ui:41
 #: ui/filter-list-entry.ui:80 ui/list-list-entry.ui:98
 #: ui/list-statuses-page.ui:173 ui/modify-filter-dialog.ui:13
 #: ui/modify-snippet-dialog.ui:14 ui/user-filter-entry.ui:114
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/window/ComposeTweetWindow.vala:259
-msgid "Select Image"
-msgstr "Bild auswählen"
+#: src/widgets/MediaButton.vala:278 src/window/AccountDialog.vala:406
+#: src/window/AccountDialog.vala:427 src/window/UserListDialog.vala:48
+#: ui/account-dialog.ui:33 ui/list-statuses-page.ui:129
+#: ui/modify-filter-dialog.ui:20 ui/modify-snippet-dialog.ui:21
+msgid "Save"
+msgstr "Speichern"
 
-#: src/window/ComposeTweetWindow.vala:264
+#: src/widgets/TweetListBox.vala:123
+msgid "Loading…"
+msgstr "Lade…"
+
+#: src/widgets/TweetListBox.vala:126 src/widgets/TweetListBox.vala:177
+msgid "No entries found"
+msgstr "Keine Einträge gefunden"
+
+#: src/widgets/TweetListBox.vala:137 ui/account-create-widget.ui:119
+msgid "Retry"
+msgstr "Erneut versuchen"
+
+#: src/window/AccountDialog.vala:311
+msgid "Select Banner Image"
+msgstr ""
+
+#: src/window/AccountDialog.vala:316 src/window/ComposeTweetWindow.vala:273
+#: src/window/ComposeTweetWindow.vala:382
 msgid "Open"
 msgstr "Öffnen"
 
-#: src/window/ComposeTweetWindow.vala:288
+#: src/window/AccountDialog.vala:348
+msgid "Image does not meet minimum size requirements:"
+msgstr ""
+
+#: src/window/AccountDialog.vala:349
+#, c-format
+msgid "Minimum width: %d pixel"
+msgid_plural "Minimum width: %d pixels"
+msgstr[0] "Mindestbreite: %d Pixel"
+msgstr[1] "Mindestbreite: %d Pixel"
+
+#: src/window/AccountDialog.vala:351
+#, c-format
+msgid "Minimum height: %d pixel"
+msgid_plural "Minimum height: %d pixels"
+msgstr[0] "Mindesthöhe: %d Pixel"
+msgstr[1] "Mindesthöhe: %d Pixel"
+
+#: src/window/AccountDialog.vala:381 src/window/AccountDialog.vala:394
+msgid "Pick"
+msgstr "Wähle"
+
+#: src/window/ComposeTweetWindow.vala:107
+msgid "Quote tweet"
+msgstr "Zitiere Tweet"
+
+#: src/window/ComposeTweetWindow.vala:268
+#: src/window/ComposeTweetWindow.vala:377
+msgid "Select Image"
+msgstr "Bild auswählen"
+
+#: src/window/ComposeTweetWindow.vala:297
 #, c-format
 msgid ""
 "The selected image is too big. The maximum file size per image is %'d MB"
-msgstr ""
+msgstr "Das gewählte Bild ist zu groß. Die maximale Größe pro Bild beträgt %'d MB"
 
-#: src/window/ComposeTweetWindow.vala:290
+#: src/window/ComposeTweetWindow.vala:299
+#: src/window/ComposeTweetWindow.vala:305
+#: src/window/ComposeTweetWindow.vala:333
 msgid "Back"
 msgstr "Zurück"
+
+#: src/window/ComposeTweetWindow.vala:304
+msgid "Only one GIF file per tweet is allowed."
+msgstr "Nur eine GIF Datei pro Tweet is erlaubt"
 
 #: src/window/ModifyFilterDialog.vala:45
 msgid "Modify Filter"
@@ -325,20 +407,20 @@ msgid "Matches"
 msgstr "Passt"
 
 #: src/window/ModifyFilterDialog.vala:78
-msgid "Doesn't match"
-msgstr "Passt nicht"
+msgid "Doesn’t match"
+msgstr ""
 
 #: src/window/ModifySnippetDialog.vala:44
 msgid "Modify Snippet"
 msgstr "Schnipsel bearbeiten"
 
 #: src/window/ModifySnippetDialog.vala:63
-msgid "Snippet can't be empty"
-msgstr "Der Schnipsel darf nicht leer sein"
+msgid "Snippet can’t be empty"
+msgstr ""
 
 #: src/window/ModifySnippetDialog.vala:70
-msgid "Replacement can't be empty"
-msgstr "Ersetzung darf nicht leer sein"
+msgid "Replacement can’t be empty"
+msgstr ""
 
 #: src/window/ModifySnippetDialog.vala:78
 msgid "Snippet may not contain whitespace"
@@ -358,33 +440,37 @@ msgstr "Hey, schau dir die neue #Corebird version an! \\ (•◡•) / #cool #ne
 msgid "Add to or Remove User From List"
 msgstr "Nutzer zu Liste hinzufügen oder entfernen"
 
-#: src/window/UserListDialog.vala:48 ui/account-dialog.ui:33
-#: ui/list-statuses-page.ui:129 ui/modify-filter-dialog.ui:20
-#: ui/modify-snippet-dialog.ui:21
-msgid "Save"
-msgstr "Speichern"
-
 #: src/window/UserListDialog.vala:69
 msgid "You have no lists."
 msgstr "Du hast keine Listen."
 
-#: ui/about-dialog.ui:6
+#: ui/about-dialog.ui:5
 msgid "About Corebird"
 msgstr "Über Corebird"
 
-#: ui/account-create-widget.ui:16
+#: ui/account-create-widget.ui:28
 msgid "New Account"
 msgstr "Neuer Account"
 
-#: ui/account-create-widget.ui:44
-msgid "PIN:"
-msgstr "PIN:"
+#: ui/account-create-widget.ui:47
+msgid ""
+"To authenticate Corebird, you need a PIN from twitter.com with the account "
+"you wish to add"
+msgstr ""
 
-#: ui/account-create-widget.ui:65
+#: ui/account-create-widget.ui:58
 msgid "Request PIN"
 msgstr "PIN anfordern"
 
-#: ui/account-create-widget.ui:75 ui/list-statuses-page.ui:358
+#: ui/account-create-widget.ui:88
+msgid "Enter PIN from twitter.com below:"
+msgstr ""
+
+#: ui/account-create-widget.ui:106
+msgid "PIN"
+msgstr ""
+
+#: ui/account-create-widget.ui:132 ui/list-statuses-page.ui:358
 msgid "Confirm"
 msgstr "Bestätigen"
 
@@ -392,26 +478,19 @@ msgstr "Bestätigen"
 msgid "Account Settings"
 msgstr "Account Einstellungen"
 
-#: ui/account-dialog.ui:90
+#: ui/account-dialog.ui:88
 msgid "Name"
 msgstr "Name"
 
-#: ui/account-dialog.ui:118
+#: ui/account-dialog.ui:117
 msgid "Website"
 msgstr "Webseite"
 
-#: ui/account-dialog.ui:172
+#: ui/account-dialog.ui:171
 msgid "Autostart"
 msgstr "Autostart"
 
-#: ui/account-dialog.ui:203 ui/account-dialog.ui:260
-#: ui/filter-list-entry.ui:93 ui/list-list-entry.ui:132
-#: ui/list-statuses-page.ui:166 ui/modify-snippet-dialog.ui:108
-#: ui/tweet-info-page.ui:10 ui/tweet-list-entry.ui:10
-msgid "Delete"
-msgstr "Löschen"
-
-#: ui/account-dialog.ui:235
+#: ui/account-dialog.ui:234
 msgid "Do you really want to delete this account?"
 msgstr "Willst Du diesen Account wirklich löschen?"
 
@@ -423,9 +502,13 @@ msgstr "Tweet erstellen"
 msgid "Send"
 msgstr "Senden"
 
-#: ui/compose-window.ui:138
+#: ui/compose-window.ui:151
 msgid "Add Image"
 msgstr "Bild anhängen"
+
+#: ui/compose-window.ui:159
+msgid "Show favorite images"
+msgstr ""
 
 #: ui/filter-page.ui:71 ui/search-page.ui:86
 msgid "Users"
@@ -555,19 +638,19 @@ msgstr "Stummgeschaltet"
 msgid "Retweets disabled"
 msgstr "Retweets deaktiviert"
 
-#: ui/profile-page.ui:167
+#: ui/profile-page.ui:166
 msgid "Follows you"
 msgstr "Folgt dir"
 
-#: ui/profile-page.ui:242 ui/search-page.ui:74 ui/settings-dialog.ui:420
+#: ui/profile-page.ui:241 ui/search-page.ui:74 ui/settings-dialog.ui:420
 msgid "Tweets"
 msgstr "Tweets"
 
-#: ui/profile-page.ui:283
+#: ui/profile-page.ui:282
 msgid "Followers"
 msgstr "Followers"
 
-#: ui/profile-page.ui:324
+#: ui/profile-page.ui:323
 msgid "Following"
 msgstr "Folgt"
 
@@ -739,7 +822,7 @@ msgstr "Antworten"
 #: ui/shortcuts-window.ui:100
 msgctxt "shortcuts window"
 msgid "Quote"
-msgstr ""
+msgstr "Zitieren"
 
 #: ui/shortcuts-window.ui:107
 msgctxt "shortcuts window"
@@ -767,19 +850,19 @@ msgstr "Los"
 msgid "Quote"
 msgstr "Zitieren"
 
-#: ui/tweet-info-page.ui:226
+#: ui/tweet-info-page.ui:265
 msgid "Retweet tweet"
 msgstr "Tweet retweeten"
 
-#: ui/tweet-info-page.ui:253
+#: ui/tweet-info-page.ui:292
 msgid "Favorite tweet"
 msgstr "Favorisieren"
 
-#: ui/tweet-info-page.ui:280
+#: ui/tweet-info-page.ui:319
 msgid "Reply to tweet"
 msgstr "Auf Tweet antworten"
 
-#: ui/tweet-info-page.ui:318
+#: ui/tweet-info-page.ui:357
 msgid "More"
 msgstr "Mehr"
 

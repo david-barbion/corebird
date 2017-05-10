@@ -102,38 +102,11 @@ class ComposeTweetWindow : Gtk.ApplicationWindow {
       content_grid.attach (reply_list, 0, 0, 2, 1);
     }
 
-    if (mode == Mode.REPLY) {
-      StringBuilder mention_builder = new StringBuilder ();
-      if (reply_to.get_screen_name () != account.screen_name) {
-        mention_builder.append ("@").append (reply_to.get_screen_name ());
-      }
-
-      if (reply_to.retweeted_tweet != null) {
-        if (mention_builder.len > 0)
-          mention_builder.append (" ");
-
-        mention_builder.append ("@").append (reply_to.source_tweet.author.screen_name);
-      }
-
-      foreach (unowned string s in reply_to.get_mentions ()) {
-        if (s == "@" + account.screen_name ||
-            s == "@" + reply_to.get_screen_name () ||
-            (reply_to.retweeted_tweet != null && reply_to.source_tweet.author.screen_name != s))
-          continue;
-
-        if (mention_builder.len > 0)
-          mention_builder.append (" ");
-
-        mention_builder.append (s);
-      }
-      /* Only add a space if we actually added some screen names */
-      if (mention_builder.len > 0)
-        mention_builder.append (" ");
-
-      tweet_text.buffer.text = mention_builder.str;
-    } else if (mode == Mode.QUOTE) {
+    if (mode == Mode.QUOTE) {
       assert (reply_to != null);
       this.title_label.label = _("Quote tweet");
+      add_image_button.sensitive = false;
+      fav_image_button.sensitive = false;
     }
 
     /* Let the text view immediately grab the keyboard focus */
@@ -164,6 +137,15 @@ class ComposeTweetWindow : Gtk.ApplicationWindow {
       this.tweet_text.get_buffer ().text = last_tweet;
     }
 
+
+    var image_target_list = new Gtk.TargetList (null);
+    image_target_list.add_text_targets (0);
+
+    Gtk.drag_dest_set (fav_image_list,
+                       Gtk.DestDefaults.ALL,
+                       null,
+                       Gdk.DragAction.COPY);
+    Gtk.drag_dest_set_target_list (fav_image_list, image_target_list);
 
     this.set_default_size (DEFAULT_WIDTH, (int)(DEFAULT_WIDTH / 2.5));
   }
@@ -205,6 +187,7 @@ class ComposeTweetWindow : Gtk.ApplicationWindow {
     tweet_text.sensitive = false;
     fav_image_button.sensitive = false;
     add_image_button.sensitive = false;
+    compose_image_manager.sensitive = false;
 
 
     Gtk.TextIter start, end;
@@ -461,6 +444,31 @@ class ComposeTweetWindow : Gtk.ApplicationWindow {
 
     if (this.compose_image_manager.n_images > 0)
       this.disable_fav_gifs ();
+  }
+
+  [GtkCallback]
+  private void fav_image_box_drag_data_received_cb (Gdk.DragContext   context,
+                                                    int               x,
+                                                    int               y,
+                                                    Gtk.SelectionData selection_data,
+                                                    uint              info,
+                                                    uint              time) {
+    if (info == 0) {
+      /* Text */
+      string? text = selection_data.get_text ().strip ();
+      if (text.has_prefix ("file://")) {
+        var row = new FavImageRow (GLib.File.new_for_uri (text).get_path ());
+        if (this.compose_image_manager.n_images > 0)
+          row.set_sensitive (false);
+
+        row.show_all ();
+        fav_image_list.add (row);
+      } else {
+        debug ("Can't handle '%s'", text);
+      }
+    } else {
+      warning ("Unknown drag data info %u", info);
+    }
   }
 
   private void disable_fav_gifs () {

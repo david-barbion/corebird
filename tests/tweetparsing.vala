@@ -1036,6 +1036,1085 @@ const string TD6 =
   "lang" : "en"
 }
 """;
+
+const string REPLY_TWEET_DATA = """
+{
+  "created_at" : "Mon Apr 17 15:16:18 +0000 2017",
+  "id" : 853990508326252550,
+  "id_str" : "853990508326252550",
+  "full_text" : "@jjdesmond @_UBRAS_ @franalsworth @4Apes @katy4apes @theAliceRoberts @JaneGoodallUK @Jane_Goodall @JaneGoodallInst And here's the link for tickets again ... https://t.co/a9lOVMouNK",
+  "truncated" : false,
+  "display_text_range" : [
+    115,
+    180
+  ],
+  "entities" : {
+    "hashtags" : [
+    ],
+    "symbols" : [
+    ],
+    "user_mentions" : [
+      {
+        "screen_name" : "jjdesmond",
+        "name" : "Jimmy Jenny Desmond",
+        "id" : 21278482,
+        "id_str" : "21278482",
+        "indices" : [
+          0,
+          10
+        ]
+      },
+      {
+        "screen_name" : "_UBRAS_",
+        "name" : "Roots and Shoots UOB",
+        "id" : 803329927974096896,
+        "id_str" : "803329927974096896",
+        "indices" : [
+          11,
+          19
+        ]
+      },
+      {
+        "screen_name" : "franalsworth",
+        "name" : "Fran",
+        "id" : 776983919287754752,
+        "id_str" : "776983919287754752",
+        "indices" : [
+          20,
+          33
+        ]
+      },
+      {
+        "screen_name" : "4Apes",
+        "name" : "Ian Redmond",
+        "id" : 155889035,
+        "id_str" : "155889035",
+        "indices" : [
+          34,
+          40
+        ]
+      },
+      {
+        "screen_name" : "katy4apes",
+        "name" : "Katy Jedamzik",
+        "id" : 159608654,
+        "id_str" : "159608654",
+        "indices" : [
+          41,
+          51
+        ]
+      },
+      {
+        "screen_name" : "theAliceRoberts",
+        "name" : "Prof Alice Roberts",
+        "id" : 260211154,
+        "id_str" : "260211154",
+        "indices" : [
+          52,
+          68
+        ]
+      },
+      {
+        "screen_name" : "JaneGoodallUK",
+        "name" : "Roots & Shoots UK",
+        "id" : 423423823,
+        "id_str" : "423423823",
+        "indices" : [
+          69,
+          83
+        ]
+      },
+      {
+        "screen_name" : "Jane_Goodall",
+        "name" : "Jane Goodall",
+        "id" : 235157216,
+        "id_str" : "235157216",
+        "indices" : [
+          84,
+          97
+        ]
+      },
+      {
+        "screen_name" : "JaneGoodallInst",
+        "name" : "JaneGoodallInstitute",
+        "id" : 39822897,
+        "id_str" : "39822897",
+        "indices" : [
+          98,
+          114
+        ]
+      }
+    ],
+    "urls" : [
+      {
+        "url" : "https://t.co/a9lOVMouNK",
+        "expanded_url" : "https://www.eventbrite.com/e/working-with-apes-tickets-33089771397",
+        "display_url" : "eventbrite.com/e/working-with…",
+        "indices" : [
+          157,
+          180
+        ]
+      }
+    ]
+  },
+  "source" : "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+  "in_reply_to_status_id" : 853925036696141824,
+  "in_reply_to_status_id_str" : "853925036696141824",
+  "in_reply_to_user_id" : 21278482,
+  "in_reply_to_user_id_str" : "21278482",
+  "in_reply_to_screen_name" : "jjdesmond",
+  "user" : {
+    "id" : 415472140,
+    "id_str" : "415472140",
+    "name" : "Ben Garrod",
+    "screen_name" : "Ben_garrod",
+    "location" : "Bristol&Norfolk",
+    "description" : "Monkey-chaser, TV-talker, bone geek and Teaching Fellow at @AngliaRuskin https://t.co/FXbftdxxTJ",
+    "url" : "https://t.co/1B9SDHfWoF",
+    "entities" : {
+      "url" : {
+        "urls" : [
+          {
+            "url" : "https://t.co/1B9SDHfWoF",
+            "expanded_url" : "http://www.josarsby.com/ben-garrod",
+            "display_url" : "josarsby.com/ben-garrod",
+            "indices" : [
+              0,
+              23
+            ]
+          }
+        ]
+      },
+      "description" : {
+        "urls" : [
+          {
+            "url" : "https://t.co/FXbftdxxTJ",
+            "expanded_url" : "http://www.anglia.ac.uk/science-and-technology/about/life-sciences/our-staff/ben-garrod",
+            "display_url" : "anglia.ac.uk/science-and-te…",
+            "indices" : [
+              73,
+              96
+            ]
+          }
+        ]
+      }
+    },
+    "protected" : false,
+    "followers_count" : 6526,
+    "friends_count" : 1016,
+    "listed_count" : 128,
+    "created_at" : "Fri Nov 18 11:30:48 +0000 2011",
+    "favourites_count" : 25292,
+    "utc_offset" : 3600,
+    "time_zone" : "London",
+    "geo_enabled" : true,
+    "verified" : true,
+    "statuses_count" : 17224,
+    "lang" : "en",
+    "contributors_enabled" : false,
+    "is_translator" : false,
+    "is_translation_enabled" : false,
+    "profile_background_color" : "C0DEED",
+    "profile_background_image_url" : "http://pbs.twimg.com/profile_background_images/590945579024257024/2F1itaGz.jpg",
+    "profile_background_image_url_https" : "https://pbs.twimg.com/profile_background_images/590945579024257024/2F1itaGz.jpg",
+    "profile_background_tile" : false,
+    "profile_image_url" : "http://pbs.twimg.com/profile_images/615498558385557505/cwSloac3_normal.jpg",
+    "profile_image_url_https" : "https://pbs.twimg.com/profile_images/615498558385557505/cwSloac3_normal.jpg",
+    "profile_banner_url" : "https://pbs.twimg.com/profile_banners/415472140/1477223840",
+    "profile_link_color" : "0084B4",
+    "profile_sidebar_border_color" : "FFFFFF",
+    "profile_sidebar_fill_color" : "DDEEF6",
+    "profile_text_color" : "333333",
+    "profile_use_background_image" : false,
+    "has_extended_profile" : false,
+    "default_profile" : false,
+    "default_profile_image" : false,
+    "following" : false,
+    "follow_request_sent" : false,
+    "notifications" : false,
+    "translator_type" : "none"
+  },
+  "geo" : null,
+  "coordinates" : null,
+  "place" : null,
+  "contributors" : null,
+  "is_quote_status" : false,
+  "retweet_count" : 6,
+  "favorite_count" : 7,
+  "favorited" : false,
+  "retweeted" : false,
+  "possibly_sensitive" : false,
+  "lang" : "en"
+}
+
+""";
+
+const string TD7 = """
+{
+  "created_at" : "Mon Feb 13 07:59:35 +0000 2017",
+  "id" : 831050171744149504,
+  "id_str" : "831050171744149504",
+  "full_text" : "@GOP https://t.co/e2fTVgNC3D",
+  "truncated" : false,
+  "display_text_range" : [
+    4,
+    4
+  ],
+  "entities" : {
+    "hashtags" : [
+    ],
+    "symbols" : [
+    ],
+    "user_mentions" : [
+      {
+        "screen_name" : "GOP",
+        "name" : "GOP",
+        "id" : 11134252,
+        "id_str" : "11134252",
+        "indices" : [
+          0,
+          4
+        ]
+      }
+    ],
+    "urls" : [
+    ],
+    "media" : [
+      {
+        "id" : 831050167918923776,
+        "id_str" : "831050167918923776",
+        "indices" : [
+          5,
+          28
+        ],
+        "media_url" : "http://pbs.twimg.com/media/C4h7uYFWEAA1Af6.jpg",
+        "media_url_https" : "https://pbs.twimg.com/media/C4h7uYFWEAA1Af6.jpg",
+        "url" : "https://t.co/e2fTVgNC3D",
+        "display_url" : "pic.twitter.com/e2fTVgNC3D",
+        "expanded_url" : "https://twitter.com/CBoyForeman/status/831050171744149504/photo/1",
+        "type" : "photo",
+        "sizes" : {
+          "large" : {
+            "w" : 576,
+            "h" : 357,
+            "resize" : "fit"
+          },
+          "small" : {
+            "w" : 576,
+            "h" : 357,
+            "resize" : "fit"
+          },
+          "thumb" : {
+            "w" : 150,
+            "h" : 150,
+            "resize" : "crop"
+          },
+          "medium" : {
+            "w" : 576,
+            "h" : 357,
+            "resize" : "fit"
+          }
+        }
+      }
+    ]
+  },
+  "extended_entities" : {
+    "media" : [
+      {
+        "id" : 831050167918923776,
+        "id_str" : "831050167918923776",
+        "indices" : [
+          5,
+          28
+        ],
+        "media_url" : "http://pbs.twimg.com/media/C4h7uYFWEAA1Af6.jpg",
+        "media_url_https" : "https://pbs.twimg.com/media/C4h7uYFWEAA1Af6.jpg",
+        "url" : "https://t.co/e2fTVgNC3D",
+        "display_url" : "pic.twitter.com/e2fTVgNC3D",
+        "expanded_url" : "https://twitter.com/CBoyForeman/status/831050171744149504/photo/1",
+        "type" : "photo",
+        "sizes" : {
+          "large" : {
+            "w" : 576,
+            "h" : 357,
+            "resize" : "fit"
+          },
+          "small" : {
+            "w" : 576,
+            "h" : 357,
+            "resize" : "fit"
+          },
+          "thumb" : {
+            "w" : 150,
+            "h" : 150,
+            "resize" : "crop"
+          },
+          "medium" : {
+            "w" : 576,
+            "h" : 357,
+            "resize" : "fit"
+          }
+        }
+      }
+    ]
+  },
+  "source" : "<a href=\"http://twitter.com/download/android\" rel=\"nofollow\">Twitter for Android</a>",
+  "in_reply_to_status_id" : 830800137291194368,
+  "in_reply_to_status_id_str" : "830800137291194368",
+  "in_reply_to_user_id" : 11134252,
+  "in_reply_to_user_id_str" : "11134252",
+  "in_reply_to_screen_name" : "GOP",
+  "user" : {
+    "id" : 77301204,
+    "id_str" : "77301204",
+    "name" : "Chrissy Boy",
+    "screen_name" : "CBoyForeman",
+    "location" : "Brighton",
+    "description" : "Musician, allegedly.",
+    "url" : "https://t.co/wkTvkNumcF",
+    "entities" : {
+      "url" : {
+        "urls" : [
+          {
+            "url" : "https://t.co/wkTvkNumcF",
+            "expanded_url" : "http://www.madness.co.uk/chris-cupboard/",
+            "display_url" : "madness.co.uk/chris-cupboard/",
+            "indices" : [
+              0,
+              23
+            ]
+          }
+        ]
+      },
+      "description" : {
+        "urls" : [
+        ]
+      }
+    },
+    "protected" : false,
+    "followers_count" : 8605,
+    "friends_count" : 42,
+    "listed_count" : 54,
+    "created_at" : "Fri Sep 25 20:19:11 +0000 2009",
+    "favourites_count" : 71,
+    "utc_offset" : 3600,
+    "time_zone" : "London",
+    "geo_enabled" : true,
+    "verified" : false,
+    "statuses_count" : 1079,
+    "lang" : "en",
+    "contributors_enabled" : false,
+    "is_translator" : false,
+    "is_translation_enabled" : false,
+    "profile_background_color" : "95B6C7",
+    "profile_background_image_url" : "http://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_image_url_https" : "https://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_tile" : true,
+    "profile_image_url" : "http://pbs.twimg.com/profile_images/542792449907638272/AsxM39Oz_normal.jpeg",
+    "profile_image_url_https" : "https://pbs.twimg.com/profile_images/542792449907638272/AsxM39Oz_normal.jpeg",
+    "profile_banner_url" : "https://pbs.twimg.com/profile_banners/77301204/1387963265",
+    "profile_link_color" : "89C9FA",
+    "profile_sidebar_border_color" : "EEEEEE",
+    "profile_sidebar_fill_color" : "EFEFEF",
+    "profile_text_color" : "333333",
+    "profile_use_background_image" : true,
+    "has_extended_profile" : true,
+    "default_profile" : false,
+    "default_profile_image" : false,
+    "following" : false,
+    "follow_request_sent" : false,
+    "notifications" : false,
+    "translator_type" : "none"
+  },
+  "geo" : null,
+  "coordinates" : null,
+  "place" : null,
+  "contributors" : null,
+  "is_quote_status" : false,
+  "retweet_count" : 0,
+  "favorite_count" : 2,
+  "favorited" : false,
+  "retweeted" : false,
+  "possibly_sensitive" : false,
+  "lang" : "und"
+}
+""";
+
+const string TD8 = """
+{
+  "created_at" : "Mon Apr 24 11:40:53 +0000 2017",
+  "id" : 856473014560591872,
+  "id_str" : "856473014560591872",
+  "full_text" : "RT @corebirdgtk: @baedert and @corebirdclient so?",
+  "truncated" : false,
+  "display_text_range" : [
+    0,
+    49
+  ],
+  "entities" : {
+    "hashtags" : [
+    ],
+    "symbols" : [
+    ],
+    "user_mentions" : [
+      {
+        "screen_name" : "corebirdgtk",
+        "name" : "Z??!@*(&*²³¤²³¤",
+        "id" : 993713617,
+        "id_str" : "993713617",
+        "indices" : [
+          3,
+          15
+        ]
+      },
+      {
+        "screen_name" : "baedert",
+        "name" : "Schupp & Wupp",
+        "id" : 118055879,
+        "id_str" : "118055879",
+        "indices" : [
+          17,
+          25
+        ]
+      },
+      {
+        "screen_name" : "corebirdclient",
+        "name" : "Corebird",
+        "id" : 2877682863,
+        "id_str" : "2877682863",
+        "indices" : [
+          30,
+          45
+        ]
+      }
+    ],
+    "urls" : [
+    ]
+  },
+  "source" : "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter Web Client</a>",
+  "in_reply_to_status_id" : null,
+  "in_reply_to_status_id_str" : null,
+  "in_reply_to_user_id" : null,
+  "in_reply_to_user_id_str" : null,
+  "in_reply_to_screen_name" : null,
+  "user" : {
+    "id" : 993713617,
+    "id_str" : "993713617",
+    "name" : "Z??!@*(&*²³¤²³¤",
+    "screen_name" : "corebirdgtk",
+    "location" : "",
+    "description" : "&lt;asdf",
+    "url" : null,
+    "entities" : {
+      "description" : {
+        "urls" : [
+        ]
+      }
+    },
+    "protected" : true,
+    "followers_count" : 3,
+    "friends_count" : 4,
+    "listed_count" : 0,
+    "created_at" : "Thu Dec 06 19:47:16 +0000 2012",
+    "favourites_count" : 9,
+    "utc_offset" : 7200,
+    "time_zone" : "Amsterdam",
+    "geo_enabled" : false,
+    "verified" : false,
+    "statuses_count" : 909,
+    "lang" : "en",
+    "contributors_enabled" : false,
+    "is_translator" : false,
+    "is_translation_enabled" : true,
+    "profile_background_color" : "C0DEED",
+    "profile_background_image_url" : "http://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_image_url_https" : "https://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_tile" : false,
+    "profile_image_url" : "http://pbs.twimg.com/profile_images/655270693341417472/h6BbZKJy_normal.png",
+    "profile_image_url_https" : "https://pbs.twimg.com/profile_images/655270693341417472/h6BbZKJy_normal.png",
+    "profile_banner_url" : "https://pbs.twimg.com/profile_banners/993713617/1413106147",
+    "profile_link_color" : "1DA1F2",
+    "profile_sidebar_border_color" : "C0DEED",
+    "profile_sidebar_fill_color" : "DDEEF6",
+    "profile_text_color" : "333333",
+    "profile_use_background_image" : true,
+    "has_extended_profile" : false,
+    "default_profile" : true,
+    "default_profile_image" : false,
+    "following" : true,
+    "follow_request_sent" : false,
+    "notifications" : false,
+    "translator_type" : "none"
+  },
+  "geo" : null,
+  "coordinates" : null,
+  "place" : null,
+  "contributors" : null,
+  "retweeted_status" : {
+    "created_at" : "Mon Apr 24 11:35:17 +0000 2017",
+    "id" : 856471602883686400,
+    "id_str" : "856471602883686400",
+    "full_text" : "@baedert and @corebirdclient so?",
+    "truncated" : false,
+    "display_text_range" : [
+      9,
+      32
+    ],
+    "entities" : {
+      "hashtags" : [
+      ],
+      "symbols" : [
+      ],
+      "user_mentions" : [
+        {
+          "screen_name" : "baedert",
+          "name" : "Schupp & Wupp",
+          "id" : 118055879,
+          "id_str" : "118055879",
+          "indices" : [
+            0,
+            8
+          ]
+        },
+        {
+          "screen_name" : "corebirdclient",
+          "name" : "Corebird",
+          "id" : 2877682863,
+          "id_str" : "2877682863",
+          "indices" : [
+            13,
+            28
+          ]
+        }
+      ],
+      "urls" : [
+      ]
+    },
+    "source" : "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter Web Client</a>",
+    "in_reply_to_status_id" : 853198126106148864,
+    "in_reply_to_status_id_str" : "853198126106148864",
+    "in_reply_to_user_id" : 993713617,
+    "in_reply_to_user_id_str" : "993713617",
+    "in_reply_to_screen_name" : "corebirdgtk",
+    "user" : {
+      "id" : 993713617,
+      "id_str" : "993713617",
+      "name" : "Z??!@*(&*²³¤²³¤",
+      "screen_name" : "corebirdgtk",
+      "location" : "",
+      "description" : "&lt;asdf",
+      "url" : null,
+      "entities" : {
+        "description" : {
+          "urls" : [
+          ]
+        }
+      },
+      "protected" : true,
+      "followers_count" : 3,
+      "friends_count" : 4,
+      "listed_count" : 0,
+      "created_at" : "Thu Dec 06 19:47:16 +0000 2012",
+      "favourites_count" : 9,
+      "utc_offset" : 7200,
+      "time_zone" : "Amsterdam",
+      "geo_enabled" : false,
+      "verified" : false,
+      "statuses_count" : 909,
+      "lang" : "en",
+      "contributors_enabled" : false,
+      "is_translator" : false,
+      "is_translation_enabled" : true,
+      "profile_background_color" : "C0DEED",
+      "profile_background_image_url" : "http://abs.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_image_url_https" : "https://abs.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_tile" : false,
+      "profile_image_url" : "http://pbs.twimg.com/profile_images/655270693341417472/h6BbZKJy_normal.png",
+      "profile_image_url_https" : "https://pbs.twimg.com/profile_images/655270693341417472/h6BbZKJy_normal.png",
+      "profile_banner_url" : "https://pbs.twimg.com/profile_banners/993713617/1413106147",
+      "profile_link_color" : "1DA1F2",
+      "profile_sidebar_border_color" : "C0DEED",
+      "profile_sidebar_fill_color" : "DDEEF6",
+      "profile_text_color" : "333333",
+      "profile_use_background_image" : true,
+      "has_extended_profile" : false,
+      "default_profile" : true,
+      "default_profile_image" : false,
+      "following" : true,
+      "follow_request_sent" : false,
+      "notifications" : false,
+      "translator_type" : "none"
+    },
+    "geo" : null,
+    "coordinates" : null,
+    "place" : null,
+    "contributors" : null,
+    "is_quote_status" : false,
+    "retweet_count" : 1,
+    "favorite_count" : 0,
+    "favorited" : false,
+    "retweeted" : false,
+    "lang" : "en"
+  },
+  "is_quote_status" : false,
+  "retweet_count" : 1,
+  "favorite_count" : 0,
+  "favorited" : false,
+  "retweeted" : false,
+  "lang" : "en"
+}
+""";
+
+const string TD9 = """
+{
+  "created_at" : "Thu Apr 27 17:00:15 +0000 2017",
+  "id" : 857640546793177088,
+  "id_str" : "857640546793177088",
+  "full_text" : "Hey @zillow, I get why you make it so hard to close my profile, but it's so transparent and just seems scammy. Scammy, scammy, scammy.",
+  "truncated" : false,
+  "display_text_range" : [
+    0,
+    134
+  ],
+  "entities" : {
+    "hashtags" : [
+    ],
+    "symbols" : [
+    ],
+    "user_mentions" : [
+      {
+        "screen_name" : "zillow",
+        "name" : "Zillow",
+        "id" : 19262500,
+        "id_str" : "19262500",
+        "indices" : [
+          4,
+          11
+        ]
+      }
+    ],
+    "urls" : [
+    ]
+  },
+  "source" : "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter Web Client</a>",
+  "in_reply_to_status_id" : null,
+  "in_reply_to_status_id_str" : null,
+  "in_reply_to_user_id" : null,
+  "in_reply_to_user_id_str" : null,
+  "in_reply_to_screen_name" : null,
+  "user" : {
+    "id" : 14498432,
+    "id_str" : "14498432",
+    "name" : "Kristian Høgsberg",
+    "screen_name" : "hoegsberg",
+    "location" : "Portland OR",
+    "description" : "Casually Defiant, Inadvertently Pretentious",
+    "url" : "https://t.co/z672MnpkDP",
+    "entities" : {
+      "url" : {
+        "urls" : [
+          {
+            "url" : "https://t.co/z672MnpkDP",
+            "expanded_url" : "http://hoegsberg.blogspot.com",
+            "display_url" : "hoegsberg.blogspot.com",
+            "indices" : [
+              0,
+              23
+            ]
+          }
+        ]
+      },
+      "description" : {
+        "urls" : [
+        ]
+      }
+    },
+    "protected" : false,
+    "followers_count" : 689,
+    "friends_count" : 210,
+    "listed_count" : 25,
+    "created_at" : "Wed Apr 23 18:29:05 +0000 2008",
+    "favourites_count" : 717,
+    "utc_offset" : -14400,
+    "time_zone" : "Eastern Time (US & Canada)",
+    "geo_enabled" : true,
+    "verified" : false,
+    "statuses_count" : 2685,
+    "lang" : "en",
+    "contributors_enabled" : false,
+    "is_translator" : false,
+    "is_translation_enabled" : false,
+    "profile_background_color" : "352726",
+    "profile_background_image_url" : "http://abs.twimg.com/images/themes/theme5/bg.gif",
+    "profile_background_image_url_https" : "https://abs.twimg.com/images/themes/theme5/bg.gif",
+    "profile_background_tile" : false,
+    "profile_image_url" : "http://pbs.twimg.com/profile_images/679383568016130049/DcwLkGhB_normal.jpg",
+    "profile_image_url_https" : "https://pbs.twimg.com/profile_images/679383568016130049/DcwLkGhB_normal.jpg",
+    "profile_banner_url" : "https://pbs.twimg.com/profile_banners/14498432/1450812639",
+    "profile_link_color" : "D02B54",
+    "profile_sidebar_border_color" : "829D5E",
+    "profile_sidebar_fill_color" : "99CC33",
+    "profile_text_color" : "3E4415",
+    "profile_use_background_image" : true,
+    "has_extended_profile" : false,
+    "default_profile" : false,
+    "default_profile_image" : false,
+    "following" : true,
+    "follow_request_sent" : false,
+    "notifications" : false,
+    "translator_type" : "none"
+  },
+  "geo" : null,
+  "coordinates" : null,
+  "place" : null,
+  "contributors" : null,
+  "is_quote_status" : false,
+  "retweet_count" : 0,
+  "favorite_count" : 0,
+  "favorited" : false,
+  "retweeted" : false,
+  "lang" : "en"
+}
+""";
+
+const string TD10 = """
+{
+  "created_at" : "Fri Apr 28 19:40:04 +0000 2017",
+  "id" : 858043155547140096,
+  "id_str" : "858043155547140096",
+  "full_text" : ".@archillect\nhttps://t.co/8sOpx6hIV8\nhttps://t.co/LazmRudPfL\nhttps://t.co/Q2C5FM0OJO\nhttps://t.co/Vq6aJdD766\nhttps://t.co/otr3LIJ15c",
+  "truncated" : false,
+  "display_text_range" : [
+    0,
+    132
+  ],
+  "entities" : {
+    "hashtags" : [
+    ],
+    "symbols" : [
+    ],
+    "user_mentions" : [
+      {
+        "screen_name" : "archillect",
+        "name" : "Archillect",
+        "id" : 2907774137,
+        "id_str" : "2907774137",
+        "indices" : [
+          1,
+          12
+        ]
+      }
+    ],
+    "urls" : [
+      {
+        "url" : "https://t.co/8sOpx6hIV8",
+        "expanded_url" : "http://www.pbs.org/newshour/art/photos-dying-art-neon-hong-kong/",
+        "display_url" : "pbs.org/newshour/art/p…",
+        "indices" : [
+          13,
+          36
+        ]
+      },
+      {
+        "url" : "https://t.co/LazmRudPfL",
+        "expanded_url" : "http://www.neonsigns.hk/media/upload/2014/05/shya-5.jpg",
+        "display_url" : "neonsigns.hk/media/upload/2…",
+        "indices" : [
+          37,
+          60
+        ]
+      },
+      {
+        "url" : "https://t.co/Q2C5FM0OJO",
+        "expanded_url" : "http://t.umblr.com/redirect?z=http%3A%2F%2Fwww.neonsigns.hk%2Fmy-neon-city%2Fwing-shya%2F%3Flang%3Den&t=YmUzYTFmNTM1NmJjODlkYjlkNGJiMzYyNzRjZmU3OTllOGZhZmIwYyw5ODIzODIzNzg5NQ%3D%3D&b=t%3AYGx1bpY-ynhca0q3r41odw&p=http%3A%2F%2Fotakugangsta.com%2Fpost%2F98238237895&m=0",
+        "display_url" : "t.umblr.com/redirect?z=htt…",
+        "indices" : [
+          61,
+          84
+        ]
+      },
+      {
+        "url" : "https://t.co/Vq6aJdD766",
+        "expanded_url" : "https://www.pinterest.com/pin/47569339794350377/",
+        "display_url" : "pinterest.com/pin/4756933979…",
+        "indices" : [
+          85,
+          108
+        ]
+      },
+      {
+        "url" : "https://t.co/otr3LIJ15c",
+        "expanded_url" : "https://twitter.com/archillect/status/858043152820826113",
+        "display_url" : "twitter.com/archillect/sta…",
+        "indices" : [
+          109,
+          132
+        ]
+      }
+    ]
+  },
+  "source" : "<a href=\"http://machinu.net\" rel=\"nofollow\">archillinks</a>",
+  "in_reply_to_status_id" : 858043152820826113,
+  "in_reply_to_status_id_str" : "858043152820826113",
+  "in_reply_to_user_id" : 2907774137,
+  "in_reply_to_user_id_str" : "2907774137",
+  "in_reply_to_screen_name" : "archillect",
+  "user" : {
+    "id" : 808595043560857600,
+    "id_str" : "808595043560857600",
+    "name" : "Archillect Links",
+    "screen_name" : "archillinks",
+    "location" : "",
+    "description" : "The Ocular Engine // Links",
+    "url" : "https://t.co/U7Oh7xumQp",
+    "entities" : {
+      "url" : {
+        "urls" : [
+          {
+            "url" : "https://t.co/U7Oh7xumQp",
+            "expanded_url" : "http://archillect.com",
+            "display_url" : "archillect.com",
+            "indices" : [
+              0,
+              23
+            ]
+          }
+        ]
+      },
+      "description" : {
+        "urls" : [
+        ]
+      }
+    },
+    "protected" : false,
+    "followers_count" : 9481,
+    "friends_count" : 2,
+    "listed_count" : 107,
+    "created_at" : "Tue Dec 13 08:50:56 +0000 2016",
+    "favourites_count" : 0,
+    "utc_offset" : null,
+    "time_zone" : null,
+    "geo_enabled" : false,
+    "verified" : false,
+    "statuses_count" : 17980,
+    "lang" : "en",
+    "contributors_enabled" : false,
+    "is_translator" : false,
+    "is_translation_enabled" : false,
+    "profile_background_color" : "000000",
+    "profile_background_image_url" : "http://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_image_url_https" : "https://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_tile" : false,
+    "profile_image_url" : "http://pbs.twimg.com/profile_images/808595805942714368/PuH1r_aQ_normal.jpg",
+    "profile_image_url_https" : "https://pbs.twimg.com/profile_images/808595805942714368/PuH1r_aQ_normal.jpg",
+    "profile_banner_url" : "https://pbs.twimg.com/profile_banners/808595043560857600/1481619199",
+    "profile_link_color" : "111111",
+    "profile_sidebar_border_color" : "000000",
+    "profile_sidebar_fill_color" : "000000",
+    "profile_text_color" : "000000",
+    "profile_use_background_image" : false,
+    "has_extended_profile" : false,
+    "default_profile" : false,
+    "default_profile_image" : false,
+    "following" : false,
+    "follow_request_sent" : false,
+    "notifications" : false,
+    "translator_type" : "none"
+  },
+  "geo" : null,
+  "coordinates" : null,
+  "place" : null,
+  "contributors" : null,
+  "is_quote_status" : true,
+  "quoted_status_id" : 858043152820826113,
+  "quoted_status_id_str" : "858043152820826113",
+  "quoted_status" : {
+    "created_at" : "Fri Apr 28 19:40:03 +0000 2017",
+    "id" : 858043152820826113,
+    "id_str" : "858043152820826113",
+    "full_text" : "https://t.co/4Kk2ol4YDf",
+    "truncated" : false,
+    "display_text_range" : [
+      0,
+      0
+    ],
+    "entities" : {
+      "hashtags" : [
+      ],
+      "symbols" : [
+      ],
+      "user_mentions" : [
+      ],
+      "urls" : [
+      ],
+      "media" : [
+        {
+          "id" : 858043148114808833,
+          "id_str" : "858043148114808833",
+          "indices" : [
+            0,
+            23
+          ],
+          "media_url" : "http://pbs.twimg.com/media/C-hhsnVXUAESrBA.jpg",
+          "media_url_https" : "https://pbs.twimg.com/media/C-hhsnVXUAESrBA.jpg",
+          "url" : "https://t.co/4Kk2ol4YDf",
+          "display_url" : "pic.twitter.com/4Kk2ol4YDf",
+          "expanded_url" : "https://twitter.com/archillect/status/858043152820826113/photo/1",
+          "type" : "photo",
+          "sizes" : {
+            "large" : {
+              "w" : 1280,
+              "h" : 960,
+              "resize" : "fit"
+            },
+            "small" : {
+              "w" : 680,
+              "h" : 510,
+              "resize" : "fit"
+            },
+            "medium" : {
+              "w" : 1200,
+              "h" : 900,
+              "resize" : "fit"
+            },
+            "thumb" : {
+              "w" : 150,
+              "h" : 150,
+              "resize" : "crop"
+            }
+          }
+        }
+      ]
+    },
+    "extended_entities" : {
+      "media" : [
+        {
+          "id" : 858043148114808833,
+          "id_str" : "858043148114808833",
+          "indices" : [
+            0,
+            23
+          ],
+          "media_url" : "http://pbs.twimg.com/media/C-hhsnVXUAESrBA.jpg",
+          "media_url_https" : "https://pbs.twimg.com/media/C-hhsnVXUAESrBA.jpg",
+          "url" : "https://t.co/4Kk2ol4YDf",
+          "display_url" : "pic.twitter.com/4Kk2ol4YDf",
+          "expanded_url" : "https://twitter.com/archillect/status/858043152820826113/photo/1",
+          "type" : "photo",
+          "sizes" : {
+            "large" : {
+              "w" : 1280,
+              "h" : 960,
+              "resize" : "fit"
+            },
+            "small" : {
+              "w" : 680,
+              "h" : 510,
+              "resize" : "fit"
+            },
+            "medium" : {
+              "w" : 1200,
+              "h" : 900,
+              "resize" : "fit"
+            },
+            "thumb" : {
+              "w" : 150,
+              "h" : 150,
+              "resize" : "crop"
+            }
+          }
+        }
+      ]
+    },
+    "source" : "<a href=\"http://machinu.net\" rel=\"nofollow\">Archillect</a>",
+    "in_reply_to_status_id" : null,
+    "in_reply_to_status_id_str" : null,
+    "in_reply_to_user_id" : null,
+    "in_reply_to_user_id_str" : null,
+    "in_reply_to_screen_name" : null,
+    "user" : {
+      "id" : 2907774137,
+      "id_str" : "2907774137",
+      "name" : "Archillect",
+      "screen_name" : "archillect",
+      "location" : "Meta",
+      "description" : "The ocular engine. Sources: @archillinks",
+      "url" : "https://t.co/U7Oh7xumQp",
+      "entities" : {
+        "url" : {
+          "urls" : [
+            {
+              "url" : "https://t.co/U7Oh7xumQp",
+              "expanded_url" : "http://archillect.com",
+              "display_url" : "archillect.com",
+              "indices" : [
+                0,
+                23
+              ]
+            }
+          ]
+        },
+        "description" : {
+          "urls" : [
+          ]
+        }
+      },
+      "protected" : false,
+      "followers_count" : 332778,
+      "friends_count" : 1,
+      "listed_count" : 4168,
+      "created_at" : "Sat Dec 06 14:07:45 +0000 2014",
+      "favourites_count" : 10461,
+      "utc_offset" : 10800,
+      "time_zone" : "Istanbul",
+      "geo_enabled" : false,
+      "verified" : false,
+      "statuses_count" : 119611,
+      "lang" : "en",
+      "contributors_enabled" : false,
+      "is_translator" : false,
+      "is_translation_enabled" : false,
+      "profile_background_color" : "050505",
+      "profile_background_image_url" : "http://abs.twimg.com/images/themes/theme19/bg.gif",
+      "profile_background_image_url_https" : "https://abs.twimg.com/images/themes/theme19/bg.gif",
+      "profile_background_tile" : false,
+      "profile_image_url" : "http://pbs.twimg.com/profile_images/542430526057881602/mjWPm56H_normal.png",
+      "profile_image_url_https" : "https://pbs.twimg.com/profile_images/542430526057881602/mjWPm56H_normal.png",
+      "profile_banner_url" : "https://pbs.twimg.com/profile_banners/2907774137/1418102176",
+      "profile_link_color" : "191919",
+      "profile_sidebar_border_color" : "000000",
+      "profile_sidebar_fill_color" : "000000",
+      "profile_text_color" : "000000",
+      "profile_use_background_image" : false,
+      "has_extended_profile" : false,
+      "default_profile" : false,
+      "default_profile_image" : false,
+      "following" : false,
+      "follow_request_sent" : false,
+      "notifications" : false,
+      "translator_type" : "none"
+    },
+    "geo" : null,
+    "coordinates" : null,
+    "place" : null,
+    "contributors" : null,
+    "is_quote_status" : false,
+    "retweet_count" : 48,
+    "favorite_count" : 68,
+    "favorited" : false,
+    "retweeted" : false,
+    "possibly_sensitive" : false,
+    "lang" : "und"
+  },
+  "retweet_count" : 0,
+  "favorite_count" : 0,
+  "favorited" : false,
+  "retweeted" : false,
+  "possibly_sensitive" : false,
+  "lang" : "und"
+}
+""";
+
 // """
 // }}}
 
@@ -1067,7 +2146,7 @@ void retweet () {
   assert (!t.is_flag_set (Cb.TweetState.FAVORITED));
   assert (!t.is_flag_set (Cb.TweetState.RETWEETED));
   assert (!t.is_flag_set (Cb.TweetState.VERIFIED));
-  assert (t.reply_id == 0);
+  assert (t.source_tweet.reply_id == 0);
   assert (t.my_retweet == 0);
   //assert (!t.has_inline_media);
 }
@@ -1143,6 +2222,132 @@ void special_quote () {
   assert (t.retweeted_tweet.medias.length > 0);
 }
 
+void reply_users () {
+  var now = new GLib.DateTime.now_local ();
+  var t = new Cb.Tweet ();
+
+  var parser = new Json.Parser ();
+  try {
+    parser.load_from_data (REPLY_TWEET_DATA);
+  } catch (GLib.Error e) {
+    critical (e.message);
+  }
+  var root = parser.get_root ();
+
+  t.load_from_json (root, 0, now);
+
+  var reply_users = t.get_reply_users ();
+  assert (reply_users.length == 9);
+}
+
+void empty_display_range () {
+  var now = new GLib.DateTime.now_local ();
+  var t = new Cb.Tweet ();
+
+  var parser = new Json.Parser ();
+  try {
+    parser.load_from_data (TD7);
+  } catch (GLib.Error e) {
+    critical (e.message);
+  }
+  var root = parser.get_root ();
+
+  t.load_from_json (root, 0, now);
+
+  // This should NOT break.
+  var s = t.get_filter_text ();
+
+  assert (s.length > 0);
+}
+
+void rt_reply () {
+  var now = new GLib.DateTime.now_local ();
+  var t = new Cb.Tweet ();
+
+  var parser = new Json.Parser ();
+  try {
+    parser.load_from_data (TD8);
+  } catch (GLib.Error e) {
+    critical (e.message);
+  }
+  var root = parser.get_root ();
+
+  t.load_from_json (root, 0, now);
+
+  /*
+   * The loaded tweet is a retweet of a tweet that replies
+   * to 2 users (namely @corebirdgtk and @baedert).
+   * @baedert is mentioned directly in the tweet text, before the display_range_start
+   * and @corebirdgtk as the in_reply_to_screen_name embedded in the retweeted tweet.
+   *
+   * The result we want is that the CbTweet is a reply to all the
+   * users the retweeted tweet was a reply to, so both @corebirdgtk and @baedert.
+   */
+  assert (t.retweeted_tweet.reply_users.length == 2);
+  /* It's a direct reply to @corebirdgtk, so that should be first */
+  assert (t.retweeted_tweet.reply_users[0].screen_name == "corebirdgtk");
+  assert (t.retweeted_tweet.reply_users[1].screen_name == "baedert");
+
+  /* Consequently, the ones returned by get_reply_users should be the same. */
+  var reply_users = t.get_reply_users ();
+  assert (reply_users.length == 2);
+  assert (reply_users[0].screen_name == "corebirdgtk");
+  assert (reply_users[1].screen_name == "baedert");
+}
+
+void entity_count () {
+  var now = new GLib.DateTime.now_local ();
+  var t = new Cb.Tweet ();
+
+  var parser = new Json.Parser ();
+  try {
+    parser.load_from_data (TD9);
+  } catch (GLib.Error e) {
+    critical (e.message);
+  }
+  var root = parser.get_root ();
+
+  t.load_from_json (root, 0, now);
+
+  assert (t.source_tweet.entities.length == 1);
+}
+
+void reply_id () {
+  var now = new GLib.DateTime.now_local ();
+  var t = new Cb.Tweet ();
+
+  var parser = new Json.Parser ();
+  try {
+    parser.load_from_data (TD10);
+  } catch (GLib.Error e) {
+    critical (e.message);
+  }
+  var root = parser.get_root ();
+
+  t.load_from_json (root, 0, now);
+
+  /* The source tweet is a reply, but the quoted one isn't */
+
+  assert (t.source_tweet.reply_id == 858043152820826113);
+  assert (t.quoted_tweet != null);
+  assert (t.quoted_tweet.reply_id == 0);
+
+  /* source_tweet is a reply, so should definitely have >0 reply_users.
+   * This is interesting for this tweet since the tweet text contains
+   * a user mention, but it's part of the tweet text and not before
+   * the display_range_start.
+   */
+  assert (t.source_tweet.reply_users.length == 1);
+
+  /* Sanity check: The source_tweet's user mention should still end up being
+   * a text entity of course. */
+  assert (t.source_tweet.entities.length > 0);
+  /* It's the first one. I'm sure. */
+  assert (t.source_tweet.entities[0].display_text == "@archillect");
+}
+
+
+
 int main (string[] args) {
   GLib.Test.init (ref args);
   Settings.init ();
@@ -1156,6 +2361,11 @@ int main (string[] args) {
   GLib.Test.add_func ("/tweet-parsing/media-count", media_count);
   GLib.Test.add_func ("/tweet-parsing/double-media", double_media);
   GLib.Test.add_func ("/tweet-parsing/special-quote", special_quote);
+  GLib.Test.add_func ("/tweet-parsing/reply-users", reply_users);
+  GLib.Test.add_func ("/tweet-parsing/empty-display-range", empty_display_range);
+  GLib.Test.add_func ("/tweet-parsing/rt-reply", rt_reply);
+  GLib.Test.add_func ("/tweet-parsing/entity-count", entity_count);
+  GLib.Test.add_func ("/tweet-parsing/reply-id", reply_id);
 
   return GLib.Test.run ();
 }

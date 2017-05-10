@@ -102,6 +102,35 @@ void main (string[] args) {
     list3.add (row);
   }
 
+  {
+    // Reply to ONE user.
+    var tweet = parse_tweet (REPLY);
+    var row = new TweetListEntry (tweet, null, fake_acount);
+    list3.add (row);
+  }
+
+  {
+    // Reply to TWO users.
+    var tweet = parse_tweet (REPLY_TO_TWO);
+    var row = new TweetListEntry (tweet, null, fake_acount);
+    list3.add (row);
+  }
+
+  {
+    // Reply to MORE users.
+    var tweet = parse_tweet (REPLY2);
+    var row = new TweetListEntry (tweet, null, fake_acount);
+    list3.add (row);
+  }
+
+  {
+    // Retweet of a tweet that replies to multiple users (2!)
+    var tweet = parse_tweet (REPLY3);
+    var row = new TweetListEntry (tweet, null, fake_acount);
+    list3.add (row);
+  }
+
+
   list.set_size_request  (500, -1);
   list2.set_size_request (500, -1);
   list2.set_size_request (500, -1);
@@ -3009,4 +3038,674 @@ const string VIDEO_AND_THUMBNAIL =
   "possibly_sensitive_appealable" : false,
   "lang" : "en"
 }
+""";
+
+const string REPLY = """
+{
+  "created_at" : "Sat Jan 28 09:23:50 +0000 2017",
+  "id" : 825273167560208384,
+  "id_str" : "825273167560208384",
+  "full_text" : "@explodingwalrus \"definitely\" as in \"xdg-settings get default-url-scheme-handler https\" returns chrome's desktop file?",
+  "truncated" : false,
+  "display_text_range" : [
+    17,
+    118
+  ],
+  "entities" : {
+    "hashtags" : [
+    ],
+    "symbols" : [
+    ],
+    "user_mentions" : [
+      {
+        "screen_name" : "explodingwalrus",
+        "name" : "Carl Draper",
+        "id" : 44823886,
+        "id_str" : "44823886",
+        "indices" : [
+          0,
+          16
+        ]
+      }
+    ],
+    "urls" : [
+    ]
+  },
+  "source" : "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter Web Client</a>",
+  "in_reply_to_status_id" : 825269440556081153,
+  "in_reply_to_status_id_str" : "825269440556081153",
+  "in_reply_to_user_id" : 44823886,
+  "in_reply_to_user_id_str" : "44823886",
+  "in_reply_to_screen_name" : "explodingwalrus",
+  "user" : {
+    "id" : 2877682863,
+    "id_str" : "2877682863",
+    "name" : "Corebird",
+    "screen_name" : "corebirdclient",
+    "location" : "",
+    "description" : "If there's no bug report for it, it doesn't exist.\n\nThis account is run by a highly-paid intern, not @baedert himself.\n\nStill not CoreBird. Or @Corebird.",
+    "url" : "https://t.co/yGvX7Nf6i3",
+    "entities" : {
+      "url" : {
+        "urls" : [
+          {
+            "url" : "https://t.co/yGvX7Nf6i3",
+            "expanded_url" : "http://corebird.baedert.org",
+            "display_url" : "corebird.baedert.org",
+            "indices" : [
+              0,
+              23
+            ]
+          }
+        ]
+      },
+      "description" : {
+        "urls" : [
+        ]
+      }
+    },
+    "protected" : false,
+    "followers_count" : 430,
+    "friends_count" : 3,
+    "listed_count" : 24,
+    "created_at" : "Sat Nov 15 08:08:32 +0000 2014",
+    "favourites_count" : 22,
+    "utc_offset" : 7200,
+    "time_zone" : "Ljubljana",
+    "geo_enabled" : false,
+    "verified" : false,
+    "statuses_count" : 376,
+    "lang" : "en",
+    "contributors_enabled" : false,
+    "is_translator" : false,
+    "is_translation_enabled" : false,
+    "profile_background_color" : "FAB81E",
+    "profile_background_image_url" : "http://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_image_url_https" : "https://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_tile" : false,
+    "profile_image_url" : "http://pbs.twimg.com/profile_images/533595923679432704/bIWqAMTk_normal.png",
+    "profile_image_url_https" : "https://pbs.twimg.com/profile_images/533595923679432704/bIWqAMTk_normal.png",
+    "profile_link_color" : "000000",
+    "profile_sidebar_border_color" : "000000",
+    "profile_sidebar_fill_color" : "000000",
+    "profile_text_color" : "000000",
+    "profile_use_background_image" : true,
+    "has_extended_profile" : false,
+    "default_profile" : false,
+    "default_profile_image" : false,
+    "following" : true,
+    "follow_request_sent" : false,
+    "notifications" : false,
+    "translator_type" : "none"
+  },
+  "geo" : null,
+  "coordinates" : null,
+  "place" : null,
+  "contributors" : null,
+  "is_quote_status" : false,
+  "retweet_count" : 0,
+  "favorite_count" : 0,
+  "favorited" : false,
+  "retweeted" : false,
+  "lang" : "en"
+}
+""";
+
+const string REPLY_TO_TWO = """
+{
+  "created_at" : "Mon Apr 17 13:01:46 +0000 2017",
+  "id" : 853956655020748801,
+  "id_str" : "853956655020748801",
+  "full_text" : "@kaidjohnson @gnome Not everyone feels as confident switching to Linux. UKUI gives them a comfort blanket of familiarity.",
+  "truncated" : false,
+  "display_text_range" : [
+    20,
+    121
+  ],
+  "entities" : {
+    "hashtags" : [
+    ],
+    "symbols" : [
+    ],
+    "user_mentions" : [
+      {
+        "screen_name" : "kaidjohnson",
+        "name" : "Kai Johnson",
+        "id" : 34798045,
+        "id_str" : "34798045",
+        "indices" : [
+          0,
+          12
+        ]
+      },
+      {
+        "screen_name" : "gnome",
+        "name" : "GNOME",
+        "id" : 12579252,
+        "id_str" : "12579252",
+        "indices" : [
+          13,
+          19
+        ]
+      }
+    ],
+    "urls" : [
+    ]
+  },
+  "source" : "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter Web Client</a>",
+  "in_reply_to_status_id" : 853956134323048452,
+  "in_reply_to_status_id_str" : "853956134323048452",
+  "in_reply_to_user_id" : 34798045,
+  "in_reply_to_user_id_str" : "34798045",
+  "in_reply_to_screen_name" : "kaidjohnson",
+  "user" : {
+    "id" : 72915446,
+    "id_str" : "72915446",
+    "name" : "OMG! UBUNTU!",
+    "screen_name" : "omgubuntu",
+    "location" : "US/UK",
+    "description" : "Your #1 source for the latest #Ubuntu Linux news, apps, tips, gaming & more. Got news? joey[at]ohso.io",
+    "url" : "https://t.co/E0SDJKEG9w",
+    "entities" : {
+      "url" : {
+        "urls" : [
+          {
+            "url" : "https://t.co/E0SDJKEG9w",
+            "expanded_url" : "http://www.omgubuntu.co.uk",
+            "display_url" : "omgubuntu.co.uk",
+            "indices" : [
+              0,
+              23
+            ]
+          }
+        ]
+      },
+      "description" : {
+        "urls" : [
+        ]
+      }
+    },
+    "protected" : false,
+    "followers_count" : 94994,
+    "friends_count" : 54,
+    "listed_count" : 3816,
+    "created_at" : "Wed Sep 09 18:26:36 +0000 2009",
+    "favourites_count" : 2689,
+    "utc_offset" : 3600,
+    "time_zone" : "London",
+    "geo_enabled" : true,
+    "verified" : false,
+    "statuses_count" : 12699,
+    "lang" : "en",
+    "contributors_enabled" : false,
+    "is_translator" : false,
+    "is_translation_enabled" : false,
+    "profile_background_color" : "4D1F41",
+    "profile_background_image_url" : "http://pbs.twimg.com/profile_background_images/458275648939622400/g2-00Dua.png",
+    "profile_background_image_url_https" : "https://pbs.twimg.com/profile_background_images/458275648939622400/g2-00Dua.png",
+    "profile_background_tile" : false,
+    "profile_image_url" : "http://pbs.twimg.com/profile_images/627831364692389888/L3tujQ89_normal.png",
+    "profile_image_url_https" : "https://pbs.twimg.com/profile_images/627831364692389888/L3tujQ89_normal.png",
+    "profile_banner_url" : "https://pbs.twimg.com/profile_banners/72915446/1485460019",
+    "profile_link_color" : "009999",
+    "profile_sidebar_border_color" : "FFFFFF",
+    "profile_sidebar_fill_color" : "FFFFFF",
+    "profile_text_color" : "303030",
+    "profile_use_background_image" : true,
+    "has_extended_profile" : false,
+    "default_profile" : false,
+    "default_profile_image" : false,
+    "following" : true,
+    "follow_request_sent" : false,
+    "notifications" : false,
+    "translator_type" : "regular"
+  },
+  "geo" : null,
+  "coordinates" : null,
+  "place" : null,
+  "contributors" : null,
+  "is_quote_status" : false,
+  "retweet_count" : 0,
+  "favorite_count" : 1,
+  "favorited" : false,
+  "retweeted" : false,
+  "lang" : "en"
+}
+""";
+
+const string REPLY2 = """
+{
+  "created_at" : "Mon Apr 17 15:16:18 +0000 2017",
+  "id" : 853990508326252550,
+  "id_str" : "853990508326252550",
+  "full_text" : "@jjdesmond @_UBRAS_ @franalsworth @4Apes @katy4apes @theAliceRoberts @JaneGoodallUK @Jane_Goodall @JaneGoodallInst And here's the link for tickets again ... https://t.co/a9lOVMouNK",
+  "truncated" : false,
+  "display_text_range" : [
+    115,
+    180
+  ],
+  "entities" : {
+    "hashtags" : [
+    ],
+    "symbols" : [
+    ],
+    "user_mentions" : [
+      {
+        "screen_name" : "jjdesmond",
+        "name" : "Jimmy Jenny Desmond",
+        "id" : 21278482,
+        "id_str" : "21278482",
+        "indices" : [
+          0,
+          10
+        ]
+      },
+      {
+        "screen_name" : "_UBRAS_",
+        "name" : "Roots and Shoots UOB",
+        "id" : 803329927974096896,
+        "id_str" : "803329927974096896",
+        "indices" : [
+          11,
+          19
+        ]
+      },
+      {
+        "screen_name" : "franalsworth",
+        "name" : "Fran",
+        "id" : 776983919287754752,
+        "id_str" : "776983919287754752",
+        "indices" : [
+          20,
+          33
+        ]
+      },
+      {
+        "screen_name" : "4Apes",
+        "name" : "Ian Redmond",
+        "id" : 155889035,
+        "id_str" : "155889035",
+        "indices" : [
+          34,
+          40
+        ]
+      },
+      {
+        "screen_name" : "katy4apes",
+        "name" : "Katy Jedamzik",
+        "id" : 159608654,
+        "id_str" : "159608654",
+        "indices" : [
+          41,
+          51
+        ]
+      },
+      {
+        "screen_name" : "theAliceRoberts",
+        "name" : "Prof Alice Roberts",
+        "id" : 260211154,
+        "id_str" : "260211154",
+        "indices" : [
+          52,
+          68
+        ]
+      },
+      {
+        "screen_name" : "JaneGoodallUK",
+        "name" : "Roots & Shoots UK",
+        "id" : 423423823,
+        "id_str" : "423423823",
+        "indices" : [
+          69,
+          83
+        ]
+      },
+      {
+        "screen_name" : "Jane_Goodall",
+        "name" : "Jane Goodall",
+        "id" : 235157216,
+        "id_str" : "235157216",
+        "indices" : [
+          84,
+          97
+        ]
+      },
+      {
+        "screen_name" : "JaneGoodallInst",
+        "name" : "JaneGoodallInstitute",
+        "id" : 39822897,
+        "id_str" : "39822897",
+        "indices" : [
+          98,
+          114
+        ]
+      }
+    ],
+    "urls" : [
+      {
+        "url" : "https://t.co/a9lOVMouNK",
+        "expanded_url" : "https://www.eventbrite.com/e/working-with-apes-tickets-33089771397",
+        "display_url" : "eventbrite.com/e/working-with…",
+        "indices" : [
+          157,
+          180
+        ]
+      }
+    ]
+  },
+  "source" : "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+  "in_reply_to_status_id" : 853925036696141824,
+  "in_reply_to_status_id_str" : "853925036696141824",
+  "in_reply_to_user_id" : 21278482,
+  "in_reply_to_user_id_str" : "21278482",
+  "in_reply_to_screen_name" : "jjdesmond",
+  "user" : {
+    "id" : 415472140,
+    "id_str" : "415472140",
+    "name" : "Ben Garrod",
+    "screen_name" : "Ben_garrod",
+    "location" : "Bristol&Norfolk",
+    "description" : "Monkey-chaser, TV-talker, bone geek and Teaching Fellow at @AngliaRuskin https://t.co/FXbftdxxTJ",
+    "url" : "https://t.co/1B9SDHfWoF",
+    "entities" : {
+      "url" : {
+        "urls" : [
+          {
+            "url" : "https://t.co/1B9SDHfWoF",
+            "expanded_url" : "http://www.josarsby.com/ben-garrod",
+            "display_url" : "josarsby.com/ben-garrod",
+            "indices" : [
+              0,
+              23
+            ]
+          }
+        ]
+      },
+      "description" : {
+        "urls" : [
+          {
+            "url" : "https://t.co/FXbftdxxTJ",
+            "expanded_url" : "http://www.anglia.ac.uk/science-and-technology/about/life-sciences/our-staff/ben-garrod",
+            "display_url" : "anglia.ac.uk/science-and-te…",
+            "indices" : [
+              73,
+              96
+            ]
+          }
+        ]
+      }
+    },
+    "protected" : false,
+    "followers_count" : 6526,
+    "friends_count" : 1016,
+    "listed_count" : 128,
+    "created_at" : "Fri Nov 18 11:30:48 +0000 2011",
+    "favourites_count" : 25292,
+    "utc_offset" : 3600,
+    "time_zone" : "London",
+    "geo_enabled" : true,
+    "verified" : true,
+    "statuses_count" : 17224,
+    "lang" : "en",
+    "contributors_enabled" : false,
+    "is_translator" : false,
+    "is_translation_enabled" : false,
+    "profile_background_color" : "C0DEED",
+    "profile_background_image_url" : "http://pbs.twimg.com/profile_background_images/590945579024257024/2F1itaGz.jpg",
+    "profile_background_image_url_https" : "https://pbs.twimg.com/profile_background_images/590945579024257024/2F1itaGz.jpg",
+    "profile_background_tile" : false,
+    "profile_image_url" : "http://pbs.twimg.com/profile_images/615498558385557505/cwSloac3_normal.jpg",
+    "profile_image_url_https" : "https://pbs.twimg.com/profile_images/615498558385557505/cwSloac3_normal.jpg",
+    "profile_banner_url" : "https://pbs.twimg.com/profile_banners/415472140/1477223840",
+    "profile_link_color" : "0084B4",
+    "profile_sidebar_border_color" : "FFFFFF",
+    "profile_sidebar_fill_color" : "DDEEF6",
+    "profile_text_color" : "333333",
+    "profile_use_background_image" : false,
+    "has_extended_profile" : false,
+    "default_profile" : false,
+    "default_profile_image" : false,
+    "following" : false,
+    "follow_request_sent" : false,
+    "notifications" : false,
+    "translator_type" : "none"
+  },
+  "geo" : null,
+  "coordinates" : null,
+  "place" : null,
+  "contributors" : null,
+  "is_quote_status" : false,
+  "retweet_count" : 6,
+  "favorite_count" : 7,
+  "favorited" : false,
+  "retweeted" : false,
+  "possibly_sensitive" : false,
+  "lang" : "en"
+}
+""";
+
+const string REPLY3 = """
+{
+  "created_at" : "Mon Apr 24 11:40:53 +0000 2017",
+  "id" : 856473014560591872,
+  "id_str" : "856473014560591872",
+  "full_text" : "RT @corebirdgtk: @baedert and @corebirdclient so?",
+  "truncated" : false,
+  "display_text_range" : [
+    0,
+    49
+  ],
+  "entities" : {
+    "hashtags" : [
+    ],
+    "symbols" : [
+    ],
+    "user_mentions" : [
+      {
+        "screen_name" : "corebirdgtk",
+        "name" : "Z??!@*(&*²³¤²³¤",
+        "id" : 993713617,
+        "id_str" : "993713617",
+        "indices" : [
+          3,
+          15
+        ]
+      },
+      {
+        "screen_name" : "baedert",
+        "name" : "Schupp & Wupp",
+        "id" : 118055879,
+        "id_str" : "118055879",
+        "indices" : [
+          17,
+          25
+        ]
+      },
+      {
+        "screen_name" : "corebirdclient",
+        "name" : "Corebird",
+        "id" : 2877682863,
+        "id_str" : "2877682863",
+        "indices" : [
+          30,
+          45
+        ]
+      }
+    ],
+    "urls" : [
+    ]
+  },
+  "source" : "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter Web Client</a>",
+  "in_reply_to_status_id" : null,
+  "in_reply_to_status_id_str" : null,
+  "in_reply_to_user_id" : null,
+  "in_reply_to_user_id_str" : null,
+  "in_reply_to_screen_name" : null,
+  "user" : {
+    "id" : 993713617,
+    "id_str" : "993713617",
+    "name" : "Z??!@*(&*²³¤²³¤",
+    "screen_name" : "corebirdgtk",
+    "location" : "",
+    "description" : "&lt;asdf",
+    "url" : null,
+    "entities" : {
+      "description" : {
+        "urls" : [
+        ]
+      }
+    },
+    "protected" : true,
+    "followers_count" : 3,
+    "friends_count" : 4,
+    "listed_count" : 0,
+    "created_at" : "Thu Dec 06 19:47:16 +0000 2012",
+    "favourites_count" : 9,
+    "utc_offset" : 7200,
+    "time_zone" : "Amsterdam",
+    "geo_enabled" : false,
+    "verified" : false,
+    "statuses_count" : 909,
+    "lang" : "en",
+    "contributors_enabled" : false,
+    "is_translator" : false,
+    "is_translation_enabled" : true,
+    "profile_background_color" : "C0DEED",
+    "profile_background_image_url" : "http://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_image_url_https" : "https://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_tile" : false,
+    "profile_image_url" : "http://pbs.twimg.com/profile_images/655270693341417472/h6BbZKJy_normal.png",
+    "profile_image_url_https" : "https://pbs.twimg.com/profile_images/655270693341417472/h6BbZKJy_normal.png",
+    "profile_banner_url" : "https://pbs.twimg.com/profile_banners/993713617/1413106147",
+    "profile_link_color" : "1DA1F2",
+    "profile_sidebar_border_color" : "C0DEED",
+    "profile_sidebar_fill_color" : "DDEEF6",
+    "profile_text_color" : "333333",
+    "profile_use_background_image" : true,
+    "has_extended_profile" : false,
+    "default_profile" : true,
+    "default_profile_image" : false,
+    "following" : true,
+    "follow_request_sent" : false,
+    "notifications" : false,
+    "translator_type" : "none"
+  },
+  "geo" : null,
+  "coordinates" : null,
+  "place" : null,
+  "contributors" : null,
+  "retweeted_status" : {
+    "created_at" : "Mon Apr 24 11:35:17 +0000 2017",
+    "id" : 856471602883686400,
+    "id_str" : "856471602883686400",
+    "full_text" : "@baedert and @corebirdclient so?",
+    "truncated" : false,
+    "display_text_range" : [
+      9,
+      32
+    ],
+    "entities" : {
+      "hashtags" : [
+      ],
+      "symbols" : [
+      ],
+      "user_mentions" : [
+        {
+          "screen_name" : "baedert",
+          "name" : "Schupp & Wupp",
+          "id" : 118055879,
+          "id_str" : "118055879",
+          "indices" : [
+            0,
+            8
+          ]
+        },
+        {
+          "screen_name" : "corebirdclient",
+          "name" : "Corebird",
+          "id" : 2877682863,
+          "id_str" : "2877682863",
+          "indices" : [
+            13,
+            28
+          ]
+        }
+      ],
+      "urls" : [
+      ]
+    },
+    "source" : "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter Web Client</a>",
+    "in_reply_to_status_id" : 853198126106148864,
+    "in_reply_to_status_id_str" : "853198126106148864",
+    "in_reply_to_user_id" : 993713617,
+    "in_reply_to_user_id_str" : "993713617",
+    "in_reply_to_screen_name" : "corebirdgtk",
+    "user" : {
+      "id" : 993713617,
+      "id_str" : "993713617",
+      "name" : "Z??!@*(&*²³¤²³¤",
+      "screen_name" : "corebirdgtk",
+      "location" : "",
+      "description" : "&lt;asdf",
+      "url" : null,
+      "entities" : {
+        "description" : {
+          "urls" : [
+          ]
+        }
+      },
+      "protected" : true,
+      "followers_count" : 3,
+      "friends_count" : 4,
+      "listed_count" : 0,
+      "created_at" : "Thu Dec 06 19:47:16 +0000 2012",
+      "favourites_count" : 9,
+      "utc_offset" : 7200,
+      "time_zone" : "Amsterdam",
+      "geo_enabled" : false,
+      "verified" : false,
+      "statuses_count" : 909,
+      "lang" : "en",
+      "contributors_enabled" : false,
+      "is_translator" : false,
+      "is_translation_enabled" : true,
+      "profile_background_color" : "C0DEED",
+      "profile_background_image_url" : "http://abs.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_image_url_https" : "https://abs.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_tile" : false,
+      "profile_image_url" : "http://pbs.twimg.com/profile_images/655270693341417472/h6BbZKJy_normal.png",
+      "profile_image_url_https" : "https://pbs.twimg.com/profile_images/655270693341417472/h6BbZKJy_normal.png",
+      "profile_banner_url" : "https://pbs.twimg.com/profile_banners/993713617/1413106147",
+      "profile_link_color" : "1DA1F2",
+      "profile_sidebar_border_color" : "C0DEED",
+      "profile_sidebar_fill_color" : "DDEEF6",
+      "profile_text_color" : "333333",
+      "profile_use_background_image" : true,
+      "has_extended_profile" : false,
+      "default_profile" : true,
+      "default_profile_image" : false,
+      "following" : true,
+      "follow_request_sent" : false,
+      "notifications" : false,
+      "translator_type" : "none"
+    },
+    "geo" : null,
+    "coordinates" : null,
+    "place" : null,
+    "contributors" : null,
+    "is_quote_status" : false,
+    "retweet_count" : 1,
+    "favorite_count" : 0,
+    "favorited" : false,
+    "retweeted" : false,
+    "lang" : "en"
+  },
+  "is_quote_status" : false,
+  "retweet_count" : 1,
+  "favorite_count" : 0,
+  "favorited" : false,
+  "retweeted" : false,
+  "lang" : "en"
+}
+
 """;
