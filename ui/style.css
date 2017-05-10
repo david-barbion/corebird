@@ -1,5 +1,11 @@
 @define-color topbar_bg #333;
 
+* {
+  /* The default for this style property for gtk3 is 150
+   * so we have to get rid of that. */
+  -GtkProgressBar-min-horizontal-bar-width: 0;
+}
+
 .avatar-round {
   border: 1px solid grey;
   border-radius: 48px;
@@ -60,15 +66,15 @@
   opacity: 0.9;
   box-shadow: none;
   border: none;
-  border-top: 2px solid transparent;
   border-bottom: 2px solid transparent;
+  border-top: 2px solid transparent;
 }
 
 .inline-media:hover {
-  border-top: 2px solid #4a90d9;
-  border-bottom: 2px solid #4a90d9;
   opacity: 1.0;
   box-shadow: none;
+  border-top: 2px solid grey;
+  border-bottom: 2px solid grey;
 }
 
 .image-progress {
@@ -118,7 +124,7 @@
 }
 
 /* Don't target :hover:active here */
-.favorite-button:checked,
+.favorite-button:checked:not(:hover),
 .retweet-button:checked:not(:hover) {
   background-image: none;
   background-color: transparent;
@@ -150,6 +156,7 @@
   border-radius: 0px;
   border-bottom: 1px solid transparent;
   min-height: 0px;
+  margin-bottom: -1px;
 }
 
 .text-only-button:hover {
@@ -245,4 +252,28 @@ progressbar.horizontal.embedded-progress>trough>progress {
   border-radius: 0px;
   border-left-width: 0px;
   border-right-width: 0px;
+}
+
+.fav-image-box {
+  padding: 6px;
+}
+
+/* GtkFlowBox doesn't handle the hover state of its children so... */
+.fav-image-item:hover {
+  background-color: alpha(black, 0.1);
+}
+
+.fav-image-item:active {
+  background-color: alpha(black, 0.3);
+}
+
+.nobg {
+  /* Hide background for really fucked up themes */
+  background: none;
+  box-shadow: none;
+  border: none;
+}
+
+.invisible-links link:link {
+  color:inherit;
 }

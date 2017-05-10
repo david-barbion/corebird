@@ -19,7 +19,7 @@
 public class MainWindow : Gtk.ApplicationWindow {
   private const GLib.ActionEntry[] win_entries = {
     {"compose-tweet",       show_hide_compose_window},
-    {"toggle-sidebar",      Settings.toggle_sidebar_visible},
+    {"toggle-topbar",       Settings.toggle_topbar_visible},
     {"switch-page",         simple_switch_page, "i"},
     {"show-account-dialog", show_account_dialog},
     {"show-account-list",   show_account_list},
@@ -62,7 +62,7 @@ public class MainWindow : Gtk.ApplicationWindow {
   }
 
   public MainWindow (Gtk.Application app, Account? account = null) {
-    set_default_size (480, 700);
+    set_default_size (530, 700);
 
     var group = new Gtk.WindowGroup ();
     group.add_window (this);
@@ -512,8 +512,8 @@ public class MainWindow : Gtk.ApplicationWindow {
 
   public void reply_to_tweet (int64 tweet_id) {
     Cb.Tweet? tweet = null;
-    tweet = ((DefaultTimeline)this.main_widget.get_page(Page.STREAM)).tweet_list.model.get_from_id (tweet_id,
-                                                                                                    0);
+    tweet = ((DefaultTimeline)this.main_widget.get_page(Page.STREAM)).tweet_list.model.get_for_id (tweet_id,
+                                                                                                   0);
     if (tweet == null) {
       warning ("tweet with id %s could not be found", tweet_id.to_string ());
       return;
@@ -528,16 +528,16 @@ public class MainWindow : Gtk.ApplicationWindow {
     DefaultTimeline home_timeline     = ((DefaultTimeline)this.main_widget.get_page(Page.STREAM));
     DefaultTimeline mentions_timeline = ((DefaultTimeline)this.main_widget.get_page(Page.MENTIONS));
     Cb.Tweet? tweet = null;
-    tweet = home_timeline.tweet_list.model.get_from_id (tweet_id,
-                                                        0);
+    tweet = home_timeline.tweet_list.model.get_for_id (tweet_id,
+                                                       0);
     if (tweet != null) {
       tweet.set_seen (true);
       home_timeline.unread_count --;
     }
 
     // and now with the MentionsTimeline
-    tweet = mentions_timeline.tweet_list.model.get_from_id (tweet_id,
-                                                            0);
+    tweet = mentions_timeline.tweet_list.model.get_for_id (tweet_id,
+                                                           0);
     if (tweet != null) {
       tweet.set_seen (true);
       mentions_timeline.unread_count --;

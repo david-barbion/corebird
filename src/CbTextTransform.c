@@ -1,6 +1,24 @@
+/*  This file is part of corebird, a Gtk+ linux Twitter client.
+ *  Copyright (C) 2016 Timm Bäder
+ *
+ *  corebird is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  corebird is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with corebird.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "CbTextTransform.h"
 #include "CbMediaDownloader.h"
 #include "CbTypes.h"
+#include "CbUtils.h"
 #include <string.h>
 #include <ctype.h>
 
@@ -14,7 +32,8 @@ cb_text_transform_tweet (const CbMiniTweet *tweet,
                                  tweet->n_entities,
                                  flags,
                                  tweet->n_medias,
-                                 quote_id);
+                                 quote_id,
+                                 tweet->display_range_start);
 }
 
 const int TRAILING = 1 << 0;
@@ -76,7 +95,8 @@ cb_text_transform_text (const char   *text,
                         gsize         n_entities,
                         guint         flags,
                         gsize         n_medias,
-                        gint64        quote_id)
+                        gint64        quote_id,
+                        guint         display_range_start)
 {
   GString *str;
   const  guint text_len   = g_utf8_strlen (text, -1);
@@ -93,10 +113,18 @@ cb_text_transform_text (const char   *text,
 
   for (i = (int)n_entities - 1; i >= 0; i --)
     {
-      char *btw = g_utf8_substring (text,
-                                    entities[i].to,
-                                    cur_end);
+      char *btw;
+      guint entity_to;
       gsize btw_length = cur_end - entities[i].to;
+
+      if (entities[i].to <= display_range_start)
+        continue;
+
+      entity_to = entities[i].to - display_range_start;
+
+      btw = g_utf8_substring (text,
+                              entity_to,
+                              cur_end);
 
       if (!is_whitespace (btw) && btw_length > 0)
         {
@@ -104,13 +132,13 @@ cb_text_transform_text (const char   *text,
           break;
         }
       else
-        cur_end = entities[i].to;
+        cur_end = entity_to;
 
       if (entities[i].to == cur_end &&
           (is_hashtag (entities[i].display_text) || is_link (entities[i].target)))
           {
             entities[i].info |= TRAILING;
-            cur_end = entities[i].from;
+            cur_end = entities[i].from - display_range_start;
           }
       else
         {
@@ -125,8 +153,16 @@ cb_text_transform_text (const char   *text,
   for (i = 0; i < (int)n_entities; i ++)
     {
       CbTextEntity *entity = &entities[i];
+      char *before;
+      guint entity_to;
 
-      char *before = g_utf8_substring (text, last_end, entity->from);
+      if (entity->to <= display_range_start)
+        continue;
+
+      entity_to = entity->to - display_range_start;
+      before = g_utf8_substring (text,
+                                 last_end,
+                                 entity->from - display_range_start);
 
       if (!(last_entity_was_trailing && is_whitespace (before)))
         g_string_append (str, before);
@@ -135,7 +171,7 @@ cb_text_transform_text (const char   *text,
           (entity->info & TRAILING) > 0 &&
           is_hashtag (entity->display_text))
         {
-          last_end = entity->to;
+          last_end = entity_to;
           last_entity_was_trailing = TRUE;
           g_free (before);
           continue;
@@ -147,7 +183,7 @@ cb_text_transform_text (const char   *text,
            is_media_url (entity->target, entity->display_text, n_medias)) ||
           (quote_id != 0 && is_quote_link (entity, quote_id)))
         {
-          last_end = entity->to;
+          last_end = entity_to;
           g_free (before);
           continue;
         }
@@ -167,12 +203,14 @@ cb_text_transform_text (const char   *text,
 
           if (entity->tooltip_text != NULL)
             {
-              char *c = escape_ampersand (entity->tooltip_text);
+              char *c = cb_utils_escape_ampersands (entity->tooltip_text);
+              char *cc = cb_utils_escape_quotes (c);
 
               g_string_append (str, " title=\"");
-              g_string_append (str, c);
+              g_string_append (str, cc);
               g_string_append (str, "\"");
 
+              g_free (cc);
               g_free (c);
             }
 
@@ -181,7 +219,7 @@ cb_text_transform_text (const char   *text,
           g_string_append (str,"</a></span>");
         }
 
-      last_end = entity->to;
+      last_end = entity_to;
       g_free (before);
     }
 

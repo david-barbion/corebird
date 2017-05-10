@@ -51,12 +51,19 @@ struct _CbMiniTweet
 {
   gint64 id;
   gint64 created_at;
+  guint display_range_start;
   CbUserIdentity author;
   char *text;
+  gint64 reply_id;
+
   CbTextEntity *entities;
   guint n_entities;
+
   CbMedia **medias;
   guint n_medias;
+
+  CbUserIdentity *reply_users;
+  guint n_reply_users;
 };
 typedef struct _CbMiniTweet CbMiniTweet;
 void cb_mini_tweet_free (CbMiniTweet *tweet);
@@ -64,7 +71,5 @@ void cb_mini_tweet_copy (CbMiniTweet *t1, CbMiniTweet *t2);
 void cb_mini_tweet_init (CbMiniTweet *t);
 void cb_mini_tweet_parse (CbMiniTweet *t, JsonObject *obj);
 void cb_mini_tweet_parse_entities (CbMiniTweet *t, JsonObject *obj);
-
-char *escape_ampersand (const char *in);
 
 #endif

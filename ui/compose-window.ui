@@ -7,10 +7,10 @@
     </widgets>
   </object>
   <template class="ComposeTweetWindow" parent="GtkApplicationWindow">
-    <property name="can-focus">False</property>
+    <property name="can-focus">1</property>
     <property name="title" translatable="yes">Compose Tweet</property>
     <property name="window-position">center-on-parent</property>
-    <property name="destroy-with-parent">True</property>
+    <property name="destroy-with-parent">1</property>
     <property name="type-hint">dialog</property>
     <child type="titlebar">
       <object class="GtkHeaderBar" id="header_bar">
@@ -132,15 +132,41 @@
                 <property name="top-attach">2</property>
               </packing>
             </child>
+
+
+
+
             <child>
-              <object class="GtkButton" id="add_image_button">
-                <property name="visible">1</property>
-                <property name="label" translatable="yes">Add Image</property>
-                <property name="halign">end</property>
-                <property name="valign">baseline</property>
+              <object class="GtkBox">
+                <property name="visible">true</property>
                 <property name="margin-end">10</property>
                 <property name="margin-bottom">10</property>
-                <signal name="clicked" handler="add_image_clicked_cb"/>
+                <property name="halign">end</property>
+                <style>
+                  <class name="linked" />
+                </style>
+                <child>
+                  <object class="GtkButton" id="add_image_button">
+                    <property name="visible">1</property>
+                    <property name="label" translatable="yes">Add Image</property>
+                    <property name="valign">baseline</property>
+                    <signal name="clicked" handler="add_image_clicked_cb"/>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="fav_image_button">
+                    <property name="visible">1</property>
+                    <property name="tooltip-text" translatable="yes">Show favorite images</property>
+                    <signal name="clicked" handler="fav_image_button_clicked_cb" />
+                    <child>
+                      <object class="GtkImage">
+                        <property name="visible">1</property>
+                        <property name="icon-name">corebird-favorite-symbolic</property>
+                        <property name="icon-size">1</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -184,6 +210,56 @@
               </packing>
             </child>
           </object>
+        </child>
+
+        <child>
+          <object class="GtkBox">
+            <property name="visible">1</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="visible">1</property>
+                <property name="hscrollbar-policy">never</property>
+                <property name="vexpand">1</property>
+                <child>
+                  <object class="GtkFlowBox" id="fav_image_list">
+                    <property name="visible">1</property>
+                    <property name="selection-mode">none</property>
+                    <signal name="child-activated" handler="fav_image_box_child_activated_cb" />
+                    <signal name="drag-data-received" handler="fav_image_box_drag_data_received_cb" />
+                    <style>
+                      <class name="view" />
+                      <class name="fav-image-box" />
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator">
+                <property name="visible">1</property>
+                <property name="orientation">horizontal</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="visible">1</property>
+                <property name="halign">start</property>
+                <property name="margin">6</property>
+                <signal name="clicked" handler="new_fav_image_button_clicked_cb" />
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">1</property>
+                    <property name="icon-name">list-add-symbolic</property>
+                    <property name="icon-size">1</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="name">fav-images</property>
+          </packing>
         </child>
       </object>
     </child>

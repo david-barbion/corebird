@@ -17,64 +17,9 @@
 
 #include "CbTypes.h"
 #include "CbMediaDownloader.h"
+#include "CbUtils.h"
 #include <string.h>
 #include <stdlib.h>
-
-char *
-escape_ampersand (const char *in)
-{
-  gsize bytes = strlen (in);
-  gsize n_ampersands = 0;
-  const char *p = in;
-  gunichar c;
-  char *result;
-  const char *last;
-  char *out_pos;
-
-  c = g_utf8_get_char (p);
-  while (c != '\0')
-    {
-      if (c == '&')
-        n_ampersands ++;
-
-      p = g_utf8_next_char (p);
-      c = g_utf8_get_char (p);
-    }
-
-  result = g_malloc (bytes + (n_ampersands * 4) + 1);
-  result[bytes + (n_ampersands * 4)] = '\0';
-
-  p = in;
-  c = g_utf8_get_char (p);
-  last = p;
-  out_pos = result;
-  while (c != '\0')
-    {
-
-      if (c == '&')
-        {
-          int bytes = p - last;
-          memcpy (out_pos, last, bytes);
-          last = p;
-          out_pos[bytes + 0] = '&';
-          out_pos[bytes + 1] = 'a';
-          out_pos[bytes + 2] = 'm';
-          out_pos[bytes + 3] = 'p';
-          out_pos[bytes + 4] = ';';
-          last += 1; /* Skip & */
-          out_pos += bytes + 5;
-        }
-
-      p = g_utf8_next_char (p);
-      c = g_utf8_get_char (p);
-    }
-
-  memcpy (out_pos, last, p - last);
-
-  return result;
-}
-
-
 
 void
 cb_user_identity_free (CbUserIdentity *id)
@@ -98,7 +43,7 @@ void cb_user_identity_parse (CbUserIdentity *id,
 {
   id->id = json_object_get_int_member (user_obj, "id");
   id->screen_name = g_strdup (json_object_get_string_member (user_obj, "screen_name"));
-  id->user_name = escape_ampersand (json_object_get_string_member (user_obj, "name"));
+  id->user_name = cb_utils_escape_ampersands (json_object_get_string_member (user_obj, "name"));
 }
 
 
@@ -141,6 +86,10 @@ cb_mini_tweet_free (CbMiniTweet *t)
     cb_text_entity_free (&t->entities[i]);
   g_free (t->entities);
 
+  for (i = 0; i < t->n_reply_users; i ++)
+    cb_user_identity_free (&t->reply_users[i]);
+  g_free (t->reply_users);
+
   cb_user_identity_free (&t->author);
 }
 
@@ -170,114 +119,14 @@ cb_mini_tweet_copy (CbMiniTweet *t1, CbMiniTweet *t2)
 void
 cb_mini_tweet_init (CbMiniTweet *t)
 {
+  t->reply_id = 0;
   t->medias = NULL;
   t->n_medias = 0;
   t->entities = NULL;
   t->n_entities = 0;
+  t->reply_users = NULL;
+  t->n_reply_users = 0;
 }
-
-static GDateTime *
-parse_created_at (const char *_in)
-{
-  char *in = g_strdup (_in);
-  const char *month_str;
-  int year, month, hour, minute, day;
-  GDateTime *result;
-  GDateTime *result_local;
-  GTimeZone *time_zone;
-  GTimeZone *local_time_zone;
-  double seconds;
-
-  /* The input string is ASCII, in the form  'Wed Jun 20 19:01:28 +0000 2012' */
-
-  if (!_in)
-    {
-      g_free (in);
-      return g_date_time_new_now_local ();
-    }
-
-  g_assert (strlen (_in) == 30);
-
-  in[3]  = '\0';
-  in[7]  = '\0';
-  in[10] = '\0';
-  in[13] = '\0';
-  in[16] = '\0';
-  in[19] = '\0';
-  in[25] = '\0';
-
-  year    = atoi (in + 26);
-  day     = atoi (in + 8);
-  hour    = atoi (in + 11);
-  minute  = atoi (in + 14);
-  seconds = atof (in + 17);
-
-  month_str = in + 4;
-  switch (month_str[0])
-    {
-      case 'J': /* January */
-        if (month_str[1] == 'u' && month_str[2] == 'n')
-          month = 6;
-        else if (month_str[1] == 'u' && month_str[2] == 'l')
-          month = 7;
-        else
-          month = 1;
-        break;
-      case 'F':
-        month = 2;
-        break;
-      case 'M':
-        if (month_str[1] == 'a')
-          month = 3;
-        else
-          month = 5;
-        break;
-      case 'A':
-        if (month_str[1] == 'p')
-          month = 4;
-        else
-          month = 8;
-        break;
-      case 'S':
-        month = 9;
-        break;
-      case 'O':
-        month = 10;
-        break;
-      case 'N':
-        month = 11;
-        break;
-      case 'D':
-        month = 12;
-        break;
-
-      default:
-        g_warn_if_reached ();
-        break;
-    }
-
-
-  time_zone = g_time_zone_new (in + 20);
-
-  result = g_date_time_new (time_zone,
-                            year,
-                            month,
-                            day,
-                            hour,
-                            minute,
-                            seconds);
-  g_assert (result);
-
-  local_time_zone = g_time_zone_new_local ();
-  result_local = g_date_time_to_timezone (result, local_time_zone);
-
-  g_time_zone_unref (local_time_zone);
-  g_time_zone_unref (time_zone);
-  g_date_time_unref (result);
-  g_free (in);
-  return result_local;
-}
-
 
 void
 cb_mini_tweet_parse (CbMiniTweet *t,
@@ -285,19 +134,42 @@ cb_mini_tweet_parse (CbMiniTweet *t,
 {
   GDateTime *time;
   JsonObject *extended_object;
+  const char *tweet_text;
 
   if (json_object_has_member (obj, "extended_tweet"))
     extended_object = json_object_get_object_member (obj, "extended_tweet");
   else
     extended_object = obj;
 
-  time = parse_created_at (json_object_get_string_member (obj, "created_at"));
+  time = cb_utils_parse_date (json_object_get_string_member (obj, "created_at"));
 
   t->id = json_object_get_int_member (obj, "id");
   if (json_object_has_member (extended_object, "full_text"))
-    t->text = g_strdup (json_object_get_string_member (extended_object, "full_text"));
+    tweet_text = json_object_get_string_member (extended_object, "full_text");
   else
-    t->text = g_strdup (json_object_get_string_member (extended_object, "text"));
+    tweet_text = json_object_get_string_member (extended_object, "text");
+
+  if (json_object_has_member (obj, "display_text_range"))
+    {
+      /* We only remove the prefix */
+      guint start = (guint)json_array_get_int_element (
+                          json_object_get_array_member (obj, "display_text_range"),
+                          0);
+      guint i;
+      const char *p = tweet_text;
+
+      /* Skip ahead */
+      for (i = 0; i < start; i ++)
+        p = g_utf8_next_char (p);
+
+      t->text = g_strdup (p);
+      t->display_range_start = start;
+    }
+  else
+    {
+      t->text = g_strdup (tweet_text);
+      t->display_range_start= 0;
+    }
 
   t->created_at = g_date_time_to_unix (time);
   cb_user_identity_parse (&t->author, json_object_get_object_member (obj, "user"));
@@ -329,7 +201,10 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
   guint i, p;
   int url_index = 0;
   guint n_media_arrays = 0;
+  guint n_reply_users = 0;
+  guint non_reply_mentions = 0;
   int max_entities;
+  gboolean direct_duplicate = FALSE;
 
   if (json_object_has_member (status, "extended_tweet"))
     extended_obj = json_object_get_object_member (status, "extended_tweet");
@@ -342,13 +217,68 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
 
 
   if (json_object_has_member (status, "extended_entities"))
-    media_count +=  json_object_get_member_size (json_object_get_object_member (status, "extended_entities"),
-                                                 "media");
+    media_count += json_object_get_member_size (json_object_get_object_member (status, "extended_entities"),
+                                                "media");
+
+  if (json_object_has_member (status, "in_reply_to_status_id") &&
+      !json_object_get_null_member (status, "in_reply_to_status_id"))
+    {
+      guint reply_index = 0;
+      gint64 reply_to_user_id = 0;
+
+      reply_to_user_id = json_object_get_int_member (status, "in_reply_to_user_id");
+
+      /* Check how many of the user mentions are reply mentions */
+      t->reply_id = json_object_get_int_member (status, "in_reply_to_status_id");
+      for (i = 0, p = json_array_get_length (user_mentions); i < p; i ++)
+        {
+          JsonObject *mention = json_node_get_object (json_array_get_element (user_mentions, i));
+          JsonArray  *indices = json_object_get_array_member (mention, "indices");
+          gint64 user_id = json_object_get_int_member (mention, "id");
+
+          if (json_array_get_int_element (indices, 1) <= t->display_range_start)
+              n_reply_users ++;
+          else
+            break;
+
+          if (i == 0 && user_id == reply_to_user_id)
+            direct_duplicate = TRUE;
+        }
+
+      if (!direct_duplicate)
+        n_reply_users ++;
+
+      t->reply_users = g_new0 (CbUserIdentity, n_reply_users);
+      t->n_reply_users = n_reply_users;
+
+      if (!direct_duplicate)
+        {
+          t->reply_users[0].id = reply_to_user_id;
+          t->reply_users[0].screen_name = g_strdup (json_object_get_string_member (status, "in_reply_to_screen_name"));
+          t->reply_users[0].user_name = g_strdup ("");
+          reply_index = 1;
+        }
+
+      /* Now fill ->reply_users. The very first entry is always the user this tweet
+       * *actually* replies to. */
+      for (i = 0;
+           i < n_reply_users - (direct_duplicate ? 0 : 1);
+           i ++)
+        {
+          JsonObject *mention = json_node_get_object (json_array_get_element (user_mentions, i));
+          t->reply_users[reply_index].id = json_object_get_int_member (mention, "id");
+          t->reply_users[reply_index].screen_name = g_strdup (json_object_get_string_member (mention, "screen_name"));
+          t->reply_users[reply_index].user_name = g_strdup (json_object_get_string_member (mention, "name"));
+          reply_index ++;
+        }
+
+      non_reply_mentions = n_reply_users - 1;
+    }
 
   max_entities = json_array_get_length (urls) +
-                                      json_array_get_length (hashtags) +
-                                      json_array_get_length (user_mentions) +
-                                      media_count;
+                 json_array_get_length (hashtags) +
+                 json_array_get_length (user_mentions) - non_reply_mentions +
+                 media_count;
   media_count += (int)json_array_get_length (urls);
 
 
@@ -378,9 +308,9 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
       indices = json_object_get_array_member (url, "indices");
       t->entities[url_index].from = json_array_get_int_element (indices, 0);
       t->entities[url_index].to   = json_array_get_int_element (indices, 1);
-      t->entities[url_index].display_text = escape_ampersand (json_object_get_string_member (url, "display_url"));
-      t->entities[url_index].tooltip_text = escape_ampersand (expanded_url);
-      t->entities[url_index].target = escape_ampersand (expanded_url);
+      t->entities[url_index].display_text = cb_utils_escape_ampersands (json_object_get_string_member (url, "display_url"));
+      t->entities[url_index].tooltip_text = cb_utils_escape_ampersands (expanded_url);
+      t->entities[url_index].target = cb_utils_escape_ampersands (expanded_url);
 
       url_index ++;
     }
@@ -402,7 +332,12 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
     }
 
   /* USER MENTIONS */
-  for (i = 0, p = json_array_get_length (user_mentions); i < p; i ++)
+  if (direct_duplicate)
+    i = n_reply_users;
+  else
+    i = n_reply_users == 0 ? 0 : n_reply_users - 1;
+
+  for (p = json_array_get_length (user_mentions); i < p; i ++)
     {
       JsonObject *mention = json_node_get_object (json_array_get_element (user_mentions, i));
       JsonArray  *indices = json_object_get_array_member (mention, "indices");
@@ -412,7 +347,7 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
       t->entities[url_index].from = json_array_get_int_element (indices, 0);
       t->entities[url_index].to   = json_array_get_int_element (indices, 1);
       t->entities[url_index].display_text = g_strdup_printf ("@%s", screen_name);
-      t->entities[url_index].tooltip_text = escape_ampersand (json_object_get_string_member (mention, "name"));
+      t->entities[url_index].tooltip_text = cb_utils_escape_ampersands (json_object_get_string_member (mention, "name"));
       t->entities[url_index].target = g_strdup_printf ("@%s/@%s", id_str, screen_name);
       url_index ++;
     }
@@ -426,7 +361,7 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
         {
           JsonObject *url = json_node_get_object (json_array_get_element (medias, i));
           JsonArray  *indices = json_object_get_array_member (url, "indices");
-          char *url_str = escape_ampersand (json_object_get_string_member (url, "url"));
+          char *url_str = cb_utils_escape_ampersands (json_object_get_string_member (url, "url"));
           int k;
           gboolean duplicate = FALSE;
 
@@ -442,11 +377,14 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
             }
 
           if (duplicate)
-            continue;
+            {
+              g_free (url_str);
+              continue;
+            }
 
           t->entities[url_index].from = json_array_get_int_element (indices, 0);
           t->entities[url_index].to   = json_array_get_int_element (indices, 1);
-          t->entities[url_index].display_text = escape_ampersand (json_object_get_string_member (url, "display_url"));
+          t->entities[url_index].display_text = cb_utils_escape_ampersands (json_object_get_string_member (url, "display_url"));
           t->entities[url_index].target = url_str;
 
           url_index ++;
