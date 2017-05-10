@@ -16,7 +16,7 @@
  */
 
 [GtkTemplate (ui = "/org/baedert/corebird/ui/user-list-entry.ui")]
-class UserListEntry : Gtk.ListBoxRow, ITwitterItem {
+class UserListEntry : Gtk.ListBoxRow, Cb.TwitterItem {
   [GtkChild]
   private Gtk.Label name_label;
   [GtkChild]
@@ -62,10 +62,6 @@ class UserListEntry : Gtk.ListBoxRow, ITwitterItem {
     set {}
   }
 
-  public int64 sort_factor {
-    get{ return int64.MAX-1; }
-  }
-
   public bool show_settings {
     set {
       settings_button.visible = value;
@@ -75,6 +71,7 @@ class UserListEntry : Gtk.ListBoxRow, ITwitterItem {
   }
 
   public int64 user_id { get; set; }
+  private GLib.TimeSpan last_timediff;
 
   public signal void action_clicked ();
 
@@ -125,6 +122,22 @@ class UserListEntry : Gtk.ListBoxRow, ITwitterItem {
 
   public int update_time_delta (GLib.DateTime? now = null) {return 0;}
 
+  public int64 get_sort_factor () {
+    return int64.MAX - 1;
+  }
+
+  public int64 get_timestamp () {
+    return 0;
+  }
+
+  public GLib.TimeSpan get_last_set_timediff () {
+    return this.last_timediff;
+  }
+
+  public void set_last_set_timediff (GLib.TimeSpan span) {
+    this.last_timediff = span;
+  }
+
   private void update_window_button_sensitivity (Gtk.Window window, bool new_value) {
     if (((MainWindow)window).account.screen_name == this.account.screen_name) {
       new_window_button.sensitive = new_value;
@@ -156,9 +169,9 @@ class UserListEntry : Gtk.ListBoxRow, ITwitterItem {
     var active_window = ((Gtk.Application)GLib.Application.get_default ()).active_window;
     if (active_window is MainWindow) {
       var mw = (MainWindow) active_window;
-      var bundle = new Bundle ();
-      bundle.put_int64 ("user_id", this.user_id);
-      bundle.put_string ("screen_name", this.screen_name);
+      var bundle = new Cb.Bundle ();
+      bundle.put_int64 (ProfilePage.KEY_USER_ID, this.user_id);
+      bundle.put_string (ProfilePage.KEY_SCREEN_NAME, this.screen_name);
       mw.main_widget.switch_page (Page.PROFILE, bundle);
     }
   }

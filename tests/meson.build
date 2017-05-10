@@ -10,18 +10,20 @@ tests = [
   'filters',
   'texttransform',
   'avatardownload',
+  'avatarcache',
   'friends',
-  'highlighting'
+  'highlighting',
+  'twitteritem'
 ]
 
 foreach test_name : tests
   testcase = executable(
     test_name,
     test_name + '.vala',
+    meson.source_root() + '/vapi/corebird-internal.vapi',
     cb_resources,
     dependencies: cb_dep,
     vala_args: [
-      meson.source_root() + '/vapi/corebird-internal.vapi',
       '--gresources=' + meson.source_root() + '/corebird.gresource.xml',
     ]
   )

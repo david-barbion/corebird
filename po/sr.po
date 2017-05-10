@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Corebird\n"
 "Report-Msgid-Bugs-To: https://github.com/baedert/corebird/issues/new\n"
-"POT-Creation-Date: 2017-01-13 17:50+0100\n"
-"PO-Revision-Date: 2017-01-08 14:58+0000\n"
-"Last-Translator: Марко М. Костић (Marko M. Kostić) <marko.m.kostic@gmail.com>\n"
+"POT-Creation-Date: 2017-04-29 18:29+0200\n"
+"PO-Revision-Date: 2017-04-30 09:37+0000\n"
+"Last-Translator: baedert <mail@baedert.org>\n"
 "Language-Team: Serbian (http://www.transifex.com/corebird/corebird/language/sr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -52,6 +52,10 @@ msgstr "Уобичајени Твитер профил"
 msgid "Account settings can be configured"
 msgstr "Подешавања налога се могу мењати"
 
+#: data/org.baedert.corebird.appdata.xml.in:41
+msgid "Timm Bäder"
+msgstr ""
+
 #: data/org.baedert.corebird.desktop.in:5
 msgid "Use Twitter from within a normal desktop application"
 msgstr "Користите Твитер помоћу обичног рачунарског програма"
@@ -68,15 +72,30 @@ msgstr "twitter;tviter;твитер;"
 msgid "corebird"
 msgstr "corebird"
 
-#: src/DefaultTimeline.vala:365
-msgid "Could not load tweets"
-msgstr "Не могу да учитам твитове"
+#. TRANSLATORS: This is the start of a "Replying to" line in a tweet
+#: src/CbUtils.c:87 src/TweetInfoPage.vala:479
+msgid "Replying to"
+msgstr "Одговор за"
 
-#: src/DMPage.vala:330
+#. TRANSLATORS: This gets appended to the "replying to" line
+#. * in a tweet. Example: "Replying to Foo and Bar" where
+#. * "and Bar" comes from this string.
+#: src/CbUtils.c:98 src/TweetInfoPage.vala:491
+msgid "and"
+msgstr "и"
+
+#. TRANSLATORS: This gets appended to the "replying to" line
+#. * in a tweet
+#: src/CbUtils.c:107
+#, c-format
+msgid "and %d others"
+msgstr "и %d других"
+
+#: src/DMPage.vala:346
 msgid "Direct Conversation"
 msgstr "Директни разговори"
 
-#: src/DMThreadsPage.vala:207
+#: src/DMThreadsPage.vala:205
 #, c-format
 msgid "%d new Message from %s"
 msgid_plural "%d new Messages from %s"
@@ -84,17 +103,21 @@ msgstr[0] "%d нова порука од %s"
 msgstr[1] "%d нове поруке од %s"
 msgstr[2] "%d нових порука од %s"
 
-#: src/DMThreadsPage.vala:213 src/UserEventReceiver.vala:94
+#: src/DMThreadsPage.vala:211 src/UserEventReceiver.vala:94
 #, c-format
 msgid "New direct message from %s"
 msgstr "Нова директна порука од %s"
 
-#: src/DMThreadsPage.vala:223 src/DMThreadsPage.vala:237
+#: src/DMThreadsPage.vala:221 src/DMThreadsPage.vala:235
 msgid "Direct Messages"
 msgstr "Директне поруке"
 
+#: src/DefaultTimeline.vala:357
+msgid "Could not load tweets"
+msgstr "Не могу да учитам твитове"
+
 #: src/FavoritesTimeline.vala:67 src/FavoritesTimeline.vala:71
-#: src/TweetInfoPage.vala:479
+#: src/TweetInfoPage.vala:521
 msgid "Favorites"
 msgstr "Омиљено"
 
@@ -128,34 +151,13 @@ msgstr[2] "%d нових твитова!"
 msgid "Home"
 msgstr "Почетна"
 
-#: src/list/DMThreadEntry.vala:71
-#, c-format
-msgid "(%d unread)"
-msgid_plural "(%d unread)"
-msgstr[0] "(%d непрочитана)"
-msgstr[1] "(%d непрочитане)"
-msgstr[2] "(%d непрочитаних)"
-
-#: src/ListsPage.vala:120 src/ListsPage.vala:125 ui/profile-page.ui:365
-msgid "Lists"
-msgstr "Спискови"
-
-#: src/ListStatusesPage.vala:369
+#: src/ListStatusesPage.vala:378
 msgid "List"
 msgstr "Списак"
 
-#: src/list/TweetListEntry.vala:434
-#, c-format
-msgid "Block %s"
-msgstr "Блокирај %s"
-
-#: src/list/TweetListEntry.vala:575
-msgid "This tweet contains images marked as inappropriate"
-msgstr "Означено је да овај твит садржи недоличне слике"
-
-#: src/list/TweetListEntry.vala:582
-msgid "Show anyway"
-msgstr "Ипак прикажи"
+#: src/ListsPage.vala:123 src/ListsPage.vala:128 ui/profile-page.ui:364
+msgid "Lists"
+msgstr "Спискови"
 
 #: src/MainWindow.vala:79
 msgid "Add new Account"
@@ -170,11 +172,11 @@ msgstr "%s је споменуо/ла %s"
 msgid "Mentions"
 msgstr "Спомињања"
 
-#: src/ProfilePage.vala:253
+#: src/ProfilePage.vala:261
 msgid "Protected profile"
 msgstr "Заштићен профил"
 
-#: src/ProfilePage.vala:308
+#: src/ProfilePage.vala:319
 #, c-format
 msgid "Tweet to @%s"
 msgstr "Твитуј ка @%s"
@@ -183,64 +185,93 @@ msgstr "Твитуј ка @%s"
 msgid "Search"
 msgstr "Претрага"
 
-#: src/TweetInfoPage.vala:295
+#: src/TweetInfoPage.vala:303
 msgid "Could not show tweet"
 msgstr "Не могу да прикажем твит"
 
-#: src/TweetInfoPage.vala:478
+#: src/TweetInfoPage.vala:520
 msgid "Retweets"
 msgstr "поновних твитова"
 
-#: src/TweetInfoPage.vala:487 src/widgets/MediaButton.vala:100
+#: src/TweetInfoPage.vala:529 src/widgets/MediaButton.vala:104
 msgid "Open in Browser"
 msgstr "Отвори у прегледачу"
 
-#: src/TweetInfoPage.vala:487
+#: src/TweetInfoPage.vala:529
 msgid "Source"
 msgstr "извор"
 
-#: src/TweetInfoPage.vala:533
+#: src/TweetInfoPage.vala:575
 msgid "Tweet Details"
 msgstr "појединости твита"
 
-#: src/util/Utils.vala:195
+#: src/list/DMThreadEntry.vala:71
+#, c-format
+msgid "(%d unread)"
+msgid_plural "(%d unread)"
+msgstr[0] "(%d непрочитана)"
+msgstr[1] "(%d непрочитане)"
+msgstr[2] "(%d непрочитаних)"
+
+#: src/list/FavImageRow.vala:68 ui/account-dialog.ui:202
+#: ui/account-dialog.ui:259 ui/filter-list-entry.ui:93
+#: ui/list-list-entry.ui:132 ui/list-statuses-page.ui:166
+#: ui/modify-snippet-dialog.ui:108 ui/tweet-info-page.ui:10
+#: ui/tweet-list-entry.ui:10
+msgid "Delete"
+msgstr "Обриши"
+
+#: src/list/TweetListEntry.vala:453
+#, c-format
+msgid "Block %s"
+msgstr "Блокирај %s"
+
+#: src/list/TweetListEntry.vala:609
+msgid "This tweet contains images marked as inappropriate"
+msgstr "Означено је да овај твит садржи недоличне слике"
+
+#: src/list/TweetListEntry.vala:616
+msgid "Show anyway"
+msgstr "Ипак прикажи"
+
+#: src/util/Utils.vala:168
 msgid "Now"
 msgstr "сада"
 
-#: src/util/Utils.vala:197
+#: src/util/Utils.vala:170
 #, c-format
 msgid "%dm"
 msgstr "%dм"
 
-#: src/util/Utils.vala:201
+#: src/util/Utils.vala:174
 #, c-format
 msgid "%dh"
 msgstr "%dч"
 
-#: src/widgets/AccountCreateWidget.vala:40
-msgid "Don't have an account yet?"
-msgstr "Немате налог?"
+#: src/widgets/AccountCreateWidget.vala:42
+msgid "Don’t have a Twitter account yet?"
+msgstr ""
 
-#: src/widgets/AccountCreateWidget.vala:40
+#: src/widgets/AccountCreateWidget.vala:42
 msgid "Create one"
 msgstr "Направи налог"
 
-#: src/widgets/AccountCreateWidget.vala:55
+#: src/widgets/AccountCreateWidget.vala:57
 msgid ""
-"Unauthorized. Most of the time, this means that there's something wrong with"
+"Unauthorized. Most of the time, this means that there’s something wrong with"
 " the Twitter servers and you should try again later"
-msgstr "Недовољно овлашћења. Најчешће ово значи да нешто није у реду са Твитеровим серверима и да требате покушати поново касније"
+msgstr ""
 
-#: src/widgets/AccountCreateWidget.vala:67
+#: src/widgets/AccountCreateWidget.vala:69
 #, c-format
 msgid "Could not open %s"
 msgstr "Не могу да отворим %s"
 
-#: src/widgets/AccountCreateWidget.vala:89
+#: src/widgets/AccountCreateWidget.vala:92
 msgid "Wrong PIN"
 msgstr "Погрешан ПИН"
 
-#: src/widgets/AccountCreateWidget.vala:115
+#: src/widgets/AccountCreateWidget.vala:118
 msgid "Account already in use"
 msgstr "Налог се већ користи"
 
@@ -256,56 +287,109 @@ msgstr "Прати"
 msgid "Unfollow"
 msgstr "Престани са праћењем"
 
-#: src/widgets/MediaButton.vala:45
+#: src/widgets/MediaButton.vala:48
 msgid "Copy URL"
 msgstr "Копирај УРЛ"
 
-#: src/widgets/PixbufButton.vala:52
-msgid "Copy link"
-msgstr "Копирај везу"
+#: src/widgets/MediaButton.vala:106
+msgid "Save as…"
+msgstr "Сачувај као…"
 
-#: src/widgets/TweetListBox.vala:99
-msgid "Loading..."
-msgstr "Учитавам…"
+#: src/widgets/MediaButton.vala:269
+msgid "Save Video"
+msgstr "Сачувај видео"
 
-#: src/widgets/TweetListBox.vala:102 src/widgets/TweetListBox.vala:153
-msgid "No entries found"
-msgstr "Нема пронађених уноса"
+#: src/widgets/MediaButton.vala:271
+msgid "Save Image"
+msgstr "Сачувај слику"
 
-#: src/widgets/TweetListBox.vala:113
-msgid "Retry"
-msgstr "Поново покушај"
-
-#: src/window/ComposeTweetWindow.vala:128
-msgid "Quote tweet"
-msgstr "Цитирај твит"
-
-#: src/window/ComposeTweetWindow.vala:237
-#: src/window/ComposeTweetWindow.vala:262 src/window/UserListDialog.vala:47
-#: ui/account-dialog.ui:25 ui/account-dialog.ui:247 ui/compose-window.ui:41
+#: src/widgets/MediaButton.vala:276 src/window/AccountDialog.vala:314
+#: src/window/ComposeTweetWindow.vala:241
+#: src/window/ComposeTweetWindow.vala:271
+#: src/window/ComposeTweetWindow.vala:380 src/window/UserListDialog.vala:47
+#: ui/account-dialog.ui:25 ui/account-dialog.ui:246 ui/compose-window.ui:41
 #: ui/filter-list-entry.ui:80 ui/list-list-entry.ui:98
 #: ui/list-statuses-page.ui:173 ui/modify-filter-dialog.ui:13
 #: ui/modify-snippet-dialog.ui:14 ui/user-filter-entry.ui:114
 msgid "Cancel"
 msgstr "Откажи"
 
-#: src/window/ComposeTweetWindow.vala:259
-msgid "Select Image"
-msgstr "Изабери слику"
+#: src/widgets/MediaButton.vala:278 src/window/AccountDialog.vala:406
+#: src/window/AccountDialog.vala:427 src/window/UserListDialog.vala:48
+#: ui/account-dialog.ui:33 ui/list-statuses-page.ui:129
+#: ui/modify-filter-dialog.ui:20 ui/modify-snippet-dialog.ui:21
+msgid "Save"
+msgstr "Сачувај"
 
-#: src/window/ComposeTweetWindow.vala:264
+#: src/widgets/TweetListBox.vala:123
+msgid "Loading…"
+msgstr ""
+
+#: src/widgets/TweetListBox.vala:126 src/widgets/TweetListBox.vala:177
+msgid "No entries found"
+msgstr "Нема пронађених уноса"
+
+#: src/widgets/TweetListBox.vala:137 ui/account-create-widget.ui:119
+msgid "Retry"
+msgstr "Поново покушај"
+
+#: src/window/AccountDialog.vala:311
+msgid "Select Banner Image"
+msgstr ""
+
+#: src/window/AccountDialog.vala:316 src/window/ComposeTweetWindow.vala:273
+#: src/window/ComposeTweetWindow.vala:382
 msgid "Open"
 msgstr "Отвори"
 
-#: src/window/ComposeTweetWindow.vala:288
+#: src/window/AccountDialog.vala:348
+msgid "Image does not meet minimum size requirements:"
+msgstr ""
+
+#: src/window/AccountDialog.vala:349
+#, c-format
+msgid "Minimum width: %d pixel"
+msgid_plural "Minimum width: %d pixels"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: src/window/AccountDialog.vala:351
+#, c-format
+msgid "Minimum height: %d pixel"
+msgid_plural "Minimum height: %d pixels"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: src/window/AccountDialog.vala:381 src/window/AccountDialog.vala:394
+msgid "Pick"
+msgstr ""
+
+#: src/window/ComposeTweetWindow.vala:107
+msgid "Quote tweet"
+msgstr "Цитирај твит"
+
+#: src/window/ComposeTweetWindow.vala:268
+#: src/window/ComposeTweetWindow.vala:377
+msgid "Select Image"
+msgstr "Изабери слику"
+
+#: src/window/ComposeTweetWindow.vala:297
 #, c-format
 msgid ""
 "The selected image is too big. The maximum file size per image is %'d MB"
 msgstr "Изабрана слика је сувише велика. Највећа дозвољена величина датотеке по слици је %'d мегабајта"
 
-#: src/window/ComposeTweetWindow.vala:290
+#: src/window/ComposeTweetWindow.vala:299
+#: src/window/ComposeTweetWindow.vala:305
+#: src/window/ComposeTweetWindow.vala:333
 msgid "Back"
 msgstr "Назад"
+
+#: src/window/ComposeTweetWindow.vala:304
+msgid "Only one GIF file per tweet is allowed."
+msgstr "Дозвољен је само један ГИФ по твиту."
 
 #: src/window/ModifyFilterDialog.vala:45
 msgid "Modify Filter"
@@ -316,20 +400,20 @@ msgid "Matches"
 msgstr "подудара се"
 
 #: src/window/ModifyFilterDialog.vala:78
-msgid "Doesn't match"
-msgstr "не подудара се"
+msgid "Doesn’t match"
+msgstr ""
 
 #: src/window/ModifySnippetDialog.vala:44
 msgid "Modify Snippet"
 msgstr "Измени исечак"
 
 #: src/window/ModifySnippetDialog.vala:63
-msgid "Snippet can't be empty"
-msgstr "Исечци не могу бити празни"
+msgid "Snippet can’t be empty"
+msgstr ""
 
 #: src/window/ModifySnippetDialog.vala:70
-msgid "Replacement can't be empty"
-msgstr "Замена не може бити празна"
+msgid "Replacement can’t be empty"
+msgstr ""
 
 #: src/window/ModifySnippetDialog.vala:78
 msgid "Snippet may not contain whitespace"
@@ -349,33 +433,37 @@ msgstr "Хеј, баци поглед на ново #Corebird издање! \\ (
 msgid "Add to or Remove User From List"
 msgstr "Додај или уклони корисника са списка"
 
-#: src/window/UserListDialog.vala:48 ui/account-dialog.ui:33
-#: ui/list-statuses-page.ui:129 ui/modify-filter-dialog.ui:20
-#: ui/modify-snippet-dialog.ui:21
-msgid "Save"
-msgstr "Сачувај"
-
 #: src/window/UserListDialog.vala:69
 msgid "You have no lists."
 msgstr "Немате ниједан списак."
 
-#: ui/about-dialog.ui:6
+#: ui/about-dialog.ui:5
 msgid "About Corebird"
 msgstr "О Корберду"
 
-#: ui/account-create-widget.ui:16
+#: ui/account-create-widget.ui:28
 msgid "New Account"
 msgstr "Нови нало"
 
-#: ui/account-create-widget.ui:44
-msgid "PIN:"
-msgstr "ПИН:"
+#: ui/account-create-widget.ui:47
+msgid ""
+"To authenticate Corebird, you need a PIN from twitter.com with the account "
+"you wish to add"
+msgstr ""
 
-#: ui/account-create-widget.ui:65
+#: ui/account-create-widget.ui:58
 msgid "Request PIN"
 msgstr "Затражи ПИН"
 
-#: ui/account-create-widget.ui:75 ui/list-statuses-page.ui:358
+#: ui/account-create-widget.ui:88
+msgid "Enter PIN from twitter.com below:"
+msgstr ""
+
+#: ui/account-create-widget.ui:106
+msgid "PIN"
+msgstr ""
+
+#: ui/account-create-widget.ui:132 ui/list-statuses-page.ui:358
 msgid "Confirm"
 msgstr "Потврди"
 
@@ -383,26 +471,19 @@ msgstr "Потврди"
 msgid "Account Settings"
 msgstr "Подешавања налога"
 
-#: ui/account-dialog.ui:90
+#: ui/account-dialog.ui:88
 msgid "Name"
 msgstr "Име"
 
-#: ui/account-dialog.ui:118
+#: ui/account-dialog.ui:117
 msgid "Website"
 msgstr "Вебсајт"
 
-#: ui/account-dialog.ui:172
+#: ui/account-dialog.ui:171
 msgid "Autostart"
 msgstr "Самостално покрени"
 
-#: ui/account-dialog.ui:203 ui/account-dialog.ui:260
-#: ui/filter-list-entry.ui:93 ui/list-list-entry.ui:132
-#: ui/list-statuses-page.ui:166 ui/modify-snippet-dialog.ui:108
-#: ui/tweet-info-page.ui:10 ui/tweet-list-entry.ui:10
-msgid "Delete"
-msgstr "Обриши"
-
-#: ui/account-dialog.ui:235
+#: ui/account-dialog.ui:234
 msgid "Do you really want to delete this account?"
 msgstr "Да ли стварно желите обрисати овај налог?"
 
@@ -414,9 +495,13 @@ msgstr "Састави твит"
 msgid "Send"
 msgstr "Пошаљи"
 
-#: ui/compose-window.ui:138
+#: ui/compose-window.ui:151
 msgid "Add Image"
 msgstr "Додај слику"
+
+#: ui/compose-window.ui:159
+msgid "Show favorite images"
+msgstr "Прикажи омиљене слике"
 
 #: ui/filter-page.ui:71 ui/search-page.ui:86
 msgid "Users"
@@ -546,19 +631,19 @@ msgstr "Пригушен(а)"
 msgid "Retweets disabled"
 msgstr "Поновни твитови онемогућени"
 
-#: ui/profile-page.ui:167
+#: ui/profile-page.ui:166
 msgid "Follows you"
 msgstr "Прати вас"
 
-#: ui/profile-page.ui:242 ui/search-page.ui:74 ui/settings-dialog.ui:420
+#: ui/profile-page.ui:241 ui/search-page.ui:74 ui/settings-dialog.ui:420
 msgid "Tweets"
 msgstr "Твитови"
 
-#: ui/profile-page.ui:283
+#: ui/profile-page.ui:282
 msgid "Followers"
 msgstr "Пратиоци"
 
-#: ui/profile-page.ui:324
+#: ui/profile-page.ui:323
 msgid "Following"
 msgstr "Прати"
 
@@ -758,19 +843,19 @@ msgstr "Иди"
 msgid "Quote"
 msgstr "Цитирај"
 
-#: ui/tweet-info-page.ui:226
+#: ui/tweet-info-page.ui:265
 msgid "Retweet tweet"
 msgstr "Поново твитуј твит"
 
-#: ui/tweet-info-page.ui:253
+#: ui/tweet-info-page.ui:292
 msgid "Favorite tweet"
 msgstr "Означи твит омиљеним"
 
-#: ui/tweet-info-page.ui:280
+#: ui/tweet-info-page.ui:319
 msgid "Reply to tweet"
 msgstr "Одговори на твит"
 
-#: ui/tweet-info-page.ui:318
+#: ui/tweet-info-page.ui:357
 msgid "More"
 msgstr "Више"
 

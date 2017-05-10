@@ -4,12 +4,13 @@
 #
 # Translators:
 # kumar8600 <kumar8600@gmail.com>, 2014
+# Yuki Katsura <katsura.y.ac@icloud.com>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: Corebird\n"
 "Report-Msgid-Bugs-To: https://github.com/baedert/corebird/issues/new\n"
-"POT-Creation-Date: 2017-01-13 17:50+0100\n"
-"PO-Revision-Date: 2016-12-19 08:56+0000\n"
+"POT-Creation-Date: 2017-04-29 18:29+0200\n"
+"PO-Revision-Date: 2017-04-30 09:37+0000\n"
 "Last-Translator: baedert <mail@baedert.org>\n"
 "Language-Team: Japanese (Japan) (http://www.transifex.com/corebird/corebird/language/ja_JP/)\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +22,7 @@ msgstr ""
 #: data/org.baedert.corebird.appdata.xml.in:5
 #: data/org.baedert.corebird.desktop.in:3
 msgid "Corebird"
-msgstr ""
+msgstr "Corebird"
 
 #: data/org.baedert.corebird.appdata.xml.in:6
 #: data/org.baedert.corebird.desktop.in:4
@@ -38,7 +39,7 @@ msgstr "Corebird はGTK+ネイティブなTwitterクライアントで、ダイ�
 msgid ""
 "Additional features include local viewing of videos, multiple inline images,"
 " Lists, Filters, multiple accounts, etc."
-msgstr ""
+msgstr "加えて、ビデオの表示・インラインでの画像の表示・リスト・フィルター・複数のアカウントなどをサポートします"
 
 #: data/org.baedert.corebird.appdata.xml.in:21
 msgid "Generic timeline view when using Corebird"
@@ -50,6 +51,10 @@ msgstr ""
 
 #: data/org.baedert.corebird.appdata.xml.in:29
 msgid "Account settings can be configured"
+msgstr ""
+
+#: data/org.baedert.corebird.appdata.xml.in:41
+msgid "Timm Bäder"
 msgstr ""
 
 #: data/org.baedert.corebird.desktop.in:5
@@ -66,43 +71,62 @@ msgstr ""
 #. file name)!
 #: data/org.baedert.corebird.desktop.in:11
 msgid "corebird"
+msgstr "corebird"
+
+#. TRANSLATORS: This is the start of a "Replying to" line in a tweet
+#: src/CbUtils.c:87 src/TweetInfoPage.vala:479
+msgid "Replying to"
 msgstr ""
 
-#: src/DefaultTimeline.vala:365
-msgid "Could not load tweets"
+#. TRANSLATORS: This gets appended to the "replying to" line
+#. * in a tweet. Example: "Replying to Foo and Bar" where
+#. * "and Bar" comes from this string.
+#: src/CbUtils.c:98 src/TweetInfoPage.vala:491
+msgid "and"
 msgstr ""
 
-#: src/DMPage.vala:330
+#. TRANSLATORS: This gets appended to the "replying to" line
+#. * in a tweet
+#: src/CbUtils.c:107
+#, c-format
+msgid "and %d others"
+msgstr ""
+
+#: src/DMPage.vala:346
 msgid "Direct Conversation"
 msgstr ""
 
-#: src/DMThreadsPage.vala:207
+#: src/DMThreadsPage.vala:205
 #, c-format
 msgid "%d new Message from %s"
 msgid_plural "%d new Messages from %s"
-msgstr[0] ""
+msgstr[0] "%2$s から %1$d 件の新着メッセージ"
 
-#: src/DMThreadsPage.vala:213 src/UserEventReceiver.vala:94
+#: src/DMThreadsPage.vala:211 src/UserEventReceiver.vala:94
 #, c-format
 msgid "New direct message from %s"
 msgstr "%s からダイレクトメッセージ"
 
-#: src/DMThreadsPage.vala:223 src/DMThreadsPage.vala:237
+#: src/DMThreadsPage.vala:221 src/DMThreadsPage.vala:235
 msgid "Direct Messages"
 msgstr "ダイレクトメッセージ"
 
+#: src/DefaultTimeline.vala:357
+msgid "Could not load tweets"
+msgstr "ツイートをロードできませんでした"
+
 #: src/FavoritesTimeline.vala:67 src/FavoritesTimeline.vala:71
-#: src/TweetInfoPage.vala:479
+#: src/TweetInfoPage.vala:521
 msgid "Favorites"
 msgstr "お気に入り"
 
 #: src/FilterPage.vala:47
 msgid "Add new Filter"
-msgstr ""
+msgstr "フィルターを追加する"
 
 #: src/FilterPage.vala:317 src/FilterPage.vala:323
 msgid "Filters"
-msgstr ""
+msgstr "フィルター"
 
 #: src/HomeTimeline.vala:140
 #, c-format
@@ -118,42 +142,23 @@ msgstr "%s がツイート"
 #, c-format
 msgid "%d new Tweet!"
 msgid_plural "%d new Tweets!"
-msgstr[0] ""
+msgstr[0] "%d 件の新着ツイート！"
 
 #: src/HomeTimeline.vala:187
 msgid "Home"
 msgstr "ホーム"
 
-#: src/list/DMThreadEntry.vala:71
-#, c-format
-msgid "(%d unread)"
-msgid_plural "(%d unread)"
-msgstr[0] ""
-
-#: src/ListsPage.vala:120 src/ListsPage.vala:125 ui/profile-page.ui:365
-msgid "Lists"
-msgstr "リスト"
-
-#: src/ListStatusesPage.vala:369
+#: src/ListStatusesPage.vala:378
 msgid "List"
 msgstr ""
 
-#: src/list/TweetListEntry.vala:434
-#, c-format
-msgid "Block %s"
-msgstr ""
-
-#: src/list/TweetListEntry.vala:575
-msgid "This tweet contains images marked as inappropriate"
-msgstr ""
-
-#: src/list/TweetListEntry.vala:582
-msgid "Show anyway"
-msgstr ""
+#: src/ListsPage.vala:123 src/ListsPage.vala:128 ui/profile-page.ui:364
+msgid "Lists"
+msgstr "リスト"
 
 #: src/MainWindow.vala:79
 msgid "Add new Account"
-msgstr ""
+msgstr "アカウントを追加する"
 
 #: src/MentionsTimeline.vala:91 src/UserEventReceiver.vala:111
 #, c-format
@@ -164,11 +169,11 @@ msgstr ""
 msgid "Mentions"
 msgstr "メンション"
 
-#: src/ProfilePage.vala:253
+#: src/ProfilePage.vala:261
 msgid "Protected profile"
 msgstr "非公開プロフィール"
 
-#: src/ProfilePage.vala:308
+#: src/ProfilePage.vala:319
 #, c-format
 msgid "Tweet to @%s"
 msgstr "@%s にツイート"
@@ -177,70 +182,97 @@ msgstr "@%s にツイート"
 msgid "Search"
 msgstr "検索"
 
-#: src/TweetInfoPage.vala:295
+#: src/TweetInfoPage.vala:303
 msgid "Could not show tweet"
-msgstr ""
+msgstr "ツイートを表示できませんでした"
 
-#: src/TweetInfoPage.vala:478
+#: src/TweetInfoPage.vala:520
 msgid "Retweets"
 msgstr "リツイート"
 
-#: src/TweetInfoPage.vala:487 src/widgets/MediaButton.vala:100
+#: src/TweetInfoPage.vala:529 src/widgets/MediaButton.vala:104
 msgid "Open in Browser"
 msgstr "ブラウザーで開く"
 
-#: src/TweetInfoPage.vala:487
+#: src/TweetInfoPage.vala:529
 msgid "Source"
 msgstr "ソース"
 
-#: src/TweetInfoPage.vala:533
+#: src/TweetInfoPage.vala:575
 msgid "Tweet Details"
 msgstr "ツイートの詳細"
 
-#: src/util/Utils.vala:195
+#: src/list/DMThreadEntry.vala:71
+#, c-format
+msgid "(%d unread)"
+msgid_plural "(%d unread)"
+msgstr[0] "(%d 件の未読)"
+
+#: src/list/FavImageRow.vala:68 ui/account-dialog.ui:202
+#: ui/account-dialog.ui:259 ui/filter-list-entry.ui:93
+#: ui/list-list-entry.ui:132 ui/list-statuses-page.ui:166
+#: ui/modify-snippet-dialog.ui:108 ui/tweet-info-page.ui:10
+#: ui/tweet-list-entry.ui:10
+msgid "Delete"
+msgstr "削除"
+
+#: src/list/TweetListEntry.vala:453
+#, c-format
+msgid "Block %s"
+msgstr "%sをブロック"
+
+#: src/list/TweetListEntry.vala:609
+msgid "This tweet contains images marked as inappropriate"
+msgstr "このツイートは不適切な画像を含んでいます"
+
+#: src/list/TweetListEntry.vala:616
+msgid "Show anyway"
+msgstr "常に表示する"
+
+#: src/util/Utils.vala:168
 msgid "Now"
 msgstr "現在"
 
-#: src/util/Utils.vala:197
+#: src/util/Utils.vala:170
 #, c-format
 msgid "%dm"
 msgstr "%dm"
 
-#: src/util/Utils.vala:201
+#: src/util/Utils.vala:174
 #, c-format
 msgid "%dh"
 msgstr "%dh"
 
-#: src/widgets/AccountCreateWidget.vala:40
-msgid "Don't have an account yet?"
+#: src/widgets/AccountCreateWidget.vala:42
+msgid "Don’t have a Twitter account yet?"
 msgstr ""
 
-#: src/widgets/AccountCreateWidget.vala:40
+#: src/widgets/AccountCreateWidget.vala:42
 msgid "Create one"
 msgstr ""
 
-#: src/widgets/AccountCreateWidget.vala:55
+#: src/widgets/AccountCreateWidget.vala:57
 msgid ""
-"Unauthorized. Most of the time, this means that there's something wrong with"
+"Unauthorized. Most of the time, this means that there’s something wrong with"
 " the Twitter servers and you should try again later"
-msgstr "許可されていません。大抵の場合Twitterのサーバーがなにかおかしくなったということですから、あとでもう一度試してみてください"
-
-#: src/widgets/AccountCreateWidget.vala:67
-#, c-format
-msgid "Could not open %s"
 msgstr ""
 
-#: src/widgets/AccountCreateWidget.vala:89
+#: src/widgets/AccountCreateWidget.vala:69
+#, c-format
+msgid "Could not open %s"
+msgstr "%sを開けませんでした"
+
+#: src/widgets/AccountCreateWidget.vala:92
 msgid "Wrong PIN"
 msgstr "誤ったPIN"
 
-#: src/widgets/AccountCreateWidget.vala:115
+#: src/widgets/AccountCreateWidget.vala:118
 msgid "Account already in use"
-msgstr ""
+msgstr "アカウントはすでに使われています"
 
 #: src/widgets/CompletionTextView.vala:40
 msgid "No users found"
-msgstr ""
+msgstr "ユーザが見つかりません"
 
 #: src/widgets/FollowButton.vala:43
 msgid "Follow"
@@ -250,79 +282,128 @@ msgstr "フォロー"
 msgid "Unfollow"
 msgstr "フォロー解除"
 
-#: src/widgets/MediaButton.vala:45
+#: src/widgets/MediaButton.vala:48
 msgid "Copy URL"
 msgstr ""
 
-#: src/widgets/PixbufButton.vala:52
-msgid "Copy link"
-msgstr "リンク アドレスをコピー"
-
-#: src/widgets/TweetListBox.vala:99
-msgid "Loading..."
+#: src/widgets/MediaButton.vala:106
+msgid "Save as…"
 msgstr ""
 
-#: src/widgets/TweetListBox.vala:102 src/widgets/TweetListBox.vala:153
-msgid "No entries found"
-msgstr "エントリーがありません"
-
-#: src/widgets/TweetListBox.vala:113
-msgid "Retry"
+#: src/widgets/MediaButton.vala:269
+msgid "Save Video"
 msgstr ""
 
-#: src/window/ComposeTweetWindow.vala:128
-msgid "Quote tweet"
+#: src/widgets/MediaButton.vala:271
+msgid "Save Image"
 msgstr ""
 
-#: src/window/ComposeTweetWindow.vala:237
-#: src/window/ComposeTweetWindow.vala:262 src/window/UserListDialog.vala:47
-#: ui/account-dialog.ui:25 ui/account-dialog.ui:247 ui/compose-window.ui:41
+#: src/widgets/MediaButton.vala:276 src/window/AccountDialog.vala:314
+#: src/window/ComposeTweetWindow.vala:241
+#: src/window/ComposeTweetWindow.vala:271
+#: src/window/ComposeTweetWindow.vala:380 src/window/UserListDialog.vala:47
+#: ui/account-dialog.ui:25 ui/account-dialog.ui:246 ui/compose-window.ui:41
 #: ui/filter-list-entry.ui:80 ui/list-list-entry.ui:98
 #: ui/list-statuses-page.ui:173 ui/modify-filter-dialog.ui:13
 #: ui/modify-snippet-dialog.ui:14 ui/user-filter-entry.ui:114
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: src/window/ComposeTweetWindow.vala:259
-msgid "Select Image"
+#: src/widgets/MediaButton.vala:278 src/window/AccountDialog.vala:406
+#: src/window/AccountDialog.vala:427 src/window/UserListDialog.vala:48
+#: ui/account-dialog.ui:33 ui/list-statuses-page.ui:129
+#: ui/modify-filter-dialog.ui:20 ui/modify-snippet-dialog.ui:21
+msgid "Save"
+msgstr "保存"
+
+#: src/widgets/TweetListBox.vala:123
+msgid "Loading…"
 msgstr ""
 
-#: src/window/ComposeTweetWindow.vala:264
+#: src/widgets/TweetListBox.vala:126 src/widgets/TweetListBox.vala:177
+msgid "No entries found"
+msgstr "エントリーがありません"
+
+#: src/widgets/TweetListBox.vala:137 ui/account-create-widget.ui:119
+msgid "Retry"
+msgstr ""
+
+#: src/window/AccountDialog.vala:311
+msgid "Select Banner Image"
+msgstr ""
+
+#: src/window/AccountDialog.vala:316 src/window/ComposeTweetWindow.vala:273
+#: src/window/ComposeTweetWindow.vala:382
 msgid "Open"
 msgstr ""
 
-#: src/window/ComposeTweetWindow.vala:288
+#: src/window/AccountDialog.vala:348
+msgid "Image does not meet minimum size requirements:"
+msgstr ""
+
+#: src/window/AccountDialog.vala:349
+#, c-format
+msgid "Minimum width: %d pixel"
+msgid_plural "Minimum width: %d pixels"
+msgstr[0] ""
+
+#: src/window/AccountDialog.vala:351
+#, c-format
+msgid "Minimum height: %d pixel"
+msgid_plural "Minimum height: %d pixels"
+msgstr[0] ""
+
+#: src/window/AccountDialog.vala:381 src/window/AccountDialog.vala:394
+msgid "Pick"
+msgstr ""
+
+#: src/window/ComposeTweetWindow.vala:107
+msgid "Quote tweet"
+msgstr ""
+
+#: src/window/ComposeTweetWindow.vala:268
+#: src/window/ComposeTweetWindow.vala:377
+msgid "Select Image"
+msgstr ""
+
+#: src/window/ComposeTweetWindow.vala:297
 #, c-format
 msgid ""
 "The selected image is too big. The maximum file size per image is %'d MB"
-msgstr ""
+msgstr "選択された画像は大きすぎます。最大ファイルサイズは%'dMBです"
 
-#: src/window/ComposeTweetWindow.vala:290
+#: src/window/ComposeTweetWindow.vala:299
+#: src/window/ComposeTweetWindow.vala:305
+#: src/window/ComposeTweetWindow.vala:333
 msgid "Back"
+msgstr "戻る"
+
+#: src/window/ComposeTweetWindow.vala:304
+msgid "Only one GIF file per tweet is allowed."
 msgstr ""
 
 #: src/window/ModifyFilterDialog.vala:45
 msgid "Modify Filter"
-msgstr ""
+msgstr "フィルターを編集"
 
 #: src/window/ModifyFilterDialog.vala:76
 msgid "Matches"
 msgstr "一致"
 
 #: src/window/ModifyFilterDialog.vala:78
-msgid "Doesn't match"
-msgstr "一致しない"
+msgid "Doesn’t match"
+msgstr ""
 
 #: src/window/ModifySnippetDialog.vala:44
 msgid "Modify Snippet"
 msgstr ""
 
 #: src/window/ModifySnippetDialog.vala:63
-msgid "Snippet can't be empty"
+msgid "Snippet can’t be empty"
 msgstr ""
 
 #: src/window/ModifySnippetDialog.vala:70
-msgid "Replacement can't be empty"
+msgid "Replacement can’t be empty"
 msgstr ""
 
 #: src/window/ModifySnippetDialog.vala:78
@@ -337,68 +418,65 @@ msgstr ""
 msgid ""
 "Hey, check out this new #Corebird version! \\ (•◡•) / #cool "
 "#newisalwaysbetter"
-msgstr ""
+msgstr "さあ、新しい#Corebird のバージョンをチェックしてください！\\ (•◡•) / #cool #newisalwaysbetter"
 
 #: src/window/UserListDialog.vala:40
 msgid "Add to or Remove User From List"
-msgstr ""
-
-#: src/window/UserListDialog.vala:48 ui/account-dialog.ui:33
-#: ui/list-statuses-page.ui:129 ui/modify-filter-dialog.ui:20
-#: ui/modify-snippet-dialog.ui:21
-msgid "Save"
-msgstr "保存"
+msgstr "リストからユーザを追加、削除する"
 
 #: src/window/UserListDialog.vala:69
 msgid "You have no lists."
-msgstr ""
+msgstr "リストがありません"
 
-#: ui/about-dialog.ui:6
+#: ui/about-dialog.ui:5
 msgid "About Corebird"
 msgstr "Corebird について"
 
-#: ui/account-create-widget.ui:16
+#: ui/account-create-widget.ui:28
 msgid "New Account"
+msgstr "新しいアカウント"
+
+#: ui/account-create-widget.ui:47
+msgid ""
+"To authenticate Corebird, you need a PIN from twitter.com with the account "
+"you wish to add"
 msgstr ""
 
-#: ui/account-create-widget.ui:44
-msgid "PIN:"
-msgstr "PIN:"
-
-#: ui/account-create-widget.ui:65
+#: ui/account-create-widget.ui:58
 msgid "Request PIN"
+msgstr "PINを要求"
+
+#: ui/account-create-widget.ui:88
+msgid "Enter PIN from twitter.com below:"
 msgstr ""
 
-#: ui/account-create-widget.ui:75 ui/list-statuses-page.ui:358
+#: ui/account-create-widget.ui:106
+msgid "PIN"
+msgstr ""
+
+#: ui/account-create-widget.ui:132 ui/list-statuses-page.ui:358
 msgid "Confirm"
-msgstr "承認"
+msgstr "確認"
 
 #: ui/account-dialog.ui:19
 msgid "Account Settings"
-msgstr ""
+msgstr "アカウントの設定"
 
-#: ui/account-dialog.ui:90
+#: ui/account-dialog.ui:88
 msgid "Name"
-msgstr ""
+msgstr "名前"
 
-#: ui/account-dialog.ui:118
+#: ui/account-dialog.ui:117
 msgid "Website"
 msgstr ""
 
-#: ui/account-dialog.ui:172
+#: ui/account-dialog.ui:171
 msgid "Autostart"
-msgstr ""
+msgstr "自動起動"
 
-#: ui/account-dialog.ui:203 ui/account-dialog.ui:260
-#: ui/filter-list-entry.ui:93 ui/list-list-entry.ui:132
-#: ui/list-statuses-page.ui:166 ui/modify-snippet-dialog.ui:108
-#: ui/tweet-info-page.ui:10 ui/tweet-list-entry.ui:10
-msgid "Delete"
-msgstr "削除"
-
-#: ui/account-dialog.ui:235
+#: ui/account-dialog.ui:234
 msgid "Do you really want to delete this account?"
-msgstr ""
+msgstr "このアカウントを削除しますか？"
 
 #: ui/compose-window.ui:11 ui/compose-window.ui:25
 msgid "Compose Tweet"
@@ -408,8 +486,12 @@ msgstr "ツイートの編集"
 msgid "Send"
 msgstr "送信"
 
-#: ui/compose-window.ui:138
+#: ui/compose-window.ui:151
 msgid "Add Image"
+msgstr "画像を追加"
+
+#: ui/compose-window.ui:159
+msgid "Show favorite images"
 msgstr ""
 
 #: ui/filter-page.ui:71 ui/search-page.ui:86
@@ -466,11 +548,11 @@ msgstr "更に読み込む"
 
 #: ui/main-window.ui:64
 msgid "Show configured accounts"
-msgstr ""
+msgstr "アカウントの設定を表示"
 
 #: ui/main-window.ui:82
 msgid "Compose tweet"
-msgstr ""
+msgstr "ツイートの編集"
 
 #: ui/main-window.ui:99
 msgid "New tweet"
@@ -482,7 +564,7 @@ msgstr "設定"
 
 #: ui/menus.ui:10
 msgid "Shortcuts"
-msgstr ""
+msgstr "ショートカット"
 
 #: ui/menus.ui:15
 msgid "About"
@@ -540,19 +622,19 @@ msgstr ""
 msgid "Retweets disabled"
 msgstr ""
 
-#: ui/profile-page.ui:167
+#: ui/profile-page.ui:166
 msgid "Follows you"
 msgstr "フォローされている"
 
-#: ui/profile-page.ui:242 ui/search-page.ui:74 ui/settings-dialog.ui:420
+#: ui/profile-page.ui:241 ui/search-page.ui:74 ui/settings-dialog.ui:420
 msgid "Tweets"
 msgstr "ツイート"
 
-#: ui/profile-page.ui:283
+#: ui/profile-page.ui:282
 msgid "Followers"
 msgstr ""
 
-#: ui/profile-page.ui:324
+#: ui/profile-page.ui:323
 msgid "Following"
 msgstr ""
 
@@ -704,37 +786,37 @@ msgstr ""
 #: ui/shortcuts-window.ui:74
 msgctxt "shortcuts window"
 msgid "Tweets"
-msgstr ""
+msgstr "ツイート"
 
 #: ui/shortcuts-window.ui:79
 msgctxt "shortcuts window"
 msgid "Retweet"
-msgstr ""
+msgstr "リツイート"
 
 #: ui/shortcuts-window.ui:86
 msgctxt "shortcuts window"
 msgid "Favorite"
-msgstr ""
+msgstr "お気に入り"
 
 #: ui/shortcuts-window.ui:93
 msgctxt "shortcuts window"
 msgid "Reply"
-msgstr ""
+msgstr "返信"
 
 #: ui/shortcuts-window.ui:100
 msgctxt "shortcuts window"
 msgid "Quote"
-msgstr ""
+msgstr "引用"
 
 #: ui/shortcuts-window.ui:107
 msgctxt "shortcuts window"
 msgid "Show Details"
-msgstr ""
+msgstr "詳細を表示"
 
 #: ui/shortcuts-window.ui:114
 msgctxt "shortcuts window"
 msgid "Delete"
-msgstr ""
+msgstr "削除"
 
 #: ui/start-conversation-entry.ui:29
 msgid "Start new conversation"
@@ -752,29 +834,29 @@ msgstr "始める"
 msgid "Quote"
 msgstr "引用する"
 
-#: ui/tweet-info-page.ui:226
+#: ui/tweet-info-page.ui:265
 msgid "Retweet tweet"
 msgstr "リツイートする"
 
-#: ui/tweet-info-page.ui:253
+#: ui/tweet-info-page.ui:292
 msgid "Favorite tweet"
 msgstr "お気に入りに登録する"
 
-#: ui/tweet-info-page.ui:280
+#: ui/tweet-info-page.ui:319
 msgid "Reply to tweet"
 msgstr "返信する"
 
-#: ui/tweet-info-page.ui:318
+#: ui/tweet-info-page.ui:357
 msgid "More"
 msgstr "詳細"
 
 #: ui/tweet-list-entry.ui:60
 msgid "Favorite"
-msgstr ""
+msgstr "お気に入り"
 
 #: ui/tweet-list-entry.ui:81
 msgid "Reply"
-msgstr ""
+msgstr "リプライ"
 
 #: ui/user-filter-entry.ui:125
 msgid "Unblock"
@@ -782,19 +864,19 @@ msgstr ""
 
 #: ui/user-list-entry.ui:67
 msgid "Show settings of this account"
-msgstr ""
+msgstr "このアカウントの設定を表示"
 
 #: ui/user-list-entry.ui:92
 msgid "Open in new window"
-msgstr ""
+msgstr "新しいウィンドウで開く"
 
 #: ui/user-list-entry.ui:116
 msgid "Go to profile"
-msgstr ""
+msgstr "プロファイルを開く"
 
 #: ui/user-lists-widget.ui:14
 msgid "Created"
-msgstr "既成"
+msgstr "作成"
 
 #: ui/user-lists-widget.ui:86
 msgid "Subscribed to"

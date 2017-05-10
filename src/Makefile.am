@@ -11,7 +11,6 @@ AM_VALAFLAGS = \
 	--thread \
 	--enable-deprecated \
 	--enable-checking \
-	--enable-experimental \
 	--vapidir $(builddir) \
 	--vapidir $(top_srcdir)/vapi \
 	--basedir $(srcdir) \
@@ -39,8 +38,6 @@ libcorebird_la_VALASOURCES = \
 	MentionsTimeline.vala \
 	SearchPage.vala \
 	DMPage.vala \
-	DeltaUpdater.vala \
-	ITwitterItem.vala \
 	UserStream.vala \
 	IMessageReceiver.vala \
 	IPage.vala \
@@ -88,9 +85,7 @@ libcorebird_la_VALASOURCES = \
 	util/Utils.vala \
 	util/BundleHistory.vala \
 	util/UserCompletion.vala \
-	util/WeakRef.vala \
 	util/Dirs.vala \
-	util/Bundle.vala \
 	util/UserUtils.vala \
 	list/TweetListEntry.vala \
 	list/DMListEntry.vala \
@@ -103,6 +98,7 @@ libcorebird_la_VALASOURCES = \
 	list/UserFilterEntry.vala \
 	list/AddListEntry.vala \
 	list/SnippetListEntry.vala \
+	list/FavImageRow.vala \
 	util/Benchmark.vala \
 	window/ComposeTweetWindow.vala \
 	window/SettingsDialog.vala \
@@ -118,7 +114,6 @@ libcorebird_la_VALASOURCES = \
 	sql/SelectStatement.vala \
 	async/Collect.vala \
 	async/ComposeJob.vala \
-	model/TweetModel.vala \
 	model/DMThreadsModel.vala
 
 nodist_libcorebird_la_SOURCES = \
@@ -147,7 +142,17 @@ libcorebird_la_SOURCES = \
 	CbUserCounter.c \
 	CbUserCounter.h \
 	CbMediaImageWidget.h \
-	CbMediaImageWidget.c
+	CbMediaImageWidget.c \
+	CbTweetModel.h \
+	CbTweetModel.c \
+	CbTwitterItem.h \
+	CbTwitterItem.c \
+	CbDeltaUpdater.h \
+	CbDeltaUpdater.c \
+	CbUtils.h \
+	CbUtils.c \
+	CbBundle.h \
+	CbBundle.c
 
 libcorebird_la_vala.stamp: $(libcorebird_la_VALASOURCES) Makefile
 	@$(VALAC) \

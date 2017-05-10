@@ -18,8 +18,6 @@
 
 G_DEFINE_TYPE (CbMediaImageWidget, cb_media_image_widget, GTK_TYPE_SCROLLED_WINDOW)
 
-#define DRAG_THRESHOLD 10.0 /* px */
-
 static void
 cb_media_image_widget_finalize (GObject *object)
 {
@@ -58,17 +56,13 @@ drag_update_cb (GtkGestureDrag *gesture,
   CbMediaImageWidget *self = user_data;
   GtkAdjustment *adjustment;
 
-  if (offset_y > 10 ||
-      offset_y < -10)
-    {
-      adjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (self));
-      gtk_adjustment_set_value (adjustment, self->drag_start_hvalue - offset_x);
+  adjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (self));
+  gtk_adjustment_set_value (adjustment, self->drag_start_hvalue - offset_x);
 
-      adjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (self));
-      gtk_adjustment_set_value (adjustment, self->drag_start_vvalue - offset_y);
+  adjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (self));
+  gtk_adjustment_set_value (adjustment, self->drag_start_vvalue - offset_y);
 
-      gtk_gesture_set_state (GTK_GESTURE (gesture), GTK_EVENT_SEQUENCE_CLAIMED);
-    }
+  gtk_gesture_set_state (GTK_GESTURE (gesture), GTK_EVENT_SEQUENCE_CLAIMED);
 }
 
 static void
@@ -82,8 +76,6 @@ cb_media_image_widget_class_init (CbMediaImageWidgetClass *klass)
 static void
 cb_media_image_widget_init (CbMediaImageWidget *self)
 {
-  GtkWidget *event_box;
-
   self->image = gtk_image_new ();
   gtk_container_add (GTK_CONTAINER (self), self->image);
 
@@ -97,11 +89,17 @@ cb_media_image_widget_init (CbMediaImageWidget *self)
 GtkWidget *
 cb_media_image_widget_new (CbMedia *media)
 {
-  CbMediaImageWidget *self = CB_MEDIA_IMAGE_WIDGET (g_object_new (CB_TYPE_MEDIA_IMAGE_WIDGET, NULL));
+  CbMediaImageWidget *self;
   int img_width;
   int img_height;
   int win_width;
   int win_height;
+
+  g_return_val_if_fail (CB_IS_MEDIA (media), NULL);
+  g_return_val_if_fail (!media->invalid, NULL);
+  g_return_val_if_fail (media->surface != NULL, NULL);
+
+  self = CB_MEDIA_IMAGE_WIDGET (g_object_new (CB_TYPE_MEDIA_IMAGE_WIDGET, NULL));
 
   if (media->type == CB_MEDIA_TYPE_GIF)
     gtk_image_set_from_animation (GTK_IMAGE (self->image), media->animation);

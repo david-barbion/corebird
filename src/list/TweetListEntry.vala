@@ -16,7 +16,7 @@
  */
 
 [GtkTemplate (ui = "/org/baedert/corebird/ui/tweet-list-entry.ui")]
-public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
+public class TweetListEntry : Cb.TwitterItem, Gtk.ListBoxRow {
   private const GLib.ActionEntry[] action_entries = {
     {"quote", quote_activated},
     {"delete", delete_activated}
@@ -37,8 +37,6 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
   [GtkChild]
   private Gtk.Image rt_image;
   [GtkChild]
-  private Gtk.Image conversation_image;
-  [GtkChild]
   private Gtk.Image rt_status_image;
   [GtkChild]
   private Gtk.Image fav_status_image;
@@ -52,12 +50,15 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
   private Gtk.Stack stack;
   [GtkChild]
   private Gtk.Box action_box;
+  [GtkChild]
+  private Gtk.Label reply_label;
 
   /* Conditionally created widgets... */
   private Gtk.Label? quote_label = null;
   private TextButton? quote_name = null;
   private Gtk.Label? quote_time_delta = null;
   private Gtk.Label? quote_screen_name = null;
+  private Gtk.Label? quote_reply_label = null;
   private Gtk.Grid? quote_grid = null;
   private Gtk.Stack? media_stack = null;
   private MultiMediaWidget? mm_widget = null;
@@ -81,9 +82,6 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
       this._read_only = value;
     }
   }
-  public int64 sort_factor {
-    get { return tweet.source_tweet.id;}
-  }
   public bool shows_actions {
     get {
       return stack.visible_child == action_box;
@@ -94,6 +92,7 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
   public Cb.Tweet tweet;
   private bool values_set = false;
   private bool delete_first_activated = false;
+  private GLib.TimeSpan last_timediff;
   [Signal (action = true)]
   private signal void reply_tweet ();
   [Signal (action = true)]
@@ -140,13 +139,35 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
       rt_label.label = buff.str;
     }
 
+    if ((tweet.retweeted_tweet != null &&
+         tweet.retweeted_tweet.reply_id != 0) ||
+        tweet.source_tweet.reply_id != 0) {
+      var buff = new StringBuilder ();
+
+      if (tweet.retweeted_tweet != null)
+        Cb.Utils.write_reply_text (ref tweet.retweeted_tweet, buff);
+      else
+        Cb.Utils.write_reply_text (ref tweet.source_tweet, buff);
+
+      reply_label.label = buff.str;
+      reply_label.show ();
+    }
+
     if (tweet.quoted_tweet != null) {
-      this.create_quote_grid ();
+      this.create_quote_grid (tweet.quoted_tweet.reply_id != 0);
       quote_label.label = Cb.TextTransform.tweet (ref tweet.quoted_tweet,
                                                  Settings.get_text_transform_flags (),
                                                  0);
+      if (quote_label.label.length == 0)
+        quote_label.hide ();
+
       quote_name.set_markup (tweet.quoted_tweet.author.user_name);
       quote_screen_name.label = "@" + tweet.quoted_tweet.author.screen_name;
+      if (tweet.quoted_tweet.reply_id != 0) {
+        var buff = new GLib.StringBuilder ();
+        Cb.Utils.write_reply_text (ref tweet.quoted_tweet, buff);
+        quote_reply_label.label = buff.str;
+      }
     }
 
     retweet_button.active    =   tweet.is_flag_set (Cb.TweetState.RETWEETED);
@@ -156,8 +177,6 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
     favorite_button.active = tweet.is_flag_set (Cb.TweetState.FAVORITED);
 
     tweet.state_changed.connect (state_changed_cb);
-
-    conversation_image.visible = (tweet.reply_id != 0);
 
     if (tweet.has_inline_media ()) {
       this.create_media_widget (tweet.is_flag_set (Cb.TweetState.NSFW));
@@ -169,9 +188,9 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
 
       if (text_label.label.length == 0 && tweet.quoted_tweet == null) {
         if (this.media_stack == null)
-          this.grid.child_set (mm_widget, "top-attach", 1);
+          this.grid.child_set (mm_widget, "top-attach", 2);
         else
-          this.grid.child_set (media_stack, "top-attach", 1);
+          this.grid.child_set (media_stack, "top-attach", 2);
       }
 
       if (tweet.is_flag_set (Cb.TweetState.NSFW))
@@ -242,9 +261,9 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
 
     if (this.mm_widget != null && this.tweet.quoted_tweet == null) {
       if (text_label.label.length == 0)
-        this.grid.child_set (mm_widget, "top-attach", 1);
+        this.grid.child_set (mm_widget, "top-attach", 2);
       else
-        this.grid.child_set (mm_widget, "top-attach", 7);
+        this.grid.child_set (mm_widget, "top-attach", 8);
     }
   }
 
@@ -367,17 +386,17 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
       screen_name = tweet.source_tweet.author.screen_name;
     }
 
-    var bundle = new Bundle ();
-    bundle.put_int64 ("user_id", user_id);
-    bundle.put_string ("screen_name", screen_name);
+    var bundle = new Cb.Bundle ();
+    bundle.put_int64 (ProfilePage.KEY_USER_ID, user_id);
+    bundle.put_string (ProfilePage.KEY_SCREEN_NAME, screen_name);
     main_window.main_widget.switch_page (Page.PROFILE, bundle);
   }
 
   private void quote_name_button_clicked_cb () {
     assert (tweet.quoted_tweet != null);
-    var bundle = new Bundle ();
-    bundle.put_int64 ("user_id", tweet.quoted_tweet.author.id);
-    bundle.put_string ("screen_name", tweet.quoted_tweet.author.screen_name);
+    var bundle = new Cb.Bundle ();
+    bundle.put_int64 (ProfilePage.KEY_USER_ID, tweet.quoted_tweet.author.id);
+    bundle.put_string (ProfilePage.KEY_SCREEN_NAME, tweet.quoted_tweet.author.screen_name);
     main_window.main_widget.switch_page (Page.PROFILE, bundle);
   }
 
@@ -508,6 +527,21 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
     return (int)(cur_time.difference (then) / 1000.0 / 1000.0);
   }
 
+  public int64 get_sort_factor () {
+    return tweet.source_tweet.id;
+  }
+
+  public int64 get_timestamp () {
+    return tweet.source_tweet.created_at;
+  }
+
+  public GLib.TimeSpan get_last_set_timediff () {
+    return this.last_timediff;
+  }
+
+  public void set_last_set_timediff (GLib.TimeSpan span) {
+    this.last_timediff = span;
+  }
 
   public void toggle_mode () {
     if (this._read_only)
@@ -594,9 +628,9 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
 
       if (this.tweet.quoted_tweet != null) {
         media_stack.margin_start = 12;
-        this.quote_grid.attach (media_stack, 0, 2, 3, 1);
+        this.quote_grid.attach (media_stack, 0, 3, 3, 1);
       } else {
-        this.grid.attach (media_stack, 1, 6, 7, 1);
+        this.grid.attach (media_stack, 1, 7, 7, 1);
       }
     } else {
       /* We will never have to hide mm_widget */
@@ -604,9 +638,9 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
 
       if (this.tweet.quoted_tweet != null) {
         mm_widget.margin_start = 12;
-        this.quote_grid.attach (mm_widget, 0, 2, 3, 1);
+        this.quote_grid.attach (mm_widget, 0, 3, 3, 1);
       } else {
-        this.grid.attach (mm_widget, 1, 6, 7, 1);
+        this.grid.attach (mm_widget, 1, 7, 7, 1);
       }
     }
   }
@@ -623,7 +657,7 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
     return TweetUtils.activate_link (uri, main_window);
   }
 
-  private void create_quote_grid () {
+  private void create_quote_grid (bool reply) {
     this.quote_grid = new Gtk.Grid ();
     quote_grid.margin_top = 6;
     quote_grid.margin_end = 6;
@@ -644,6 +678,21 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
     quote_screen_name.get_style_context ().add_class ("dim-label");
     quote_grid.attach (quote_screen_name, 1, 0, 1, 1);
 
+    if (reply) {
+      this.quote_reply_label = new Gtk.Label ("");
+      quote_reply_label.halign = Gtk.Align.START;
+      quote_reply_label.set_use_markup (true);
+      quote_reply_label.xalign = 0;
+      quote_reply_label.set_margin_start (12);
+      quote_reply_label.set_margin_bottom (4);
+      quote_reply_label.activate_link.connect (quote_link_activated_cb);
+      quote_reply_label.get_style_context ().add_class ("dim-label");
+      quote_reply_label.get_style_context ().add_class ("invisible-links");
+      quote_reply_label.set_no_show_all (true);
+
+      quote_grid.attach (quote_reply_label, 0, 1, 3, 1);
+    }
+
     this.quote_label = new Gtk.Label ("");
     quote_label.halign = Gtk.Align.START;
     quote_label.hexpand = true;
@@ -658,7 +707,10 @@ public class TweetListEntry : ITwitterItem, Gtk.ListBoxRow {
     var attrs = new Pango.AttrList ();
     attrs.insert (Pango.attr_style_new (Pango.Style.ITALIC));
     quote_label.set_attributes (attrs);
-    quote_grid.attach (quote_label, 0, 1, 3, 1);
+    if (reply)
+      quote_grid.attach (quote_label, 0, 2, 3, 1);
+    else
+      quote_grid.attach (quote_label, 0, 1, 3, 1);
 
     this.quote_time_delta = new Gtk.Label ("");
     quote_time_delta.halign = Gtk.Align.END;

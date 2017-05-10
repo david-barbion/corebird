@@ -84,6 +84,16 @@ public class AccountDialog : Gtk.Window {
         set_transient_data (account.website, account.description);
       });
     }
+
+    Gtk.AccelGroup ag = new Gtk.AccelGroup ();
+    ag.connect (Gdk.Key.Escape, 0, Gtk.AccelFlags.LOCKED, escape_pressed_cb);
+
+    this.add_accel_group (ag);
+  }
+
+  private bool escape_pressed_cb () {
+    this.destroy ();
+    return Gdk.EVENT_STOP;
   }
 
   private void set_transient_data (string? website, string? description) {
@@ -93,15 +103,6 @@ public class AccountDialog : Gtk.Window {
     old_description = account.description ?? "";
     description_text_view.get_buffer ().set_text (account.description ?? "");
   }
-
-  //public override void response (int response_id) {
-    //if (response_id == Gtk.ResponseType.CLOSE) {
-      //save_data ();
-      //this.destroy ();
-    //} else if (response_id == Gtk.ResponseType.CANCEL) {
-      //this.destroy ();
-    //}
-  //}
 
   [GtkCallback]
   private void delete_button_clicked_cb () {
@@ -353,7 +354,7 @@ public class AccountDialog : Gtk.Window {
           content_stack.visible_child = error_label;
           save_button.sensitive = false;
         }
-      } else if (id == Gtk.ResponseType.CANCEL) {
+      } else {
         content_stack.visible_child = info_box;
       }
       filechooser.destroy ();

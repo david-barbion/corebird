@@ -31,15 +31,12 @@ public class TweetListBox : Gtk.ListBox {
 
   public signal void retry_button_clicked ();
 
-  public unowned DeltaUpdater delta_updater;
+  public Cb.DeltaUpdater delta_updater;
   public unowned Account account;
-  public TweetModel model = new TweetModel ();
+  public Cb.TweetModel model = new Cb.TweetModel ();
   private Gtk.GestureMultiPress press_gesture;
 
-  public TweetListBox (bool show_placeholder = true) {
-    if (show_placeholder) {
-      add_placeholder ();
-    }
+  public TweetListBox () {
   }
 
 
@@ -50,19 +47,22 @@ public class TweetListBox : Gtk.ListBox {
     this.press_gesture.set_button (0);
     this.press_gesture.set_propagation_phase (Gtk.PropagationPhase.BUBBLE);
     this.press_gesture.pressed.connect (gesture_pressed_cb);
+    this.delta_updater = new Cb.DeltaUpdater (this);
     Settings.get ().bind ("double-click-activation",
                           this, "activate-on-single-click",
                           GLib.SettingsBindFlags.INVERT_BOOLEAN);
-    this.bind_model (this.model, (obj) => {
-      assert (obj is Cb.Tweet);
 
-      var row = new TweetListEntry ((Cb.Tweet) obj,
-                                    (MainWindow) get_toplevel (),
-                                    this.account);
-      delta_updater.add (row);
-      row.fade_in ();
-      return row;
-    });
+    Cb.Utils.bind_model (this, this.model, widget_create_func);
+  }
+
+  private Gtk.Widget widget_create_func (GLib.Object obj) {
+    assert (obj is Cb.Tweet);
+
+    var row = new TweetListEntry ((Cb.Tweet) obj,
+                                  (MainWindow) get_toplevel (),
+                                  this.account);
+    row.fade_in ();
+    return row;
   }
 
   private void gesture_pressed_cb (int    n_press,
@@ -92,20 +92,35 @@ public class TweetListBox : Gtk.ListBox {
         }
         tle.toggle_mode ();
         if (tle.shows_actions)
-          this._action_entry = tle;
+          set_action_entry (tle);
         else
-          this._action_entry = null;
+          set_action_entry (null);
 
         this.press_gesture.set_state (Gtk.EventSequenceState.CLAIMED);
       }
     }
   }
 
+  private void set_action_entry (TweetListEntry? entry) {
+    if (this._action_entry != null) {
+      this._action_entry.destroy.disconnect (action_entry_destroyed_cb);
+      this._action_entry = null;
+    }
+
+    if (entry != null) {
+      this._action_entry = entry;
+      this._action_entry.destroy.connect (action_entry_destroyed_cb);
+    }
+  }
+
+  private void action_entry_destroyed_cb () {
+    this._action_entry = null;
+  }
 
   private void add_placeholder () {
     placeholder = new Gtk.Stack ();
     placeholder.transition_type = Gtk.StackTransitionType.CROSSFADE;
-    var loading_label = new Gtk.Label (_("Loading..."));
+    var loading_label = new Gtk.Label (_("Loading…"));
     loading_label.get_style_context ().add_class ("dim-label");
     placeholder.add_named (loading_label, "spinner");
     no_entries_label  = new Gtk.Label (_("No entries found"));
