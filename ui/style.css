@@ -77,17 +77,6 @@
   border-bottom: 2px solid grey;
 }
 
-.image-progress {
-  box-shadow: none;
-  background-image: none;
-  border-radius: 0px;
-  border: none;
-  background-color: transparent;
-
-  color: white;
-  -gtk-icon-source: -gtk-icontheme("content-loading-symbolic");
-}
-
 .image-success {
   box-shadow: none;
   background-image: none;
@@ -157,6 +146,7 @@
   border-bottom: 1px solid transparent;
   min-height: 0px;
   margin-bottom: -1px;
+  outline-offset: 0;
 }
 
 .text-only-button:hover {
@@ -164,7 +154,8 @@
 }
 
 .text-only-button:active {
-  background-color: shade(currentColor, 2.3);
+  color: inherit;
+  background-color: alpha(currentColor, 0.4);
 }
 
 .text-only-button:backdrop {
@@ -197,28 +188,35 @@
   background-color: transparent;
   background-image: none;
 }
-.reply-indicator {
+replyindicator {
   background-color: #4a90d9;
 }
 
 .profile-button {
-  background-image: none;
-  background-color: alpha(white,0);
-  box-shadow: none;
-  border: none;
   border-radius: 0px;
+  border-left-width: 0px;
+  border-right-width: 0px;
+  border-top-width: 0px;
+  border-bottom: 2px solid transparent;
+  box-shadow: none;
 }
 
 .profile-button:checked {
+  border: none;
+  box-shadow: none;
+  background-image: none;
+  background-color: transparent;
+  color: inherit;
   border-bottom: 2px solid #4a90d9;
 }
 
 .profile-button:hover {
+  background-image: none;
   background-color: alpha(white, 0.3);
 }
 
 .profile-button:active {
-  background-color: alpha(white, 0.5);
+  color: inherit;
   border-bottom: 2px solid grey;
 }
 
@@ -276,4 +274,8 @@ progressbar.horizontal.embedded-progress>trough>progress {
 
 .invisible-links link:link {
   color:inherit;
+}
+
+.tweet-info-grid {
+  padding: 12px;
 }

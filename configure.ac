@@ -1,4 +1,4 @@
-AC_INIT([corebird],[1.5],[mail@baedert.org])
+AC_INIT([corebird],[1.6],[mail@baedert.org])
 
 AC_PREREQ([2.65])
 
@@ -34,43 +34,43 @@ AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [Enable debugging]),, enab
 AM_CONDITIONAL([ENABLE_DEBUG], [ test "$enable_debug" = "yes"])
 
 # --disable-video
-AC_ARG_ENABLE(video, AS_HELP_STRING([--disable-video], [Disable video support]),
-              disable_video=yes, disable_video=no)
-AM_CONDITIONAL([DISABLE_VIDEO], [ test "$disable_video" = "yes"])
+AC_ARG_ENABLE(video, AS_HELP_STRING([--disable-video], [Disable video support]),, enable_video=yes)
+AM_CONDITIONAL([DISABLE_VIDEO], [ test "$enable_video" != "yes"])
 
 # --disable-gst-check
-AC_ARG_ENABLE(gst_check, AS_HELP_STRING([--disable-gst-check], [Disable check for needed gstreamer elements]),, disable_gst_check=no)
-AM_CONDITIONAL([DISABLE_GST_CHECK], [ test "$disable_gst_check" = "yes"])
+AC_ARG_ENABLE(gst_check, AS_HELP_STRING([--disable-gst-check], [Disable check for needed gstreamer elements]),, enable_gst_check=yes)
+AM_CONDITIONAL([DISABLE_GST_CHECK], [ test "$enable_gst_check" != "yes"])
 
 # --disable-spellcheck
-AC_ARG_ENABLE(spellcheck, AS_HELP_STRING([--disable-spellcheck], [Disable spellchecking supoprt]),
-              disable_spellcheck=yes, disable_spellcheck=no)
-AM_CONDITIONAL([DISABLE_SPELLCHECK], [ test "$disable_spellcheck" = "yes"])
+AC_ARG_ENABLE(spellcheck, AS_HELP_STRING([--disable-spellcheck], [Disable spellchecking support]),, enable_spellcheck=yes)
+AM_CONDITIONAL([DISABLE_SPELLCHECK], [ test "$enable_spellcheck" = "yes"])
 
 
 
-pkg_modules="gtk+-3.0 >= 3.18
+pkg_modules="gtk+-3.0 >= 3.20
              glib-2.0 >= 2.44
-             rest-0.7 >= 0.7.93
              libsoup-2.4
              json-glib-1.0
              sqlite3"
 
-if test "$disable_video" = "no"; then
+if test "$enable_video" != "no"; then
   pkg_modules="$pkg_modules gstreamer-video-1.0 >= 1.6"
 fi
 
-if test "$disable_spellcheck" = "no"; then
+if test "$enable_spellcheck" != "no"; then
   pkg_modules="$pkg_modules gspell-1 >= 1.0"
 fi
 
 PKG_CHECK_MODULES(CB, [$pkg_modules])
 
+# We do this again for librest. TODO: Do this only once.
+PKG_CHECK_MODULES(SOUP, libsoup-2.4 >= 2.42)
+PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.38)
+
 
 CB_VALA_FLAGS=" \
   --pkg gtk+-3.0 \
   --pkg json-glib-1.0 \
-  --pkg rest-0.7 \
   --pkg sqlite3 \
   --pkg libsoup-2.4 \
   --pkg glib-2.0 \
@@ -107,7 +107,7 @@ if test "${CC}" = "clang"; then
   CB_CFLAGS="$CB_CFLAGS -Wno-incompatible-pointer-types -Wno-incompatible-pointer-types-discards-qualifiers"
 fi
 
-if test "$disable_video" = "no"; then
+if test "$enable_video" != "no"; then
   CB_VALA_FLAGS="$CB_VALA_FLAGS \
                  -D VIDEO \
                  --pkg gstreamer-video-1.0"
@@ -119,12 +119,12 @@ if test "$enable_debug" = "yes"; then
   CB_CFLAGS="$CB_CFLAGS -D DEBUG -D G_DISABLE_CAST_CHECKS"
 fi
 
-if test "$disable_spellcheck" = "no"; then
+if test "$enable_spellcheck" != "no"; then
   CB_VALA_FLAGS="$CB_VALA_FLAGS -D SPELLCHECK --pkg gspell-1"
   CB_CFLAGS="$CB_CFLAGS -D SPELLCHECK"
 fi
 
-if test "$disable_gst_check" = "no"; then
+if test "$enable_gst_check" != "no"; then
   # Check for gtksink
   GST_ELEMENT_CHECK([gtksink], [1.0], [], [])
 fi
@@ -175,7 +175,7 @@ echo "
            valac version: ${VALAC_VERSION}
               C Compiler: ${CC} ${CFLAGS}
                Debugging: $enable_debug
-          Video disabled: $disable_video
-      Gst check disabled: $disable_gst_check
-  Spellchecking disabled: $disable_spellcheck
+           Video enabled: $enable_video
+       Gst check enabled: $enable_gst_check
+   Spellchecking enabled: $enable_spellcheck
 "

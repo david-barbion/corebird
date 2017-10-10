@@ -101,9 +101,9 @@ class DMManager : GLib.Object {
     call.add_param ("since_id", max_received_id.to_string ());
     call.add_param ("count", "200");
     call.add_param ("full_text", "true");
-    TweetUtils.load_threaded.begin (call, null, (obj, res) => {
+    Cb.Utils.load_threaded_async.begin (call, null, (obj, res) => {
       try {
-        Json.Node? root = TweetUtils.load_threaded.end (res);
+        Json.Node? root = Cb.Utils.load_threaded_async.end (res);
         on_dm_result (root, true);
       } catch (GLib.Error e) {
         warning (e.message);
@@ -118,9 +118,9 @@ class DMManager : GLib.Object {
     sent_call.add_param ("count", "200");
     sent_call.add_param ("full_text", "true");
     sent_call.set_method ("GET");
-    TweetUtils.load_threaded.begin (sent_call, null, (obj, res) => {
+    Cb.Utils.load_threaded_async.begin (sent_call, null, (obj, res) => {
       try {
-        Json.Node? root = TweetUtils.load_threaded.end (res);
+        Json.Node? root = Cb.Utils.load_threaded_async.end (res);
         on_dm_result (root, false);
       } catch (GLib.Error e) {
         warning (e.message);
@@ -141,7 +141,7 @@ class DMManager : GLib.Object {
         if (dm_obj.get_int_member ("sender_id") == account.id) {
           if (received) {
             update_thread (dm_obj, true);
-          } else {
+          } else if (dm_obj.get_int_member ("recipient_id") != account.id) {
             save_message (dm_obj, true);
           }
         } else {
@@ -153,16 +153,11 @@ class DMManager : GLib.Object {
   }
 
   public void insert_message (Json.Object dm_obj) {
-    if (dm_obj.get_int_member ("sender_id") == account.id) {
-      //save_message (dm_obj, false);
-      update_thread (dm_obj, false);
-    } else {
-      update_thread (dm_obj, false);
-    }
+    update_thread (dm_obj, false);
   }
 
-  /* We are ONLY calling this for RECEIVED messages, not sent ones. */
   private void update_thread (Json.Object dm_obj, bool initial) {
+    int64 recipient_id = dm_obj.get_int_member ("recipient_id");
     int64 sender_id  = dm_obj.get_int_member ("sender_id");
     int64 message_id = dm_obj.get_int_member ("id");
 
@@ -192,7 +187,16 @@ class DMManager : GLib.Object {
     string sender_name = dm_obj.get_object_member ("sender").get_string_member ("name")
                                                             .strip ().replace ("&", "&amp;");
 
-    if (!threads_model.has_thread (sender_id)) {
+    int64 thread_user_id = 0;
+
+    /* Here we get both messages sent by the user themselves, to other people including themselves
+       *and* messages sent TO the user. */
+    if (sender_id == account.id)
+      thread_user_id = recipient_id;
+    else
+      thread_user_id = sender_id;
+
+    if (!threads_model.has_thread (thread_user_id)) {
       DMThread thread = new DMThread ();
       thread.user.id = sender_id;
       thread.user.screen_name = sender_screen_name;
@@ -208,7 +212,7 @@ class DMManager : GLib.Object {
              .val ("last_message", text)
              .vali64 ("last_message_id", message_id)
              .run ();
-    } else {
+    } else if (sender_id != account.id || (recipient_id == account.id)) {
       DMThread thread = threads_model.get_thread (sender_id);
       if (message_id > thread.last_message_id) {
         this.threads_model.update_last_message (sender_id, message_id, text);
@@ -224,8 +228,7 @@ class DMManager : GLib.Object {
 
     /* This will exctract the json data again, etc. but it's still easier than
      * replacing entities here... */
-    if (sender_id != account.id)
-      save_message (dm_obj, initial);
+    save_message (dm_obj, initial);
   }
 
 

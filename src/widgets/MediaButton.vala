@@ -65,7 +65,7 @@ private class MediaButton : Gtk.Widget {
   private double media_alpha = 0.0;
 
 
-  public signal void clicked (MediaButton source);
+  public signal void clicked (MediaButton source, double px, double py);
 
   static construct {
     try {
@@ -95,7 +95,6 @@ private class MediaButton : Gtk.Widget {
     this.media = media;
     this.restrict_height = restrict_height;
     this.get_style_context ().add_class ("inline-media");
-    this.get_style_context ().add_class ("dim-label");
     actions = new GLib.SimpleActionGroup ();
     actions.add_action_entries (action_entries, this);
     this.insert_action_group ("media", actions);
@@ -256,7 +255,7 @@ private class MediaButton : Gtk.Widget {
   private void open_in_browser_activated (GLib.SimpleAction a, GLib.Variant? v) {
     try {
       Gtk.show_uri (Gdk.Screen.get_default (),
-                    media.target_url,
+                    media.target_url ?? media.url,
                     Gtk.get_current_event_time ());
     } catch (GLib.Error e) {
       critical (e.message);
@@ -270,42 +269,34 @@ private class MediaButton : Gtk.Widget {
     else
       title = _("Save Image");
 
-    var filechooser = new Gtk.FileChooserDialog (title,
+    var filechooser = new Gtk.FileChooserNative (title,
                                                  this.window,
                                                  Gtk.FileChooserAction.SAVE,
-                                                 _("Cancel"),
-                                                 Gtk.ResponseType.CANCEL,
                                                  _("Save"),
-                                                 Gtk.ResponseType.ACCEPT);
+                                                 _("Cancel"));
 
     filechooser.set_current_name (Utils.get_media_display_name (_media));
-    filechooser.response.connect ((id) => {
-      if (id == Gtk.ResponseType.ACCEPT) {
-        var file = GLib.File.new_for_path (filechooser.get_filename ());
-        // Download the file
-        Utils.get_media_display_name (_media);
-        string url = _media.target_url ?? _media.url;
-        debug ("Downloading %s to %s", url, filechooser.get_filename ());
+    if (filechooser.run () == Gtk.ResponseType.ACCEPT) {
+      var file = GLib.File.new_for_path (filechooser.get_filename ());
+      // Download the file
+      Utils.get_media_display_name (_media);
+      string url = _media.target_url ?? _media.url;
+      debug ("Downloading %s to %s", url, filechooser.get_filename ());
 
-        GLib.OutputStream? out_stream = null;
-        try {
-          out_stream = file.create (0, null);
-        } catch (GLib.Error e) {
-          Utils.show_error_dialog (e.message, this.window);
-          warning (e.message);
-        }
-
-        if (out_stream != null) {
-          Utils.download_file.begin (url, out_stream, () => {
-            debug ("Download of %s finished", url);
-          });
-        }
+      GLib.OutputStream? out_stream = null;
+      try {
+        out_stream = file.create (0, null);
+      } catch (GLib.Error e) {
+        Utils.show_error_dialog (e.message, this.window);
+        warning (e.message);
       }
 
-      filechooser.destroy ();
-    });
-
-    filechooser.show_all ();
+      if (out_stream != null) {
+        Utils.download_file.begin (url, out_stream, () => {
+          debug ("Download of %s finished", url);
+        });
+      }
+    }
   }
 
   public override Gtk.SizeRequestMode get_request_mode () {
@@ -510,14 +501,16 @@ private class MediaButton : Gtk.Widget {
 
     if (button == Gdk.BUTTON_PRIMARY) {
       this.press_gesture.set_state (Gtk.EventSequenceState.CLAIMED);
-      this.clicked (this);
+      double px = x / (double)this.get_allocated_width ();
+      double py = y / (double)this.get_allocated_height ();
+      this.clicked (this, px, py);
     }
   }
 
   public override bool key_press_event (Gdk.EventKey event) {
     if (event.keyval == Gdk.Key.Return ||
         event.keyval == Gdk.Key.KP_Enter) {
-      this.clicked (this);
+      this.clicked (this, 0.5, 0.5);
       return Gdk.EVENT_STOP;
     }
 

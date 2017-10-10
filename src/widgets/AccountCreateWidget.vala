@@ -47,30 +47,31 @@ class AccountCreateWidget : Gtk.Box {
   public void open_pin_request_site () {
     acc.init_proxy (false, true);
 
-    string? uri = null;
-    try {
-      acc.proxy.request_token ("oauth/request_token", "oob");
-      uri = "http://twitter.com/oauth/authorize?oauth_token=" + acc.proxy.get_token();
-      debug ("Trying to open %s", uri);
-    } catch (GLib.Error e) {
-      if (e.message.down() == "unauthorized") {
-        Utils.show_error_dialog (_("Unauthorized. Most of the time, this means that there’s something wrong with the Twitter servers and you should try again later"), this.main_window);
-      } else {
-        Utils.show_error_dialog (e.message, this.main_window);
+    acc.proxy.request_token_async.begin ("oauth/request_token", "oob", null, (obj, res) => {
+      try {
+        acc.proxy.request_token_async.end (res);
+      } catch (GLib.Error e) {
+        if (e.message.down() == "unauthorized") {
+          Utils.show_error_dialog (_("Unauthorized. Most of the time, this means that there’s something wrong with the Twitter servers and you should try again later"), this.main_window);
+          } else {
+          Utils.show_error_dialog (e.message, this.main_window);
+        }
+        critical (e.message);
+        return;
       }
-      critical (e.message);
-      return;
-    }
 
-    /* Try to open URI in browser */
-    try {
-      GLib.AppInfo.launch_default_for_uri (uri, null);
-    } catch (GLib.Error e) {
-      this.show_error (_("Could not open %s").printf ("<a href=\"" + uri + "\">" + uri + "</a>"));
-      Utils.show_error_dialog (e.message, this.main_window);
-      critical ("Could not open %s", uri);
-      critical (e.message);
-    }
+      string uri = "http://twitter.com/oauth/authorize?oauth_token=" + acc.proxy.get_token();
+      debug ("Trying to open %s", uri);
+
+      try {
+        GLib.AppInfo.launch_default_for_uri (uri, null);
+      } catch (GLib.Error e) {
+        this.show_error (_("Could not open %s").printf ("<a href=\"" + uri + "\">" + uri + "</a>"));
+        Utils.show_error_dialog (e.message, this.main_window);
+        critical ("Could not open %s", uri);
+        critical (e.message);
+      }
+    });
   }
 
   [GtkCallback]
@@ -80,12 +81,17 @@ class AccountCreateWidget : Gtk.Box {
   }
 
   [GtkCallback]
-  private void confirm_button_clicked_cb () {
+  private async void confirm_button_clicked_cb () {
     pin_entry.sensitive = false;
     confirm_button.sensitive = false;
     request_pin_button.sensitive = false;
+
+    this.do_confirm.begin ();
+  }
+
+  private async void do_confirm () {
     try {
-      acc.proxy.access_token("oauth/access_token", pin_entry.get_text());
+      yield acc.proxy.access_token_async ("oauth/access_token", pin_entry.get_text (), null);
     } catch (GLib.Error e) {
       critical (e.message);
       // We just assume that it was the wrong code
@@ -96,47 +102,43 @@ class AccountCreateWidget : Gtk.Box {
       return;
     }
 
-    // The token and token secret have been successfully received
-    // So, get some account information
     var call = acc.proxy.new_call ();
     call.set_function ("1.1/account/settings.json");
     call.set_method ("GET");
-    call.invoke_async.begin (null, (obj, res) => {
-      var parser = new Json.Parser ();
-      try {
-        parser.load_from_data (call.get_payload ());
-      } catch (GLib.Error e) {
-        critical ("Problem with JSON Data: %s\n%s", e.message, call.get_payload ());
-      }
-      var root = parser.get_root ().get_object ();
-      string screen_name = root.get_string_member ("screen_name");
-      debug ("Checking for %s", screen_name);
-      Account? existing_account = Account.query_account (screen_name);
-      if (existing_account != null) {
-        result_received (false, existing_account);
-        critical ("Account is already in use");
-        show_error (_("Account already in use"));
-        pin_entry.sensitive = true;
-        pin_entry.text = "";
-        request_pin_button.sensitive = true;
-        return;
 
-      }
+    Json.Node? root_node;
+    try {
+      root_node = yield Cb.Utils.load_threaded_async (call, null);
+    } catch (GLib.Error e) {
+      warning ("Could not get json data: %s", e.message);
+      return;
+    }
 
-      acc.query_user_info_by_screen_name.begin (screen_name, (obj, res) => {
-        acc.query_user_info_by_screen_name.end (res);
-        debug ("user info call");
-        acc.init_database ();
-        acc.save_info();
-        acc.db.insert ("common")
-              .val ("token", acc.proxy.token)
-              .val ("token_secret", acc.proxy.token_secret)
-              .run ();
-        acc.init_proxy (true, true);
-        corebird.account_added (acc);
-        result_received (true, acc);
-      });
-    });
+    Json.Object root = root_node.get_object ();
+    string screen_name = root.get_string_member ("screen_name");
+    debug ("Checking for %s", screen_name);
+    Account? existing_account = Account.query_account (screen_name);
+    if (existing_account != null) {
+      result_received (false, existing_account);
+      critical ("Account is already in use");
+      show_error (_("Account already in use"));
+      pin_entry.sensitive = true;
+      pin_entry.text = "";
+      request_pin_button.sensitive = true;
+      return;
+    }
+
+    yield acc.query_user_info_by_screen_name (screen_name);
+    debug ("user info call");
+    acc.init_database ();
+    acc.save_info();
+    acc.db.insert ("common")
+          .val ("token", acc.proxy.token)
+          .val ("token_secret", acc.proxy.token_secret)
+          .run ();
+    acc.init_proxy (true, true);
+    corebird.account_added (acc);
+    result_received (true, acc);
   }
 
   private void show_error (string err) {

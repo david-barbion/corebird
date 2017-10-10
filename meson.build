@@ -1,16 +1,19 @@
 project('Corebird', ['vala', 'c'],
-        version: '1.5')
+        version: '1.6',
+        default_options: [
+          'buildtype=debug'
+        ])
 
 gnome = import('gnome')
 srcdir = include_directories('src')
+restdir = include_directories('src/rest/')
 
 
 min_glib_version = '2.44'
 
 glib_dep = dependency('glib-2.0', version: '>=' + min_glib_version)
-gtk_dep  = dependency('gtk+-3.0', version: '>=3.18')
+gtk_dep  = dependency('gtk+-3.0', version: '>=3.20')
 json_dep = dependency('json-glib-1.0')
-rest_dep = dependency('rest-0.7', version: '>=0.7.91')
 sql_dep  = dependency('sqlite3')
 soup_dep = dependency('libsoup-2.4')
 
@@ -18,7 +21,6 @@ cb_deps = [
   glib_dep,
   gtk_dep,
   json_dep,
-  rest_dep,
   sql_dep,
   soup_dep
 ]
@@ -31,14 +33,10 @@ add_project_arguments('-DG_LOG_DOMAIN="corebird"', language: 'c')
 add_project_arguments('--enable-deprecated', language: 'vala')
 add_project_arguments('-D', 'GTK322', language: 'vala')
 
-if (rest_dep.version() >= '0.8.1')
-  add_project_arguments('-D', 'REST081', language: 'vala')
-  add_project_arguments('-DREST081', language: 'c')
-endif
-
 enable_debug = get_option('debug')
 if (enable_debug)
   add_project_arguments('-g', language: 'c')
+  add_project_arguments('-g', language: 'vala')
   add_project_arguments('-DDEBUG', language: 'c')
   add_project_arguments('-DG_DISABLE_CAST_CHECKS', language: 'c')
   add_project_arguments('-D', 'DEBUG', language: 'vala')
@@ -69,7 +67,6 @@ corebird_lib_sources = files([
   'src/FavoritesTimeline.vala',
   'src/FilterPage.vala',
   'src/HomeTimeline.vala',
-  'src/IMessageReceiver.vala',
   'src/IPage.vala',
   'src/ListStatusesPage.vala',
   'src/ListsPage.vala',
@@ -80,13 +77,10 @@ corebird_lib_sources = files([
   'src/ProfilePage.vala',
   'src/SearchPage.vala',
   'src/Settings.vala',
-  'src/SnippetManager.vala',
   'src/TweetInfoPage.vala',
   'src/Twitter.vala',
   'src/UserEventReceiver.vala',
-  'src/UserStream.vala',
   'src/async/Collect.vala',
-  'src/async/ComposeJob.vala',
   'src/list/AddListEntry.vala',
   'src/list/DMListEntry.vala',
   'src/list/DMThreadEntry.vala',
@@ -105,7 +99,6 @@ corebird_lib_sources = files([
   'src/sql/SelectStatement.vala',
   'src/sql/UpdateStatement.vala',
   'src/util/Benchmark.vala',
-  'src/util/BundleHistory.vala',
   'src/util/Dirs.vala',
   'src/util/TweetUtils.vala',
   'src/util/UserCompletion.vala',
@@ -127,16 +120,15 @@ corebird_lib_sources = files([
   'src/widgets/LazyMenuButton.vala',
   'src/widgets/MaxSizeContainer.vala',
   'src/widgets/MediaButton.vala',
-  'src/widgets/MediaVideoWidget.vala',
   'src/widgets/MultiMediaWidget.vala',
   'src/widgets/PixbufButton.vala',
   'src/widgets/ReplyEntry.vala',
   'src/widgets/ReplyIndicator.vala',
   'src/widgets/ScrollWidget.vala',
-  'src/widgets/SurfaceProgress.vala',
   'src/widgets/TextButton.vala',
   'src/widgets/TweetListBox.vala',
   'src/widgets/UserListsWidget.vala',
+  'src/widgets/FavImageView.vala',
   'src/window/AboutDialog.vala',
   'src/window/AccountDialog.vala',
   'src/window/ComposeTweetWindow.vala',
@@ -161,7 +153,28 @@ corebird_lib_sources = files([
   'src/CbDeltaUpdater.c',
   'src/CbUtils.c',
   'src/CbBundle.c',
-  'vapi/corebird-internal.vapi'
+  'src/CbBundleHistory.c',
+  'src/CbSnippetManager.c',
+  'src/CbSurfaceProgress.c',
+  'src/CbMediaVideoWidget.c',
+  'src/CbUserStream.c',
+  'src/CbMessageReceiver.c',
+  'src/CbComposeJob.c',
+
+
+  # Rest sources
+  'src/rest/rest/rest-param.c',
+  'src/rest/rest/rest-params.c',
+  'src/rest/rest/rest-proxy.c',
+  'src/rest/rest/rest-proxy-call.c',
+  'src/rest/rest/rest-main.c',
+  'src/rest/rest/oauth-proxy.c',
+  'src/rest/rest/oauth-proxy-call.c',
+  'src/rest/rest/sha1.c',
+
+  # Vapi files
+  'vapi/corebird-internal.vapi',
+  'vapi/rest-0.7.vapi'
 ])
 
 # glib resources
@@ -178,12 +191,12 @@ configure_file(
   configuration: cdata
 )
 
-# static library (for unit tests)
-cb_lib = static_library(
-  'libcorebird',
+# library (for unit tests)
+cb_lib = library(
+  'corebird',
   corebird_lib_sources,
   dependencies: cb_deps,
-  include_directories: srcdir,
+  include_directories: [srcdir, restdir],
   vala_args: [
     meson.source_root() + '/vapi/config.vapi',
     '--target-glib=' + min_glib_version,
@@ -197,7 +210,7 @@ cb_lib = static_library(
 cb_dep = declare_dependency(
   link_with: cb_lib,
   dependencies: cb_deps,
-  include_directories: [srcdir, include_directories('.')],
+  include_directories: [srcdir, restdir, include_directories('.')],
 )
 
 
@@ -207,9 +220,10 @@ executable(
   'src/main.vala',
   cb_resources,
   dependencies: [cb_deps, cb_dep],
-  include_directories: srcdir,
+  include_directories: [srcdir, restdir],
   vala_args: [
     meson.source_root() + '/vapi/corebird-internal.vapi',
+    meson.source_root() + '/vapi/rest-0.7.vapi',
   ],
   install: true
 )

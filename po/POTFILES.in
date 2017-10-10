@@ -24,6 +24,7 @@ src/util/Utils.vala
 src/widgets/AccountCreateWidget.vala
 src/widgets/AvatarBannerWidget.vala
 src/widgets/CompletionTextView.vala
+src/widgets/FavImageView.vala
 src/widgets/FollowButton.vala
 src/widgets/MediaButton.vala
 src/widgets/PixbufButton.vala
@@ -44,7 +45,6 @@ ui/filter-page.ui
 ui/list-list-entry.ui
 ui/list-statuses-page.ui
 ui/load-more-entry.ui
-ui/main-window.ui
 ui/menus.ui
 ui/modify-filter-dialog.ui
 ui/modify-snippet-dialog.ui

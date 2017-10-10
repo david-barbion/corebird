@@ -28,8 +28,7 @@ namespace Rest {
 	public class OAuthProxy : Rest.Proxy {
 		[CCode (has_construct_function = false, type = "RestProxy*")]
 		public OAuthProxy (string consumer_key, string consumer_secret, string url_format, bool binding_required);
-		public bool access_token (string function, string verifier) throws GLib.Error;
-		public bool access_token_async (string function, string verifier, [CCode (delegate_target_pos = 4.1, scope = "async")] Rest.OAuthProxyAuthCallback callback, GLib.Object weak_object) throws GLib.Error;
+		public async bool access_token_async (string function, string verifier, GLib.Cancellable? cancellable) throws GLib.Error;
 		public bool auth_step (string function) throws GLib.Error;
 		public bool auth_step_async (string function, [CCode (delegate_target_pos = 3.1, scope = "async")] Rest.OAuthProxyAuthCallback callback, GLib.Object weak_object) throws GLib.Error;
 		public unowned string get_signature_host ();
@@ -37,8 +36,7 @@ namespace Rest {
 		public unowned string get_token_secret ();
 		public bool is_oauth10a ();
 		public Rest.Proxy new_echo_proxy (string service_url, string url_format, bool binding_required);
-		public bool request_token (string function, string callback_uri) throws GLib.Error;
-		public bool request_token_async (string function, string callback_uri, [CCode (delegate_target_pos = 4.1, scope = "async")] Rest.OAuthProxyAuthCallback callback, GLib.Object weak_object) throws GLib.Error;
+		public async void request_token_async (string function, string callback_uri, GLib.Cancellable? cancellable) throws GLib.Error;
 		public void set_signature_host (string signature_host);
 		public void set_token (string token);
 		public void set_token_secret (string token_secret);
@@ -79,17 +77,17 @@ namespace Rest {
 		[CCode (has_construct_function = false)]
 		public Param.with_owner (global::string name, [CCode (array_length_cname = "length", array_length_pos = 2.5, array_length_type = "gsize")] uint8[] data, global::string content_type, global::string? filename, owned void* owner, GLib.DestroyNotify? owner_dnotify);
 	}
-	[CCode (cheader_filename = "rest/rest-params.h")]
+	[CCode (cheader_filename = "rest/rest-params.h", has_type_id = false)]
 	[Compact]
 	public class Params {
-		public void add (Rest.Param param);
+		public void add (owned Rest.Param param);
 		public bool are_strings ();
-		public GLib.HashTable<string,string> as_string_hash_table ();
+		public GLib.HashTable<weak string,weak string> as_string_hash_table ();
 		public void free ();
-		public Rest.Param @get (string name);
+		public unowned Rest.Param? @get (string name);
 		public void remove (string name);
 	}
-	[CCode (cheader_filename = "rest/rest-params.h")]
+	[CCode (cheader_filename = "rest/rest-params.h", has_type_id = false)]
 	[Compact]
 	public class ParamsIter {
 		public void init (Rest.Params @params);
@@ -105,14 +103,10 @@ namespace Rest {
 		public unowned string get_user_agent ();
 		public virtual Rest.ProxyCall new_call ();
 		public void set_user_agent (string user_agent);
-		[CCode (has_construct_function = false)]
-		public Proxy.with_authentication (string url_format, bool binding_required, string username, string password);
 		[NoAccessorMethod]
 		public bool binding_required { get; set; }
 		[NoAccessorMethod]
 		public bool disable_cookies { get; construct; }
-		[NoAccessorMethod]
-		public string password { owned get; set; }
 		[NoAccessorMethod]
 		public string ssl_ca_file { owned get; set; }
 		[NoAccessorMethod]
@@ -120,11 +114,9 @@ namespace Rest {
 		[NoAccessorMethod]
 		public string url_format { owned get; set; }
 		public string user_agent { get; set; }
-		[NoAccessorMethod]
-		public string username { owned get; set; }
 		public virtual signal bool authenticate (Rest.ProxyAuth auth, bool retrying);
 	}
-	[CCode (cheader_filename = "rest/oauth-proxy-call.h,rest/oauth-proxy.h,rest/oauth2-proxy-call.h,rest/oauth2-proxy.h,rest/rest-enum-types.h,rest/rest-param.h,rest/rest-params.h,rest/rest-proxy-auth.h,rest/rest-proxy-call.h,rest/rest-proxy.h,rest/rest-xml-node.h,rest/rest-xml-parser.h", type_id = "rest_proxy_auth_get_type ()")]
+	[CCode (cheader_filename = "rest/oauth-proxy-call.h,rest/oauth-proxy.h,rest/oauth2-proxy-call.h,rest/oauth2-proxy.h,rest/rest-enum-types.h,rest/rest-param.h,rest/rest-params.h,rest/rest-proxy-auth.h,rest/rest-proxy-call.h,rest/rest-proxy.h", type_id = "rest_proxy_auth_get_type ()")]
 	public class ProxyAuth : GLib.Object {
 		[CCode (has_construct_function = false)]
 		protected ProxyAuth ();
@@ -149,7 +141,7 @@ namespace Rest {
 		public unowned Rest.Params get_params ();
 		public unowned string get_payload ();
 		public int64 get_payload_length ();
-		public GLib.HashTable<weak void*,weak void*> get_response_headers ();
+		public GLib.HashTable<weak string,weak string> get_response_headers ();
 		public uint get_status_code ();
 		public unowned string get_status_message ();
 		public async bool invoke_async (GLib.Cancellable? cancellable) throws GLib.Error;
@@ -166,34 +158,9 @@ namespace Rest {
 		public virtual bool serialize_params (out string content_type, out string content, out size_t content_len) throws GLib.Error;
 		public void set_function (string function);
 		public void set_method (string method);
-		public bool sync () throws GLib.Error;
 		public bool upload ([CCode (delegate_target_pos = 2.1)] Rest.ProxyCallUploadCallback callback, GLib.Object weak_object) throws GLib.Error;
 		[NoAccessorMethod]
 		public Rest.Proxy proxy { owned get; construct; }
-	}
-	[CCode (cheader_filename = "rest/rest-xml-node.h", ref_function = "rest_xml_node_ref", type_id = "rest_xml_node_get_type ()", unref_function = "rest_xml_node_unref")]
-	[Compact]
-	public class XmlNode {
-		public weak GLib.HashTable<void*,void*> attrs;
-		public weak GLib.HashTable<void*,void*> children;
-		public weak string content;
-		public weak string name;
-		public weak Rest.XmlNode next;
-		public void add_attr (string attribute, string value);
-		public unowned Rest.XmlNode add_child (string tag);
-		public Rest.XmlNode find (string tag);
-		public void free ();
-		public unowned string get_attr (string attr_name);
-		public string print ();
-		public Rest.XmlNode @ref ();
-		public void set_content (string value);
-		public void unref ();
-	}
-	[CCode (cheader_filename = "rest/rest-xml-parser.h", type_id = "rest_xml_parser_get_type ()")]
-	public class XmlParser : GLib.Object {
-		[CCode (has_construct_function = false)]
-		public XmlParser ();
-		public Rest.XmlNode parse_from_data (string data, int64 len);
 	}
 	[CCode (cheader_filename = "rest/rest-param.h", cprefix = "REST_MEMORY_", has_type_id = false)]
 	public enum MemoryUse {

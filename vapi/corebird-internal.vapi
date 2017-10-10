@@ -12,6 +12,39 @@ namespace Cb {
     UNKNOWN
   }
 
+  [CCode (cprefix = "CB_STREAM_MESSAGE_", cheader_filename = "CbUserStream.h")]
+  public enum StreamMessageType {
+    UNSUPPORTED,
+    DELETE,
+    DM_DELETE,
+    SCRUB_GEO,
+    LIMIT,
+    DISCONNECT,
+    FRIENDS,
+    EVENT,
+    WARNING,
+    DIRECT_MESSAGE,
+
+    TWEET,
+    EVENT_LIST_CREATED,
+    EVENT_LIST_DESTROYED,
+    EVENT_LIST_UPDATED,
+    EVENT_LIST_UNSUBSCRIBED,
+    EVENT_LIST_SUBSCRIBED,
+    EVENT_LIST_MEMBER_ADDED,
+    EVENT_LIST_MEMBER_REMOVED,
+    EVENT_FAVORITE,
+    EVENT_UNFAVORITE,
+    EVENT_FOLLOW,
+    EVENT_UNFOLLOW,
+    EVENT_BLOCK,
+    EVENT_UNBLOCK,
+    EVENT_MUTE,
+    EVENT_UNMUTE,
+    EVENT_USER_UPDATE,
+    EVENT_QUOTED_TWEET
+  }
+
   [CCode (cprefix = "CbMedia_", lower_case_cprefix = "cb_media_", cheader_filename = "CbMedia.h")]
   public class Media : GLib.Object {
     public int64 length;
@@ -217,6 +250,7 @@ namespace Cb {
           "CbMediaImageWidget.h")]
   public class MediaImageWidget : Gtk.ScrolledWindow {
     public MediaImageWidget (Media media);
+    public void scroll_to (double x, double y);
   }
 
   [CCode (cprefix = "CbTweetModel_", lower_case_cprefix = "cb_tweet_model_", cheader_filename =
@@ -251,6 +285,14 @@ namespace Cb {
     public abstract GLib.TimeSpan get_last_set_timediff ();
   }
 
+  [CCode (cprefix = "CbMessageReceiverInterface_", lower_case_cprefix = "cb_message_receiver_", cheader_filename =
+          "CbMessageReceiver.h", type_cname = "CbMessageReceiverInterface")]
+  public interface MessageReceiver : GLib.Object {
+    public abstract void stream_message_received (Cb.StreamMessageType type,
+                                                  Json.Node node);
+  }
+
+
   [CCode (cprefix = "CbDeltaUpdater_", lower_case_cprefix = "cb_delta_updater_", cheader_filename =
           "CbDeltaUpdater.h")]
   public class DeltaUpdater : GLib.Object {
@@ -264,6 +306,9 @@ namespace Cb {
     public void linkify_user (ref Cb.UserIdentity id, GLib.StringBuilder str);
     public void write_reply_text (ref Cb.MiniTweet t, GLib.StringBuilder str);
     public GLib.DateTime parse_date (string _in);
+    public string get_file_type (string url);
+    public string rest_proxy_call_to_string (Rest.ProxyCall c);
+    public async Json.Node? load_threaded_async (Rest.ProxyCall call, GLib.Cancellable? cancellable) throws GLib.Error;
   }
 
   [CCode (cprefix = "CbBundle_", lower_case_cprefix = "cb_bundle_", cheader_filename =
@@ -287,5 +332,69 @@ namespace Cb {
     public unowned GLib.Object get_object (int key);
 
     public bool equals (Bundle? other);
+  }
+
+  [CCode (cprefix = "CbBundleHistory_", lower_case_cprefix = "cb_bundle_history_", cheader_filename =
+          "CbBundleHistory.h")]
+  public class BundleHistory : GLib.Object {
+    public BundleHistory ();
+
+    public void push (int v, Cb.Bundle? b);
+    public int forward ();
+    public int back ();
+    public bool at_start ();
+    public bool at_end ();
+
+    public void remove_current ();
+
+    public int get_current ();
+    public unowned Cb.Bundle? get_current_bundle ();
+
+  }
+  [CCode (cprefix = "CbSnippetManager_", lower_case_cprefix = "cb_snippet_manager_", cheader_filename =
+          "CbSnippetManager.h")]
+  public class SnippetManager : GLib.Object {
+    public SnippetManager (Sqlite.Database db);
+    public unowned string get_snippet (string key);
+    public uint n_snippets ();
+    public void query_snippets (GLib.HFunc func);
+    public void set_snippet (string old_key, string key, string value);
+    public void remove_snippet (string key);
+    public void insert_snippet (string key, string value);
+  }
+  [CCode (cprefix = "CbMediaVideoWidget_", lower_case_cprefix = "cb_media_video_widget_", cheader_filename =
+          "CbMediaVideoWidget.h")]
+  public class MediaVideoWidget : Gtk.Stack {
+    public MediaVideoWidget (Media media);
+    public void start ();
+  }
+
+  [CCode (cprefix = "CbUserStream_", lower_case_cprefix = "cb_user_stream_", cheader_filename =
+          "CbUserStream.h")]
+  public class UserStream : GLib.Object {
+    public UserStream (string name, bool b);
+    public void register (MessageReceiver r);
+    public void unregister (MessageReceiver r);
+    public void push_data (string data);
+    public void start ();
+    public void stop ();
+    public void set_proxy_data (string a, string b);
+
+    public signal void interrupted ();
+    public signal void resumed ();
+  }
+
+  [CCode (cprefix = "CbComposeJob_", lower_case_cprefix = "cb_compose_job_", cheader_filename =
+          "CbComposeJob.h")]
+  public class ComposeJob : GLib.Object {
+    public signal void image_upload_progress (string a, double d);
+    public signal void image_upload_finished (string a, string? b);
+    public ComposeJob (Rest.Proxy proxy, Rest.Proxy proxy2, GLib.Cancellable cancellable);
+    public void set_reply_id (int64 id);
+    public void set_quoted_tweet (Cb.Tweet t);
+    public void set_text (string s);
+    public void upload_image_async (string p);
+    public void abort_image_upload (string s);
+    public async bool send_async (GLib.Cancellable c) throws GLib.Error;
   }
 }

@@ -80,6 +80,9 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
   }
 
   public virtual void on_join (int page_id, Cb.Bundle? args) {
+    if (STRESSTEST)
+      return;
+
     if (!initialized) {
       load_newest ();
 
@@ -180,7 +183,10 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
           return GLib.Source.REMOVE;
         }
 
-        tweet_list.model.remove_last_n_visible (tweet_list.model.get_n_items () - DefaultTimeline.REST);
+        /* Check again in case this changed in the last 500ms */
+        if (tweet_list.model.get_n_items () > DefaultTimeline.REST) {
+          tweet_list.model.remove_last_n_visible (tweet_list.model.get_n_items () - DefaultTimeline.REST);
+        }
         tweet_remove_timeout = 0;
         return GLib.Source.REMOVE;
       });
@@ -247,13 +253,16 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
       }
     }
 
-    /* Fifth case */
-    foreach (Gtk.Widget w in tweet_list.get_children ()) {
-      if (w is TweetListEntry) {
-        var tt = ((TweetListEntry)w).tweet;
-        if (tt.retweeted_tweet != null && tt.retweeted_tweet.id == t.retweeted_tweet.id) {
-          flags |= Cb.TweetState.HIDDEN_FORCE;
-          break;
+
+    if (t.retweeted_tweet != null) {
+      /* Fifth case */
+      foreach (Gtk.Widget w in tweet_list.get_children ()) {
+        if (w is TweetListEntry) {
+          var tt = ((TweetListEntry)w).tweet;
+          if (tt.retweeted_tweet != null && tt.retweeted_tweet.id == t.retweeted_tweet.id) {
+            flags |= Cb.TweetState.HIDDEN_FORCE;
+            break;
+          }
         }
       }
     }
@@ -351,7 +360,7 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
 
     Json.Node? root_node = null;
     try {
-      root_node = yield TweetUtils.load_threaded (call, null);
+      root_node = yield Cb.Utils.load_threaded_async (call, null);
     } catch (GLib.Error e) {
       message (e.message);
       tweet_list.set_error ("%s\n%s".printf (_("Could not load tweets"), e.message));
@@ -385,7 +394,7 @@ public abstract class DefaultTimeline : ScrollWidget, IPage {
     Json.Node? root_node = null;
 
     try {
-      root_node = yield TweetUtils.load_threaded (call, null);
+      root_node = yield Cb.Utils.load_threaded_async (call, null);
     } catch (GLib.Error e) {
       warning (e.message);
       return;

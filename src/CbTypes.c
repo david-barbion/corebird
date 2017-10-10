@@ -29,7 +29,7 @@ cb_user_identity_free (CbUserIdentity *id)
 }
 
 void
-cb_user_identity_copy (CbUserIdentity *id, CbUserIdentity *id2)
+cb_user_identity_copy (const CbUserIdentity *id, CbUserIdentity *id2)
 {
   g_free (id2->screen_name);
   id2->screen_name = g_strdup (id->screen_name);
@@ -56,7 +56,7 @@ cb_text_entity_free (CbTextEntity *e)
 }
 
 void
-cb_text_entity_copy (CbTextEntity *e1, CbTextEntity *e2)
+cb_text_entity_copy (const CbTextEntity *e1, CbTextEntity *e2)
 {
   e2->from = e1->from;
   e2->to   = e1->to;
@@ -94,7 +94,7 @@ cb_mini_tweet_free (CbMiniTweet *t)
 }
 
 void
-cb_mini_tweet_copy (CbMiniTweet *t1, CbMiniTweet *t2)
+cb_mini_tweet_copy (const CbMiniTweet *t1, CbMiniTweet *t2)
 {
   guint i;
 
@@ -149,11 +149,11 @@ cb_mini_tweet_parse (CbMiniTweet *t,
   else
     tweet_text = json_object_get_string_member (extended_object, "text");
 
-  if (json_object_has_member (obj, "display_text_range"))
+  if (json_object_has_member (extended_object, "display_text_range"))
     {
       /* We only remove the prefix */
       guint start = (guint)json_array_get_int_element (
-                          json_object_get_array_member (obj, "display_text_range"),
+                          json_object_get_array_member (extended_object, "display_text_range"),
                           0);
       guint i;
       const char *p = tweet_text;
@@ -394,15 +394,20 @@ cb_mini_tweet_parse_entities (CbMiniTweet *t,
   /* entities->media and extended_entities contain exactly the same media objects,
      but extended_entities is not always present, and entities->media doesn't
      contain all the attached media, so parse both the same way... */
-
-  i = 0;
-  if (json_object_has_member (entities, "media")) n_media_arrays ++;
-  if (json_object_has_member (status, "extended_entities")) n_media_arrays ++;
   if (json_object_has_member (entities, "media"))
-    media_arrays[i++] = json_object_get_array_member (entities, "media");
+    {
+      media_arrays[n_media_arrays] = json_object_get_array_member (entities, "media");
+      n_media_arrays ++;
+    }
+
   if (json_object_has_member (status, "extended_entities"))
-    media_arrays[i] = json_object_get_array_member (json_object_get_object_member (status, "extended_entities"),
-                                                    "media");
+    {
+      media_arrays[n_media_arrays] = json_object_get_array_member (json_object_get_object_member (status,
+                                                                                                  "extended_entities"),
+                                                                   "media");
+
+      n_media_arrays ++;
+    }
 
   for (i = 0; i < n_media_arrays; i ++)
     {
