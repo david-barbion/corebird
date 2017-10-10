@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 #include <glib-object.h>
 #include "CbTypes.h"
+#include "rest/rest-proxy-call.h"
 
 void cb_utils_bind_model (GtkWidget                  *listbox,
                           GListModel                 *model,
@@ -37,6 +38,27 @@ char * cb_utils_escape_quotes (const char *in);
 char * cb_utils_escape_ampersands (const char *in);
 
 GDateTime * cb_utils_parse_date (const char *_in);
+
+char * cb_utils_get_file_type (const char *url);
+char * cb_utils_rest_proxy_call_to_string (RestProxyCall *call);
+
+void     cb_utils_load_threaded_async  (RestProxyCall       *call,
+                                        GCancellable        *cancellable,
+                                        GAsyncReadyCallback  callback,
+                                        gpointer             user_data);
+
+JsonNode *cb_utils_load_threaded_finish (GAsyncResult   *result,
+                                         GError        **error);
+
+static inline void
+cb_clear_source (guint *id)
+{
+  if (*id == 0)
+    return;
+
+  g_source_remove (*id);
+  *id = 0;
+}
 
 
 #endif

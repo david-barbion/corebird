@@ -15,7 +15,7 @@
  *  along with corebird.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class MentionsTimeline : IMessageReceiver, DefaultTimeline {
+class MentionsTimeline : Cb.MessageReceiver, DefaultTimeline {
   protected override string function {
     get {
       return "1.1/statuses/mentions_timeline.json";
@@ -28,17 +28,17 @@ class MentionsTimeline : IMessageReceiver, DefaultTimeline {
     this.tweet_list.account= account;
   }
 
-  private void stream_message_received (StreamMessageType type, Json.Node root) {
-    if (type == StreamMessageType.TWEET) {
+  private void stream_message_received (Cb.StreamMessageType type, Json.Node root) {
+    if (type == Cb.StreamMessageType.TWEET) {
       add_tweet (root);
-    } else if (type == StreamMessageType.DELETE) {
+    } else if (type == Cb.StreamMessageType.DELETE) {
       int64 id = root.get_object ().get_object_member ("delete")
                      .get_object_member ("status").get_int_member ("id");
       delete_tweet (id);
-    } else if (type == StreamMessageType.EVENT_FAVORITE) {
+    } else if (type == Cb.StreamMessageType.EVENT_FAVORITE) {
       int64 id = root.get_object ().get_object_member ("target_object").get_int_member ("id");
       toggle_favorite (id, true);
-    } else if (type == StreamMessageType.EVENT_UNFAVORITE) {
+    } else if (type == Cb.StreamMessageType.EVENT_UNFAVORITE) {
       int64 id = root.get_object ().get_object_member ("target_object").get_int_member ("id");
       toggle_favorite (id, false);
     }
@@ -88,18 +88,21 @@ class MentionsTimeline : IMessageReceiver, DefaultTimeline {
         else
           text = Utils.unescape_html (t.source_tweet.text);
 
-        string summary = _("%s mentioned %s").printf (Utils.unescape_html (t.get_user_name ()),
-                                                      account.name);
-        string id = "%s-%s".printf (account.id.to_string (), "mention");
-        var tuple = new GLib.Variant.tuple ({account.id, t.id});
-        var notification = new GLib.Notification (summary);
-        notification.set_body (text);
-        notification.set_default_action_and_target_value ("app.show-window", account.id);
-        notification.add_button_with_target_value ("Mark read", "app.mark-read", tuple);
-        notification.add_button_with_target_value ("Reply", "app.reply-to-tweet", tuple);
+        /* Ignore the mention if both accounts are configured */
+        if (Account.query_account_by_id (t.get_user_id ()) == null) {
+          string summary = _("%s mentioned %s").printf (Utils.unescape_html (t.get_user_name ()),
+                                                        account.name);
+          string id = "%s-%s".printf (account.id.to_string (), "mention");
+          var tuple = new GLib.Variant.tuple ({account.id, t.id});
+          var notification = new GLib.Notification (summary);
+          notification.set_body (text);
+          notification.set_default_action_and_target_value ("app.show-window", account.id);
+          notification.add_button_with_target_value ("Mark read", "app.mark-read", tuple);
+          notification.add_button_with_target_value ("Reply", "app.reply-to-tweet", tuple);
 
-        t.notification_id = id;
-        GLib.Application.get_default ().send_notification (id, notification);
+          t.notification_id = id;
+          GLib.Application.get_default ().send_notification (id, notification);
+        }
       }
     }
   }

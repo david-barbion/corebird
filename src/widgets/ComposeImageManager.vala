@@ -18,7 +18,6 @@
 class ComposeImageManager : Gtk.Container {
   private const int BUTTON_DELTA = 10;
   private const int BUTTON_SPACING = 12;
-  private bool _upload_started = false;
   private GLib.GenericArray<AddImageButton> buttons;
   private GLib.GenericArray<Gtk.Button> close_buttons;
   private GLib.GenericArray<Gtk.ProgressBar> progress_bars;
@@ -26,12 +25,6 @@ class ComposeImageManager : Gtk.Container {
   public int n_images {
     get {
       return this.buttons.length;
-    }
-  }
-  public bool upload_started {
-    set {
-      this._upload_started = value;
-      this.queue_draw ();
     }
   }
   public bool has_gif {
@@ -52,7 +45,7 @@ class ComposeImageManager : Gtk.Container {
     }
   }
 
-  public signal void image_removed ();
+  public signal void image_removed (string image_path);
 
   construct {
     this.buttons = new GLib.GenericArray<AddImageButton> ();
@@ -80,8 +73,8 @@ class ComposeImageManager : Gtk.Container {
       this.buttons.remove_index (index);
       this.close_buttons.remove_index (index);
       this.progress_bars.remove_index (index);
-      this.image_removed ();
       this.queue_draw ();
+      this.image_removed (aib.image_path);
     });
 
     aib.start_remove ();
@@ -127,7 +120,7 @@ class ComposeImageManager : Gtk.Container {
 
     var bar = new Gtk.ProgressBar ();
     bar.set_parent (this);
-    bar.show ();
+    bar.show_all ();
     this.progress_bars.add (bar);
   }
 
@@ -265,14 +258,10 @@ class ComposeImageManager : Gtk.Container {
       this.propagate_draw (btn, ct);
     }
 
-#if REST081
-    if (_upload_started) {
-      for (int i = 0, p = this.progress_bars.length; i < p; i ++) {
-        var bar = this.progress_bars.get (i);
-        this.propagate_draw (bar, ct);
-      }
+    for (int i = 0, p = this.progress_bars.length; i < p; i ++) {
+      var bar = this.progress_bars.get (i);
+      this.propagate_draw (bar, ct);
     }
-#endif
 
     return Gdk.EVENT_PROPAGATE;
   }
@@ -301,33 +290,15 @@ class ComposeImageManager : Gtk.Container {
     this.add (button);
   }
 
-  public string[] get_image_paths () {
-    var paths = new string[this.buttons.length];
-
-    for (int i = 0; i < buttons.length; i ++) {
-      var btn = buttons.get (i);
-      paths[i] = btn.image_path;
-    }
-
-    return paths;
-  }
-
-  public void start_progress (string image_path) {
-    for (int i = 0; i < buttons.length; i ++) {
-      var btn = buttons.get (i);
-      if (btn.image_path == image_path) {
-        btn.get_style_context ().add_class ("image-progress");
-        break;
-      }
-    }
-  }
-
   public void set_image_progress (string image_path, double progress) {
     for (int i = 0; i < buttons.length; i ++) {
       var btn = buttons.get (i);
       if (btn.image_path == image_path) {
         var progress_bar = progress_bars.get (i);
         progress_bar.set_fraction (progress);
+        if (progress == 1.0) {
+          progress_bar.hide ();
+        }
         break;
       }
     }
@@ -347,6 +318,12 @@ class ComposeImageManager : Gtk.Container {
         }
         break;
       }
+    }
+  }
+
+  public void insensitivize_buttons () {
+    for (int i = 0; i < close_buttons.length; i ++) {
+      close_buttons.get (i).set_sensitive (false);
     }
   }
 }

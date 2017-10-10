@@ -15,26 +15,20 @@
  *  along with corebird.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-[GtkTemplate (ui = "/org/baedert/corebird/ui/main-widget.ui")]
 public class MainWidget : Gtk.Box {
   private unowned Account account;
 
   private Gtk.RadioButton dummy_button  = new Gtk.RadioButton (null);
   private IPage[] pages;
-  private BundleHistory history         = new BundleHistory (10);
+  private Cb.BundleHistory history      = new Cb.BundleHistory ();
   private bool page_switch_lock         = false;
   private ImpostorWidget stack_impostor  = new ImpostorWidget ();
-
-
-  [GtkChild]
   private Gtk.Box top_box;
-  [GtkChild]
   private Gtk.Stack stack;
-  [GtkChild]
-  private Gtk.Revealer sidebar_revealer;
+  private Gtk.Revealer topbar_revealer;
   public int cur_page_id {
     get {
-      return history.current;
+      return history.get_current ();
     }
   }
 
@@ -43,6 +37,23 @@ public class MainWidget : Gtk.Box {
   public MainWidget (Account account, MainWindow parent, Corebird app) {
     this.account = account;
     app.start_account (account);
+
+    /* Create widgets */
+    this.set_orientation (Gtk.Orientation.VERTICAL);
+    this.topbar_revealer = new Gtk.Revealer ();
+    topbar_revealer.set_reveal_child (true);
+    topbar_revealer.set_transition_type (Gtk.RevealerTransitionType.SLIDE_UP);
+    this.top_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+    top_box.set_hexpand (true);
+    top_box.set_homogeneous (true);
+    top_box.get_style_context ().add_class ("topbar");
+    topbar_revealer.add (top_box);
+    this.add (topbar_revealer);
+
+    this.stack = new Gtk.Stack ();
+    stack.set_hexpand (true);
+    stack.set_vexpand (true);
+    this.add (stack);
 
     stack.add (stack_impostor);
 
@@ -64,8 +75,8 @@ public class MainWidget : Gtk.Box {
       IPage page = pages[i];
       page.window = parent;
 
-      if (page is IMessageReceiver)
-        account.user_stream.register ((IMessageReceiver)page);
+      if (page is Cb.MessageReceiver)
+        account.user_stream.register ((Cb.MessageReceiver)page);
 
       page.create_radio_button (dummy_button);
       stack.add (page);
@@ -79,7 +90,7 @@ public class MainWidget : Gtk.Box {
       }
     }
 
-    Settings.get ().bind ("sidebar-visible", sidebar_revealer, "reveal-child",
+    Settings.get ().bind ("sidebar-visible", this.topbar_revealer, "reveal-child",
                           SettingsBindFlags.DEFAULT);
   }
 
@@ -92,13 +103,13 @@ public class MainWidget : Gtk.Box {
    *
    */
   public void switch_page (int page_id, Cb.Bundle? args = null) {
-    if (page_id == history.current) {
+    if (page_id == history.get_current ()) {
       if (pages[page_id].handles_double_open ())
         pages[page_id].double_open ();
 
-      if ((history.current_bundle != null &&
-          history.current_bundle.equals (args)) ||
-          history.current_bundle == args)
+      if ((history.get_current_bundle () != null &&
+          history.get_current_bundle ().equals (args)) ||
+          history.get_current_bundle () == args)
         return;
     }
 
@@ -106,12 +117,12 @@ public class MainWidget : Gtk.Box {
 
 
     // Set the correct transition type
-    if (page_id == Page.PREVIOUS || page_id < history.current)
+    if (page_id == Page.PREVIOUS || page_id < history.get_current ())
       stack.transition_type = Gtk.StackTransitionType.SLIDE_RIGHT;
-    else if (page_id == Page.NEXT || page_id > history.current)
+    else if (page_id == Page.NEXT || page_id > history.get_current ())
       stack.transition_type = Gtk.StackTransitionType.SLIDE_LEFT;
 
-    int current_page = history.current;
+    int current_page = history.get_current ();
     // If we go forward/back, we don't need to update the history.
     if (page_id == Page.PREVIOUS) {
       if (history.at_start ())
@@ -119,14 +130,14 @@ public class MainWidget : Gtk.Box {
 
       push = false;
       page_id = history.back ();
-      args = history.current_bundle;
+      args = history.get_current_bundle ();
     } else if (page_id == Page.NEXT) {
       if (history.at_end ())
         return;
 
       push = false;
       page_id = history.forward ();
-      args = history.current_bundle;
+      args = history.get_current_bundle ();
     }
 
     if (page_id == current_page) {
@@ -180,8 +191,8 @@ public class MainWidget : Gtk.Box {
   public void stop () {
     for (int i = 0; i < pages.length; i++) {
       IPage page = pages[i];
-      if (page is IMessageReceiver)
-        account.user_stream.unregister ((IMessageReceiver)page);
+      if (page is Cb.MessageReceiver)
+        account.user_stream.unregister ((Cb.MessageReceiver)page);
     }
 
     ((Corebird)GLib.Application.get_default ()).stop_account (this.account);

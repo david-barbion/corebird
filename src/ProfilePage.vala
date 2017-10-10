@@ -16,7 +16,7 @@
  */
 
 [GtkTemplate (ui = "/org/baedert/corebird/ui/profile-page.ui")]
-class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
+class ProfilePage : ScrollWidget, IPage, Cb.MessageReceiver {
   private const GLib.ActionEntry[] action_entries = {
     {"write-dm", write_dm_activated},
     {"tweet-to", tweet_to_activated},
@@ -207,7 +207,7 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
 
     Json.Node? root_node = null;
     try {
-      root_node = yield TweetUtils.load_threaded (call, data_cancellable);
+      root_node = yield Cb.Utils.load_threaded_async (call, data_cancellable);
     } catch (GLib.Error e) {
       warning (e.message);
       return;
@@ -226,7 +226,7 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
 
     // We don't use our AvatarCache here because this (100×100) avatar is only
     // ever loaded here.
-    TweetUtils.download_avatar.begin (avatar_url, 100 * scale, (obj, res) => {
+    TweetUtils.download_avatar.begin (avatar_url, 100 * scale, data_cancellable, (obj, res) => {
       Cairo.Surface surface;
       try {
         var pixbuf = TweetUtils.download_avatar.end (res);
@@ -380,7 +380,7 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
 
     Json.Node? root = null;
     try {
-      root = yield TweetUtils.load_threaded (call, data_cancellable);
+      root = yield Cb.Utils.load_threaded_async (call, data_cancellable);
     } catch (GLib.Error e) {
       warning (e.message);
       tweet_list.set_empty ();
@@ -421,7 +421,7 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
 
     Json.Node? root = null;
     try {
-      root = yield TweetUtils.load_threaded (call, data_cancellable);
+      root = yield Cb.Utils.load_threaded_async (call, data_cancellable);
     } catch (GLib.Error e) {
       warning (e.message);
       return;
@@ -782,9 +782,9 @@ class ProfilePage : ScrollWidget, IPage, IMessageReceiver {
     followers_label.label = "%'d".printf(follower_count);
   }
 
-  public void stream_message_received (StreamMessageType type,
+  public void stream_message_received (Cb.StreamMessageType type,
                                        Json.Node         root_node) {
-    if (type == StreamMessageType.TWEET) {
+    if (type == Cb.StreamMessageType.TWEET) {
       var obj = root_node.get_object ();
       var user = obj.get_object_member ("user");
       if (user.get_int_member ("id") != this.user_id)

@@ -22,6 +22,38 @@
 #include <json-glib/json-glib.h>
 #include "CbMedia.h"
 
+typedef enum {
+  CB_STREAM_MESSAGE_UNSUPPORTED,
+  CB_STREAM_MESSAGE_DELETE,
+  CB_STREAM_MESSAGE_DM_DELETE,
+  CB_STREAM_MESSAGE_SCRUB_GEO,
+  CB_STREAM_MESSAGE_LIMIT,
+  CB_STREAM_MESSAGE_DISCONNECT,
+  CB_STREAM_MESSAGE_FRIENDS,
+  CB_STREAM_MESSAGE_EVENT,
+  CB_STREAM_MESSAGE_WARNING,
+  CB_STREAM_MESSAGE_DIRECT_MESSAGE,
+  CB_STREAM_MESSAGE_TWEET,
+
+  CB_STREAM_MESSAGE_EVENT_LIST_CREATED,
+  CB_STREAM_MESSAGE_EVENT_LIST_DESTROYED,
+  CB_STREAM_MESSAGE_EVENT_LIST_UPDATED,
+  CB_STREAM_MESSAGE_EVENT_LIST_UNSUBSCRIBED,
+  CB_STREAM_MESSAGE_EVENT_LIST_SUBSCRIBED,
+  CB_STREAM_MESSAGE_EVENT_LIST_MEMBER_ADDED,
+  CB_STREAM_MESSAGE_EVENT_LIST_MEMBER_REMOVED,
+  CB_STREAM_MESSAGE_EVENT_FAVORITE,
+  CB_STREAM_MESSAGE_EVENT_UNFAVORITE,
+  CB_STREAM_MESSAGE_EVENT_FOLLOW,
+  CB_STREAM_MESSAGE_EVENT_UNFOLLOW,
+  CB_STREAM_MESSAGE_EVENT_BLOCK,
+  CB_STREAM_MESSAGE_EVENT_UNBLOCK,
+  CB_STREAM_MESSAGE_EVENT_MUTE,
+  CB_STREAM_MESSAGE_EVENT_UNMUTE,
+  CB_STREAM_MESSAGE_EVENT_USER_UPDATE,
+  CB_STREAM_MESSAGE_EVENT_QUOTED_TWEET
+} CbStreamMessageType;
+
 struct _CbUserIdentity
 {
   gint64  id;
@@ -30,7 +62,7 @@ struct _CbUserIdentity
 };
 typedef struct _CbUserIdentity CbUserIdentity;
 void cb_user_identity_free (CbUserIdentity *id);
-void cb_user_identity_copy (CbUserIdentity *id, CbUserIdentity *id2);
+void cb_user_identity_copy (const CbUserIdentity *id, CbUserIdentity *id2);
 
 void cb_user_identity_parse (CbUserIdentity *id, JsonObject *user_obj);
 
@@ -45,7 +77,7 @@ struct _CbTextEntity
 };
 typedef struct _CbTextEntity CbTextEntity;
 void cb_text_entity_free (CbTextEntity *e);
-void cb_text_entity_copy (CbTextEntity *e1, CbTextEntity *e2);
+void cb_text_entity_copy (const CbTextEntity *e1, CbTextEntity *e2);
 
 struct _CbMiniTweet
 {
@@ -67,7 +99,7 @@ struct _CbMiniTweet
 };
 typedef struct _CbMiniTweet CbMiniTweet;
 void cb_mini_tweet_free (CbMiniTweet *tweet);
-void cb_mini_tweet_copy (CbMiniTweet *t1, CbMiniTweet *t2);
+void cb_mini_tweet_copy (const CbMiniTweet *t1, CbMiniTweet *t2);
 void cb_mini_tweet_init (CbMiniTweet *t);
 void cb_mini_tweet_parse (CbMiniTweet *t, JsonObject *obj);
 void cb_mini_tweet_parse_entities (CbMiniTweet *t, JsonObject *obj);

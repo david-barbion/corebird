@@ -90,7 +90,7 @@ namespace TweetUtils {
     else
       call.set_function (@"1.1/statuses/destroy/$(tweet.my_retweet).json");
 
-    debug (rest_call_to_string (call));
+    debug (Cb.Utils.rest_proxy_call_to_string (call));
     call.invoke_async.begin (null, (obj, res) => {
       try{
         call.invoke_async.end (res);
@@ -128,9 +128,13 @@ namespace TweetUtils {
    *
    * @return The loaded avatar.
    */
-  async Gdk.Pixbuf? download_avatar (string avatar_url, int size = 48) throws GLib.Error {
+  async Gdk.Pixbuf? download_avatar (string avatar_url, int size = 48,
+                                     GLib.Cancellable? cancellable = null) throws GLib.Error {
     Gdk.Pixbuf? avatar = null;
     var msg     = new Soup.Message ("GET", avatar_url);
+    if (cancellable != null)
+      cancellable.cancelled.connect (() => { SOUP_SESSION.cancel_message (msg, Soup.Status.CANCELLED); });
+
     GLib.Error? err = null;
     SOUP_SESSION.queue_message (msg, (s, _msg) => {
       if (_msg.status_code != Soup.Status.OK) {
@@ -290,8 +294,12 @@ namespace TweetUtils {
   }
 
 
-  public void handle_media_click (Cb.Tweet t, MainWindow window, int index) {
-    MediaDialog media_dialog = new MediaDialog (t, index);
+  public void handle_media_click (Cb.Tweet   t,
+                                  MainWindow window,
+                                  int        index,
+                                  double     px = 0.0,
+                                  double     py = 0.0) {
+    MediaDialog media_dialog = new MediaDialog (t, index, px, py);
     media_dialog.set_transient_for (window);
     media_dialog.set_modal (true);
     media_dialog.show ();
@@ -468,55 +476,6 @@ namespace TweetUtils {
 
       cur_iter = next_iter;
     }
-  }
-
-  public async Json.Node? load_threaded (Rest.ProxyCall    call,
-                                         GLib.Cancellable? cancellable) throws GLib.Error
-  {
-    Json.Node? result = null;
-    GLib.Error? err   = null;
-    GLib.SourceFunc callback = load_threaded.callback;
-
-    debug ("REST Call: %s", rest_call_to_string (call));
-
-    new Thread<void*> ("json parser", () => {
-      try {
-        call.sync ();
-      } catch (GLib.Error e) {
-        err = e;
-        GLib.Idle.add (() => { callback (); return GLib.Source.REMOVE; });
-        return null;
-      }
-
-      if (cancellable != null && cancellable.is_cancelled ()) {
-        GLib.Idle.add (() => { callback (); return GLib.Source.REMOVE; });
-        return null;
-      }
-
-      var parser = new Json.Parser ();
-      try {
-        parser.load_from_data (call.get_payload ());
-      } catch (GLib.Error e) {
-        err = e;
-        GLib.Idle.add (() => { callback (); return GLib.Source.REMOVE; });
-        return null;
-      }
-
-      if (cancellable != null && cancellable.is_cancelled ()) {
-        GLib.Idle.add (() => { callback (); return GLib.Source.REMOVE; });
-        return null;
-      }
-
-      result = parser.get_root ();
-      GLib.Idle.add (() => { callback (); return GLib.Source.REMOVE; });
-      return null;
-    });
-    yield;
-
-    if (err != null)
-      throw err;
-
-    return result;
   }
 
   public void sort_entities (ref Cb.TextEntity[] entities) {

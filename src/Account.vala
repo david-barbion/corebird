@@ -19,16 +19,16 @@ public class Account : GLib.Object {
   public const string DUMMY = "screen_name";
   public int64 id;
   public Sql.Database db;
-  public string screen_name       {public get; public  set;}
-  public string name              {public get; public  set;}
-  public string avatar_url        {public get; public  set;}
-  public string? banner_url       {public get; private set;}
-  public string? website          {public get; public  set;}
-  public string? description      {public get; public  set;}
+  public string screen_name;
+  public string name;
+  public string avatar_url;
+  public string? banner_url;
+  public string? website;
+  public string? description;
   public Cairo.Surface avatar_small {public get; public set;}
   public Cairo.Surface avatar       {public get; public set;}
   public Rest.OAuthProxy proxy;
-  public UserStream user_stream;
+  public Cb.UserStream user_stream;
   public Cb.UserCounter user_counter;
   private UserEventReceiver event_receiver;
   public NotificationManager notifications;
@@ -81,14 +81,15 @@ public class Account : GLib.Object {
                                       Settings.get_consumer_secret (),
                                       "https://api.twitter.com/",
                                       false);
-    this.user_stream = new UserStream (this);
+    this.user_stream = new Cb.UserStream (this.screen_name, STRESSTEST);
     this.user_stream.register (this.event_receiver);
     if (load_secrets) {
       init_database ();
       int n_rows = db.select ("common").cols ("token", "token_secret")
                                        .run ((vals) => {
-        proxy.token = user_stream.token = vals[0];
-        proxy.token_secret = user_stream.token_secret = vals[1];
+        proxy.token = vals[0];
+        proxy.token_secret = vals[1];
+        user_stream.set_proxy_data (proxy.token, proxy.token_secret);
         return false; //stop
       });
 
@@ -160,7 +161,7 @@ public class Account : GLib.Object {
 
     Json.Node? root_node = null;
     try {
-      root_node = yield TweetUtils.load_threaded (call, null);
+      root_node = yield Cb.Utils.load_threaded_async (call, null);
     } catch (GLib.Error e) {
       warning (e.message);
       return;
@@ -269,7 +270,7 @@ public class Account : GLib.Object {
 
     Json.Node? root = null;
     try {
-      root = yield TweetUtils.load_threaded (call, null);
+      root = yield Cb.Utils.load_threaded_async (call, null);
     } catch (GLib.Error e) {
       warning (e.message);
       collect_obj.emit ();
@@ -307,7 +308,7 @@ public class Account : GLib.Object {
       var msg = new Soup.Message ("GET", url);
       SOUP_SESSION.queue_message (msg, (_s, _msg) => {
         var data_stream = new MemoryInputStream.from_data (msg.response_body.data, GLib.g_free);
-        string type = Utils.get_file_type (url);
+        string type = Cb.Utils.get_file_type (url);
         Gdk.Pixbuf pixbuf;
         try {
           pixbuf = new Gdk.Pixbuf.from_stream(data_stream);

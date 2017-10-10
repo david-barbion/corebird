@@ -1,10 +1,10 @@
-
 AM_CPPFLAGS = \
 	$(CB_CFLAGS) \
 	-include $(CONFIG_HEADER) \
 	-DDATADIR=\"$(datadir)\" \
 	-DPKGDATADIR=\"$(pkgdatadir)\" \
-	-DG_LOG_DOMAIN=\"corebird\"
+	-DG_LOG_DOMAIN=\"corebird\" \
+	-I$(top_srcdir)/src/rest/
 
 
 AM_VALAFLAGS = \
@@ -19,6 +19,7 @@ AM_VALAFLAGS = \
 	-D G_LOG_DOMAIN=\"corebird\" \
 	$(top_srcdir)/vapi/config.vapi \
 	$(top_srcdir)/vapi/corebird-internal.vapi \
+	$(top_srcdir)/vapi/rest-0.7.vapi \
 	-C \
 	$(NULL)
 
@@ -38,8 +39,6 @@ libcorebird_la_VALASOURCES = \
 	MentionsTimeline.vala \
 	SearchPage.vala \
 	DMPage.vala \
-	UserStream.vala \
-	IMessageReceiver.vala \
 	IPage.vala \
 	DefaultTimeline.vala \
 	DMThreadsPage.vala \
@@ -53,7 +52,6 @@ libcorebird_la_VALASOURCES = \
 	FavoritesTimeline.vala \
 	FilterPage.vala \
 	UserEventReceiver.vala \
-	SnippetManager.vala \
 	DMManager.vala \
 	widgets/TweetListBox.vala \
 	widgets/MaxSizeContainer.vala \
@@ -71,19 +69,17 @@ libcorebird_la_VALASOURCES = \
 	widgets/MultiMediaWidget.vala \
 	widgets/AvatarWidget.vala \
 	widgets/AvatarBannerWidget.vala \
-	widgets/MediaVideoWidget.vala \
 	widgets/CropWidget.vala \
 	widgets/AddImageButton.vala \
 	widgets/CompletionTextView.vala \
 	widgets/LazyMenuButton.vala \
 	widgets/ImpostorWidget.vala \
 	widgets/FollowButton.vala \
-	widgets/SurfaceProgress.vala \
 	widgets/MediaButton.vala \
 	widgets/ComposeImageManager.vala \
+	widgets/FavImageView.vala \
 	util/TweetUtils.vala \
 	util/Utils.vala \
-	util/BundleHistory.vala \
 	util/UserCompletion.vala \
 	util/Dirs.vala \
 	util/UserUtils.vala \
@@ -113,7 +109,6 @@ libcorebird_la_VALASOURCES = \
 	sql/UpdateStatement.vala \
 	sql/SelectStatement.vala \
 	async/Collect.vala \
-	async/ComposeJob.vala \
 	model/DMThreadsModel.vala
 
 nodist_libcorebird_la_SOURCES = \
@@ -152,7 +147,43 @@ libcorebird_la_SOURCES = \
 	CbUtils.h \
 	CbUtils.c \
 	CbBundle.h \
-	CbBundle.c
+	CbBundle.c \
+	CbBundleHistory.h \
+	CbBundleHistory.c \
+	CbSnippetManager.h \
+	CbSnippetManager.c \
+	CbMediaVideoWidget.h \
+	CbMediaVideoWidget.c \
+	CbSurfaceProgress.h \
+	CbSurfaceProgress.c \
+	CbMessageReceiver.h \
+	CbMessageReceiver.c \
+	CbUserStream.h \
+	CbUserStream.c \
+	CbComposeJob.h \
+	CbComposeJob.c \
+	CbGtkCompat.h \
+	rest/rest/rest-param.c \
+	rest/rest/rest-params.c \
+	rest/rest/rest-proxy.c \
+	rest/rest/rest-proxy-call.c \
+	rest/rest/rest-proxy-call-private.h \
+	rest/rest/rest-main.c \
+	rest/rest/rest-private.h \
+	rest/rest/oauth-proxy.c \
+	rest/rest/oauth-proxy-call.c \
+	rest/rest/oauth-proxy-private.h \
+	rest/rest/sha1.c \
+	rest/rest/sha1.h \
+	rest/rest/rest-param.h \
+	rest/rest/rest-params.h \
+	rest/rest/rest-proxy.h \
+	rest/rest/rest-proxy-call.h \
+	rest/rest/oauth-proxy.h \
+	rest/rest/oauth-proxy-call.h
+
+
+
 
 libcorebird_la_vala.stamp: $(libcorebird_la_VALASOURCES) Makefile
 	@$(VALAC) \

@@ -17,6 +17,7 @@
 
 [GtkTemplate (ui = "/org/baedert/corebird/ui/account-dialog.ui")]
 public class AccountDialog : Gtk.Window {
+  private const int MAX_DESCRIPTION_LENGTH = 160;
   private const string PAGE_NORMAL = "normal";
   private const string PAGE_DELETE = "delete";
   [GtkChild]
@@ -41,6 +42,8 @@ public class AccountDialog : Gtk.Window {
   private Gtk.Label error_label;
   [GtkChild]
   private Gtk.Button save_button;
+  [GtkChild]
+  private Gtk.Label description_length_label;
 
   private unowned Account account;
   private string old_user_name;
@@ -51,6 +54,8 @@ public class AccountDialog : Gtk.Window {
 
   private int old_width = 0;
   private int old_height = 0;
+
+  private bool account_was_not_initied = false;
 
 
   public AccountDialog (Account account) {
@@ -79,6 +84,7 @@ public class AccountDialog : Gtk.Window {
     });
 
     if (account.proxy == null) {
+      account_was_not_initied = true;
       account.init_proxy ();
       account.query_user_info_by_screen_name.begin (null, (obj, res) => {
         set_transient_data (account.website, account.description);
@@ -88,7 +94,33 @@ public class AccountDialog : Gtk.Window {
     Gtk.AccelGroup ag = new Gtk.AccelGroup ();
     ag.connect (Gdk.Key.Escape, 0, Gtk.AccelFlags.LOCKED, escape_pressed_cb);
 
+    description_text_view.buffer.notify["text"].connect (update_description_length);
+
     this.add_accel_group (ag);
+    this.update_description_length ();
+  }
+
+  private void update_description_length () {
+    int length = description_text_view.buffer.text.length;
+    description_length_label.label = "%d/160".printf (length);
+
+    if (length > MAX_DESCRIPTION_LENGTH) {
+      save_button.sensitive = false;
+    } else {
+      save_button.sensitive = true;
+    }
+  }
+
+  public override void destroy () {
+    if (account != null) {
+      if (account_was_not_initied) {
+        account.uninit ();
+      }
+
+      account = null;
+    }
+
+    base.destroy ();
   }
 
   private bool escape_pressed_cb () {
@@ -132,6 +164,7 @@ public class AccountDialog : Gtk.Window {
       call.invoke_async.begin (null, (obj, res) => {
         try {
           call.invoke_async.end (res);
+          debug ("Profile successfully updated");
         } catch (GLib.Error e) {
           warning (e.message);
           Utils.show_error_object (call.get_payload (), "Could not update profile",
@@ -198,7 +231,7 @@ public class AccountDialog : Gtk.Window {
       call.invoke_async.begin (null, (obj, res) => {
         try {
           call.invoke_async.end (res);
-          debug ("Banner succesfully updated");
+          debug ("Banner successfully updated");
         } catch (GLib.Error e) {
           Utils.show_error_object (call.get_payload (), "Could not update your banner",
                                    GLib.Log.LINE, GLib.Log.FILE, this);
@@ -308,64 +341,54 @@ public class AccountDialog : Gtk.Window {
   }
 
   private void show_crop_image_selector () {
-    var filechooser = new Gtk.FileChooserDialog (_("Select Banner Image"),
+    var filechooser = new Gtk.FileChooserNative (_("Select Banner Image"),
                                                  this,
                                                  Gtk.FileChooserAction.OPEN,
-                                                 _("Cancel"),
-                                                 Gtk.ResponseType.CANCEL,
                                                  _("Open"),
-                                                 Gtk.ResponseType.ACCEPT);
-    filechooser.select_multiple = false;
-    filechooser.modal = true;
-
-    filechooser.response.connect ((id) => {
-      if (id == Gtk.ResponseType.ACCEPT) {
-        string selected_file = filechooser.get_filename ();
-        Gdk.Pixbuf? image = null;
-        try {
-          image = new Gdk.Pixbuf.from_file (selected_file);
-        } catch (GLib.Error e) {
-          warning (e.message);
-          return;
-        }
-
-        /* Values for banner */
-        int min_width = 200;
-        int min_height = 100;
-
-        if (crop_widget.desired_aspect_ratio == 1.0) {
-          /* Avatar */
-          min_width = 48;
-          min_height = 48;
-        }
-
-        if (image.get_width () >= min_width &&
-            image.get_height () >= min_height) {
-          crop_widget.set_image (image);
-          save_button.sensitive = true;
-        } else {
-          string error_str = "";
-          error_str += _("Image does not meet minimum size requirements:") + "\n";
-          error_str += ngettext ("Minimum width: %d pixel", "Minimum width: %d pixels", min_width)
-                       .printf (min_width) + "\n";
-          error_str += ngettext ("Minimum height: %d pixel", "Minimum height: %d pixels", min_height)
-                       .printf (min_height);
-          error_label.label = error_str;
-          content_stack.visible_child = error_label;
-          save_button.sensitive = false;
-        }
-      } else {
-        content_stack.visible_child = info_box;
-      }
-      filechooser.destroy ();
-    });
-
+                                                 _("Cancel"));
     var filter = new Gtk.FileFilter ();
     filter.add_mime_type ("image/png");
     filter.add_mime_type ("image/jpeg");
     filechooser.set_filter (filter);
 
-    filechooser.show_all ();
+    if (filechooser.run () == Gtk.ResponseType.ACCEPT) {
+      string selected_file = filechooser.get_filename ();
+      Gdk.Pixbuf? image = null;
+      try {
+        image = new Gdk.Pixbuf.from_file (selected_file);
+      } catch (GLib.Error e) {
+        warning (e.message);
+        return;
+      }
+
+      /* Values for banner */
+      int min_width = 200;
+      int min_height = 100;
+
+      if (crop_widget.desired_aspect_ratio == 1.0) {
+        /* Avatar */
+        min_width = 48;
+        min_height = 48;
+      }
+
+      if (image.get_width () >= min_width &&
+          image.get_height () >= min_height) {
+        crop_widget.set_image (image);
+        save_button.sensitive = true;
+      } else {
+        string error_str = "";
+        error_str += _("Image does not meet minimum size requirements:") + "\n";
+        error_str += ngettext ("Minimum width: %d pixel", "Minimum width: %d pixels", min_width)
+                     .printf (min_width) + "\n";
+        error_str += ngettext ("Minimum height: %d pixel", "Minimum height: %d pixels", min_height)
+                     .printf (min_height);
+        error_label.label = error_str;
+        content_stack.visible_child = error_label;
+        save_button.sensitive = false;
+      }
+    } else {
+      content_stack.visible_child = info_box;
+    }
   }
 
   [GtkCallback]
