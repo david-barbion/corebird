@@ -131,28 +131,6 @@ inline double ease_out_cubic (double t) {
   return p * p * p +1;
 }
 
-string rest_call_to_string (Rest.ProxyCall call)
-{
-  StringBuilder builder = new StringBuilder ();
-  builder.append (call.get_method ());
-  builder.append (" ");
-  builder.append (call.get_function ());
-
-  GLib.HashTable<string, string> params = call.get_params ().as_string_hash_table ();
-
-  if (params.size () > 0) {
-    builder.append ("?");
-
-    foreach (unowned string key in params.get_keys ()) {
-      // This doesn't work for the last param but whatever.
-      builder.append (key).append ("=").append (params.get (key)).append ("&");
-    }
-  }
-
-  return builder.str;
-}
-
-
 namespace Utils {
   /**
    * Calculates an easily human-readable version of the time difference between
@@ -180,32 +158,6 @@ namespace Utils {
     } else {
       return "%d %s %d".printf (time.get_day_of_month (), month, time.get_year ());
     }
-  }
-
-
-  /**
-   * Extracts the actual filename out of a given path.
-   * E.g. for /home/foo/bar.png, it will return "bar.png"
-   *
-   * @return The filename of the given path, and nothing else.
-   */
-  string get_file_name (string path) {
-    return path.substring (path.last_index_of_char ('/') + 1);
-  }
-
-  /**
-   * Extracts the file type from the given path.
-   * E.g. for http://foo.org/bar/bla.png, this will just return "png"
-   */
-  public string get_file_type (string path) {
-    string filename = get_file_name (path);
-    if (filename.index_of_char ('.') == -1)
-      return "";
-    string type = filename.substring (filename.last_index_of_char ('.') + 1);
-    type = type.down ();
-    if (type == "jpg")
-      return "jpeg";
-    return type;
   }
 
   /**
@@ -271,9 +223,15 @@ namespace Utils {
       return;
     }
 
-    if (root.get_member ("errors").get_node_type () == Json.NodeType.VALUE) {
+    if (root.has_member ("errors") &&
+        root.get_member ("errors").get_node_type () == Json.NodeType.VALUE) {
       message (json_data);
       show_error_dialog (root.get_member ("errors").get_string (), transient_for);
+      return;
+    }
+
+    if (!root.has_member ("errors")) {
+      show_error_dialog (error_message, transient_for);
       return;
     }
 
@@ -283,7 +241,7 @@ namespace Utils {
       sb.append (err.get_int_member ("code").to_string ()).append (": ")
         .append (err.get_string_member ("message"))
         .append ("(").append (file).append (":").append (line.to_string ()).append (")");
-    } else {
+    } else if (errors.get_length () > 1) {
       sb.append ("<ul>");
       errors.foreach_element ((arr, index, node) => {
         var obj = node.get_object ();
@@ -293,6 +251,7 @@ namespace Utils {
       });
       sb.append ("</ul>");
     }
+
     error_message = sb.str;
 
     critical (json_data);

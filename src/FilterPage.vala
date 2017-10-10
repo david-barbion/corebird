@@ -16,7 +16,7 @@
  */
 
 [GtkTemplate (ui = "/org/baedert/corebird/ui/filter-page.ui")]
-class FilterPage : Gtk.ScrolledWindow, IPage, IMessageReceiver {
+class FilterPage : Gtk.ScrolledWindow, IPage, Cb.MessageReceiver {
   public int id { get; set; }
   private unowned MainWindow main_window;
   public unowned MainWindow window {
@@ -93,10 +93,10 @@ class FilterPage : Gtk.ScrolledWindow, IPage, IMessageReceiver {
     call.set_method ("GET");
     call.add_param ("include_entities", "false");
     call.add_param ("skip_status", "true");
-    TweetUtils.load_threaded.begin (call, null, (_, res) => {
+    Cb.Utils.load_threaded_async.begin (call, null, (_, res) => {
       Json.Node? root = null;
       try  {
-        root = TweetUtils.load_threaded.end (res);
+        root = Cb.Utils.load_threaded_async.end (res);
       } catch (GLib.Error e) {
         warning (e.message);
         return;
@@ -121,10 +121,10 @@ class FilterPage : Gtk.ScrolledWindow, IPage, IMessageReceiver {
     call2.set_method ("GET");
     call2.add_param ("include_entities", "false");
     call2.add_param ("skip_status", "true");
-    TweetUtils.load_threaded.begin (call2, null, (_, res) => {
+    Cb.Utils.load_threaded_async.begin (call2, null, (_, res) => {
       Json.Node? root = null;
       try  {
-        root = TweetUtils.load_threaded.end (res);
+        root = Cb.Utils.load_threaded_async.end (res);
       } catch (GLib.Error e) {
         warning (e.message);
         return;
@@ -168,18 +168,18 @@ class FilterPage : Gtk.ScrolledWindow, IPage, IMessageReceiver {
     }
   }
 
-  public void stream_message_received (StreamMessageType type, Json.Node root_node) {
-    if (type == StreamMessageType.EVENT_BLOCK) {
+  public void stream_message_received (Cb.StreamMessageType type, Json.Node root_node) {
+    if (type == Cb.StreamMessageType.EVENT_BLOCK) {
       var obj = root_node.get_object ().get_object_member ("target");
       add_user (obj, false);
-    } else if (type == StreamMessageType.EVENT_UNBLOCK) {
+    } else if (type == Cb.StreamMessageType.EVENT_UNBLOCK) {
       var obj = root_node.get_object ().get_object_member ("target");
       int64 user_id = obj.get_int_member ("id");
       remove_user (user_id, false);
-    } else if (type == StreamMessageType.EVENT_MUTE) {
+    } else if (type == Cb.StreamMessageType.EVENT_MUTE) {
       var obj = root_node.get_object ().get_object_member ("target");
       add_user (obj, true);
-    } else if (type == StreamMessageType.EVENT_UNMUTE) {
+    } else if (type == Cb.StreamMessageType.EVENT_UNMUTE) {
       var obj = root_node.get_object ().get_object_member ("target");
       int64 user_id = obj.get_int_member ("id");
       remove_user (user_id, true);

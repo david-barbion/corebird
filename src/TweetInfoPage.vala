@@ -16,7 +16,7 @@
  */
 
 [GtkTemplate (ui = "/org/baedert/corebird/ui/tweet-info-page.ui")]
-class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
+class TweetInfoPage : IPage, ScrollWidget, Cb.MessageReceiver {
   public const int KEY_MODE        = 0;
   public const int KEY_TWEET       = 1;
   public const int KEY_EXISTING    = 2;
@@ -51,6 +51,8 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
 
   [GtkChild]
   private Gtk.Grid grid;
+  [GtkChild]
+  private Gtk.Box main_box;
   [GtkChild]
   private MultiMediaWidget mm_widget;
   [GtkChild]
@@ -96,6 +98,7 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
     this.top_list_box.account = account;
     this.bottom_list_box.account = account;
 
+    grid.set_redraw_on_allocate (true);
 
     mm_widget.media_clicked.connect ((m, i) => TweetUtils.handle_media_click (tweet, main_window, i));
     this.scroll_event.connect ((evt) => {
@@ -148,12 +151,18 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
 
     reply_indicator.replies_available = false;
     max_size_container.max_size = 0;
-    main_stack.visible_child = grid;
+    main_stack.visible_child = main_box;
 
+    /* If we have a tweet instance here already, we set the avatar now instead of in
+     * set_tweet_data, since the rearrange_tweets() or list.model.clear() calls
+     * might cause the avatar to get removed from the cache. */
 
     if (existing) {
       // Only possible BY_INSTANCE
       var tweet = (Cb.Tweet) args.get_object (KEY_TWEET);
+      if (Twitter.get ().has_avatar (tweet.get_user_id ()))
+        avatar_image.surface = Twitter.get ().get_cached_avatar (tweet.get_user_id ());
+
       rearrange_tweets (tweet.id);
     } else {
       bottom_list_box.model.clear ();
@@ -164,6 +173,9 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
 
     if (mode == BY_INSTANCE) {
       Cb.Tweet tweet = (Cb.Tweet)args.get_object (KEY_TWEET);
+
+      if (Twitter.get ().has_avatar (tweet.get_user_id ()))
+        avatar_image.surface = Twitter.get ().get_cached_avatar (tweet.get_user_id ());
 
       if (tweet.retweeted_tweet != null)
         this.tweet_id = tweet.retweeted_tweet.id;
@@ -179,8 +191,33 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
       this.screen_name = args.get_string (KEY_SCREEN_NAME);
     }
 
-
     query_tweet_info (existing);
+  }
+
+  private void load_user_avatar (string url) {
+    string avatar_url;
+    int scale = this.get_scale_factor ();
+
+    if (scale == 1)
+      avatar_url = url.replace ("_normal", "_bigger");
+    else
+      avatar_url = url.replace ("_normal", "_200x200");
+
+    TweetUtils.download_avatar.begin (avatar_url, 73 * scale, cancellable, (obj, res) => {
+      Cairo.Surface surface;
+      try {
+        var pixbuf = TweetUtils.download_avatar.end (res);
+        if (pixbuf == null) {
+          surface = scale_surface ((Cairo.ImageSurface)Twitter.no_avatar, 73, 73);
+        } else {
+          surface = Gdk.cairo_surface_create_from_pixbuf (pixbuf, scale, null);
+        }
+      } catch (GLib.Error e) {
+        warning (e.message);
+        surface = Twitter.no_avatar;
+      }
+      avatar_image.surface = surface;
+    });
   }
 
   private void rearrange_tweets (int64 new_id) {
@@ -214,7 +251,12 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
       //error ("wtf");
   }
 
-  public void on_leave () {}
+  public void on_leave () {
+    if (cancellable != null) {
+      cancellable.cancel ();
+      cancellable = null;
+    }
+  }
 
 
   [GtkCallback]
@@ -294,11 +336,11 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
     call.add_param ("id", tweet_id.to_string ());
     call.add_param ("include_my_retweet", "true");
     call.add_param ("tweet_mode", "extended");
-    TweetUtils.load_threaded.begin (call, cancellable, (__, res) => {
+    Cb.Utils.load_threaded_async.begin (call, cancellable, (__, res) => {
       Json.Node? root = null;
 
       try {
-        root = TweetUtils.load_threaded.end (res);
+        root = Cb.Utils.load_threaded_async.end (res);
       } catch (GLib.Error e) {
         error_label.label = "%s: %s".printf (_("Could not show tweet"), e.message);
         main_stack.visible_child = error_label;
@@ -342,11 +384,11 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
     reply_call.add_param ("since_id", tweet_id.to_string ());
     reply_call.add_param ("count", "200");
     reply_call.add_param ("tweet_mode", "extended");
-    TweetUtils.load_threaded.begin (reply_call, cancellable, (_, res) => {
+    Cb.Utils.load_threaded_async.begin (reply_call, cancellable, (_, res) => {
       Json.Node? root = null;
 
       try {
-        root = TweetUtils.load_threaded.end (res);
+        root = Cb.Utils.load_threaded_async.end (res);
       } catch (GLib.Error e) {
         warning (e.message);
         return;
@@ -461,7 +503,8 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
     text_label.label = tweet.get_formatted_text ();
     name_button.set_markup (tweet.get_user_name ());
     screen_name_label.label = "@" + tweet.get_screen_name ();
-    Twitter.get ().get_avatar.begin (tweet.get_user_id (), tweet.avatar_url, avatar_image);
+
+    load_user_avatar (tweet.avatar_url);
     update_rt_fav_labels ();
     time_label.label = time_format;
     retweet_button.active  = tweet.is_flag_set (Cb.TweetState.RETWEETED);
@@ -603,9 +646,9 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
     return null;
   }
 
-  public void stream_message_received (StreamMessageType type,
+  public void stream_message_received (Cb.StreamMessageType type,
                                        Json.Node         root) {
-    if (type == StreamMessageType.TWEET) {
+    if (type == Cb.StreamMessageType.TWEET) {
       Json.Object root_obj = root.get_object ();
       if (Utils.usable_json_value (root_obj, "in_reply_to_status_id")) {
         int64 reply_id = root_obj.get_int_member ("in_reply_to_status_id");
@@ -618,7 +661,7 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
           this.reply_indicator.replies_available = true;
         }
       }
-    } else if (type == StreamMessageType.DELETE) {
+    } else if (type == Cb.StreamMessageType.DELETE) {
       int64 tweet_id = root.get_object ().get_object_member ("delete")
                                          .get_object_member ("status")
                                          .get_int_member ("id");
@@ -628,7 +671,7 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
         debug ("Current tweet with id %s deleted!", tweet_id.to_string ());
         this.main_window.main_widget.remove_current_page ();
       }
-    } else if (type == StreamMessageType.EVENT_FAVORITE) {
+    } else if (type == Cb.StreamMessageType.EVENT_FAVORITE) {
       int64 id = root.get_object ().get_object_member ("target_object").get_int_member ("id");
       int64 source_id = root.get_object ().get_object_member ("source").get_int_member ("id");
       if (source_id == account.id && id == this.tweet_id) {
@@ -639,7 +682,7 @@ class TweetInfoPage : IPage, ScrollWidget, IMessageReceiver {
         this.values_set = true;
       }
 
-    } else if (type == StreamMessageType.EVENT_UNFAVORITE) {
+    } else if (type == Cb.StreamMessageType.EVENT_UNFAVORITE) {
       int64 id = root.get_object ().get_object_member ("target_object").get_int_member ("id");
       int64 source_id = root.get_object ().get_object_member ("source").get_int_member ("id");
       if (source_id == account.id && id == this.tweet_id) {

@@ -15,9 +15,11 @@
  *  along with corebird.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+bool STRESSTEST = false;
+
 public class Corebird : Gtk.Application {
   public static Sql.Database db;
-  public static SnippetManager snippet_manager;
+  public static Cb.SnippetManager snippet_manager;
   public signal void account_added (Account acc);
   public signal void account_removed (Account acc);
   public signal void account_window_changed (int64? old_id, int64 new_id);
@@ -46,7 +48,6 @@ public class Corebird : Gtk.Application {
     GLib.Object(application_id:   "org.baedert.corebird",
                 flags:            ApplicationFlags.HANDLES_COMMAND_LINE);
                 //register_session: true);
-    snippet_manager = new SnippetManager ();
     active_accounts = new GLib.GenericArray<Account> ();
 
     /* Create the directories here already since the database below needs it */
@@ -54,6 +55,8 @@ public class Corebird : Gtk.Application {
     db = new Sql.Database (Dirs.config ("Corebird.db"),
                            Sql.COREBIRD_INIT_FILE,
                            Sql.COREBIRD_SQL_VERSION);
+
+    snippet_manager = new Cb.SnippetManager (db.get_sqlite_db ());
   }
 
   public override int command_line (ApplicationCommandLine cmd) {
@@ -61,9 +64,10 @@ public class Corebird : Gtk.Application {
     bool start_service = false;
     bool stop_service = false;
     bool print_startup_accounts = false;
+    bool stresstest = false;
     string? account_name = null;
 
-    OptionEntry[] options = new OptionEntry[6];
+    OptionEntry[] options = new OptionEntry[7];
     options[0] = {"tweet", 't', 0, OptionArg.STRING, ref compose_screen_name,
                   "Shows only the 'compose tweet' window for the given account, nothing else.", "account name"};
     options[1] = {"start-service", 's', 0, OptionArg.NONE, ref start_service,
@@ -74,8 +78,10 @@ public class Corebird : Gtk.Application {
                   "Print configured startup accounts", null};
     options[4] = {"account", 'c', 0, OptionArg.STRING, ref account_name,
                   "Open the window for the given account", "account name"};
+    options[5] = {"stresstest", 'r', GLib.OptionFlags.HIDDEN, OptionArg.NONE, ref stresstest,
+                  "Debugging only.", null};
 
-    options[5] = {null};
+    options[6] = {null};
 
     string[] args = cmd.get_arguments ();
     string*[] _args = new string[args.length];
@@ -102,6 +108,9 @@ public class Corebird : Gtk.Application {
     if (stop_service && start_service) {
       error ("Can't stop and start service at the same time.");
     }
+
+    if (stresstest)
+      STRESSTEST = true;
 
 
     if (stop_service) {
@@ -179,22 +188,17 @@ public class Corebird : Gtk.Application {
   }
 
   private void show_shortcuts_activated () {
-    // TODO: Remove this once the required gtk version is >= 3.20
-    if (Gtk.get_major_version () == 3 && Gtk.get_minor_version () >= 19) {
-      var builder = new Gtk.Builder.from_resource ("/org/baedert/corebird/ui/shortcuts-window.ui");
-      var shortcuts_window = (Gtk.Window) builder.get_object ("shortcuts_window");
-      shortcuts_window.show ();
-    } else {
-      warning ("The shortcuts window is only available in gtk+ >= 3.20, version is %u.%u",
-               Gtk.get_major_version (), Gtk.get_minor_version ());
-    }
+    var builder = new Gtk.Builder.from_resource ("/org/baedert/corebird/ui/shortcuts-window.ui");
+    var shortcuts_window = (Gtk.Window) builder.get_object ("shortcuts_window");
+    shortcuts_window.show ();
   }
 
   public override void startup () {
     base.startup ();
     this.set_resource_base_path ("/org/baedert/corebird");
 
-    new LazyMenuButton();
+    typeof (LazyMenuButton).ensure ();
+    typeof (FavImageView).ensure ();
 
 #if DEBUG
     GLib.Environment.set_variable ("G_MESSAGES_DEBUG", "corebird", true);
@@ -236,11 +240,6 @@ public class Corebird : Gtk.Application {
     this.set_accels_for_action ("tweet.favorite", {"f"});
 
     this.add_action_entries (app_entries, this);
-
-    // TODO: Remove this once the required gtk version is >= 3.20
-    if (Gtk.get_major_version () == 3 && Gtk.get_minor_version () < 19) {
-      ((GLib.SimpleAction)this.lookup_action ("show-shortcuts")).set_enabled (false);
-    }
 
     // If the user wants the dark theme, apply it
     var gtk_s = Gtk.Settings.get_default ();
@@ -576,8 +575,7 @@ public class Corebird : Gtk.Application {
     for (int i = 0; i < this.active_accounts.length; i ++) {
       var acc = this.active_accounts.get (i);
       if (acc.screen_name == screen_name) {
-        var fake_call = acc.proxy.new_call ();
-        acc.user_stream.parse_data_cb (fake_call, json, json.length, null);
+        acc.user_stream.push_data (json);
         return;
       }
     }

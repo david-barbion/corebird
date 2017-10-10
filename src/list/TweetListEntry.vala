@@ -260,10 +260,12 @@ public class TweetListEntry : Cb.TwitterItem, Gtk.ListBoxRow {
     }
 
     if (this.mm_widget != null && this.tweet.quoted_tweet == null) {
+      Gtk.Widget w = media_stack != null ? ((Gtk.Widget)media_stack) : ((Gtk.Widget)mm_widget);
+
       if (text_label.label.length == 0)
-        this.grid.child_set (mm_widget, "top-attach", 2);
+        this.grid.child_set (w, "top-attach", 2);
       else
-        this.grid.child_set (mm_widget, "top-attach", 8);
+        this.grid.child_set (w, "top-attach", 8);
     }
   }
 
@@ -277,8 +279,8 @@ public class TweetListEntry : Cb.TwitterItem, Gtk.ListBoxRow {
       this.media_stack.visible_child = mm_widget;
   }
 
-  private void media_clicked_cb (Cb.Media m, int index) {
-    TweetUtils.handle_media_click (this.tweet, this.main_window, index);
+  private void media_clicked_cb (Cb.Media m, int index, double px, double py) {
+    TweetUtils.handle_media_click (this.tweet, this.main_window, index, px, py);
   }
 
   private void delete_tweet_activated () {
