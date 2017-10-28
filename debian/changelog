@@ -1,8 +1,8 @@
-corebird (1.6-1~16.10) xenial; urgency=medium
+corebird (1.6-1~17.10) artful; urgency=medium
 
   * New upstream release
 
- -- David Barbion <davidb@230ruedubac.fr>  Tue, 10 Oct 2017 23:16:42 +0200
+ -- David Barbion <davidb@230ruedubac.fr>  Tue, 22 Oct 2017 01:16:42 +0200
 
 corebird (1.5-1~16.10) yakkety; urgency=medium
 
